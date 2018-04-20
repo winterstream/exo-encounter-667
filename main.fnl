@@ -1,8 +1,8 @@
 (local view (require "lib.fennelview"))
-(local (w h) (values (/ 1440 4) (/ 900 4)))
+(local (w h) (values (/ 1440 2) (/ 900 2)))
 (local canvas (love.graphics.newCanvas w h))
 
-(var scale 1)
+(var scale 2)
 (var mode (require :intro))
 
 (defn set-mode [mode-name]
@@ -44,8 +44,8 @@
         (set scale (/ dh 225)))
 
       (= key "f11")
-      (do (set scale 1)
-          (love.window.setMode (/ w scale) (/ h scale)))
+      (do (set scale 2)
+          (love.window.setMode (* w scale) (* h scale)))
 
       (and (love.keyboard.isDown "lctrl" "rctrl" "capslock") (= key "q"))
       (love.event.quit)

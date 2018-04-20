@@ -24,7 +24,7 @@
 (defn keypressed [key set-mode]
   (let [f (. keymap key)]
     (if (= "escape" key)
-        (set-mode :intro)
+        (set-mode :pause)
         (= (type f) "function")
         (f))))
 

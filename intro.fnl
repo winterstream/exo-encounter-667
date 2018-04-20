@@ -12,17 +12,23 @@
 
 (var counter 0)
 
-{:draw (fn []
+{:draw (fn [message]
          (love.graphics.setFont intro-font)
          (love.graphics.draw intro-img)
          (love.graphics.print "EXO_encounter 667" 32 16)
          (love.graphics.setFont font)
-         (for [i 1 (# messages)]
-           (when (> counter (* i 2))
-             (love.graphics.print (. messages i) 8 (+ (* 18 i) 120)))))
+         (if message
+             (love.graphics.print message 16 (+ (* 18 4) 120))
+             (for [i 1 (# messages)]
+               (when (> counter (* i 2))
+                 (love.graphics.print (. messages i) 8 (+ (* 18 i) 120))))))
  :update (fn [dt set-mode]
            (set counter (+ counter dt))
            (when (> counter 16)
              (set-mode :play)))
  :keypressed (fn [key set-mode]
-               (set-mode :play))}
+               (if (or (= key "space") (= key "return"))
+                   (set counter (if (> counter 8)
+                                    (set-mode :play)
+                                    (* 2 (math.ceil (/ counter 2)))))
+                   (set-mode :play)))}
