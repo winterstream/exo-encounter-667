@@ -1,3 +1,10 @@
+(local view (require "lib.fennelview"))
+(local (w h) (values (/ 1440 4) (/ 900 4)))
+(local canvas (love.graphics.newCanvas w h))
+
+(var scale 1)
+(var mode (require :intro))
+
 (defn start-repl []
   (let [code (love.filesystem.read "stdio.fnl")
         lua (love.filesystem.newFileData (fennel.compileString code) "io")
@@ -11,11 +18,34 @@
              (: io-channel :push (view val)))))))
 
 (defn love.load []
+  (: canvas :setFilter "nearest" "nearest")
   (start-repl))
 
 (defn love.draw []
-  (love.graphics.print "SPAAAAAAACE" 100 100))
+  (love.graphics.setCanvas canvas)
+  (love.graphics.clear)
+  (love.graphics.setColor 1 1 1)
+  (mode.draw)
+  (love.graphics.setCanvas)
+  (love.graphics.setColor 1 1 1)
+  (love.graphics.draw canvas 0 0 0 scale scale))
+
+(defn love.update [dt]
+  (mode.update dt))
 
 (defn love.keypressed [key]
-  (when (= "escape" key)
-    (love.event.quit)))
+  (if (and (= key "f11") (= scale 1))
+      (let [(dw dh) (love.window.getDesktopDimensions)]
+        (love.window.setMode dw dh {:fullscreen true
+                                    :fullscreentype :desktop})
+        (set scale (/ dh 225)))
+
+      (= key "f11")
+      (do (set scale 1)
+          (love.window.setMode (/ w scale) (/ h scale)))
+
+      (and (love.keyboard.isDown "lctrl" "rctrl" "capslock") (= key "q"))
+      (love.event.quit)
+
+      :else
+      (mode.keypressed key)))

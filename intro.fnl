@@ -1,0 +1,26 @@
+(local intro-img (love.graphics.newImage "assets/intro-225.jpg"))
+(local intro-font (love.graphics.newFont "assets/FSEX300.ttf" 32))
+(local font (love.graphics.newFont "assets/FSEX300.ttf" 12))
+
+(local messages
+       [["MISSION: initial unmanned expedition to Gliese 667"]
+        ["WARNING: extreme radiation storm approaching"]
+        ["CRITICAL: detected failure in lander engines"]
+        ["STATUS: lander crash; 352 meters southwest of target site"]])
+
+(: intro-img :setFilter "nearest")
+
+(var counter 0)
+
+{:draw (fn []
+         (love.graphics.setFont intro-font)
+         (love.graphics.draw intro-img)
+         (love.graphics.print "EXO_encounter 667" 32 16)
+         (love.graphics.setFont font)
+         (for [i 1 (# messages)]
+           (when (> counter (* i 2))
+             (love.graphics.print (. messages i) 8 (+ (* 18 i) 120)))))
+ :update (fn [dt]
+           (set counter (+ counter dt)))
+ :keypressed (fn [key]
+               (love.event.quit))}
