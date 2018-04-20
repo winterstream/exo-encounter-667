@@ -1,10 +1,14 @@
 # TODO
 
+## immediately
+
 * rover movement
 * selecting between rovers
 * main probe movement
 * initial area map
 * rocks that can be pushed
+
+## soon
 
 * laser aiming
 * laser reflection
@@ -13,8 +17,9 @@
 * american base map
 * reactor with activation
 
-* other map elements that can be activated by laser?
+## later
 
+* other map elements that can be activated by laser?
 * HUD
 * in-game message system
 * writing for russian terminals
