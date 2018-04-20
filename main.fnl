@@ -5,6 +5,9 @@
 (var scale 1)
 (var mode (require :intro))
 
+(defn set-mode [mode-name]
+  (set mode (require mode-name)))
+
 (defn start-repl []
   (let [code (love.filesystem.read "stdio.fnl")
         lua (love.filesystem.newFileData (fennel.compileString code) "io")
@@ -31,7 +34,7 @@
   (love.graphics.draw canvas 0 0 0 scale scale))
 
 (defn love.update [dt]
-  (mode.update dt))
+  (mode.update dt set-mode))
 
 (defn love.keypressed [key]
   (if (and (= key "f11") (= scale 1))
@@ -48,4 +51,4 @@
       (love.event.quit)
 
       :else
-      (mode.keypressed key)))
+      (mode.keypressed key set-mode)))

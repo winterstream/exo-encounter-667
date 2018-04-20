@@ -20,7 +20,9 @@
          (for [i 1 (# messages)]
            (when (> counter (* i 2))
              (love.graphics.print (. messages i) 8 (+ (* 18 i) 120)))))
- :update (fn [dt]
-           (set counter (+ counter dt)))
- :keypressed (fn [key]
-               (love.event.quit))}
+ :update (fn [dt set-mode]
+           (set counter (+ counter dt))
+           (when (> counter 16)
+             (set-mode :play)))
+ :keypressed (fn [key set-mode]
+               (set-mode :play))}
