@@ -10,21 +10,34 @@
 (local probe-width 20)
 
 (local state {:tx 0 :ty -1024 ; <- viewport translation
-              :rovers [{:x 100 :y 1200 :r 0 :docked true :type :rover :radius 5}
-                       {:x 120 :y 1200 :r 0 :docked false :type :rover :radius 5}
-                       {:x 120 :y 1220 :r 0 :docked false :type :rover :radius 5}
-                       {:x 100 :y 1220 :r 0 :docked true :type :rover :radius 5}]})
+              :rovers [{:x 100 :y 1200 :theta 0 :docked true
+                        :type :rover :radius rover-radius
+                        :width (* rover-radius 2) :height (* rover-radius 2)}
+                       {:x 120 :y 1200 :theta 0 :docked false :type :rover
+                        :radius rover-radius
+                        :width (* rover-radius 2) :height (* rover-radius 2)}
+                       {:x 120 :y 1220 :theta 0 :docked false :type :rover
+                        :radius rover-radius
+                        :width (* rover-radius 2) :height (* rover-radius 2)}
+                       {:x 100 :y 1220 :theta 0 :docked true :type :rover
+                        :radius rover-radius
+                        :width (* rover-radius 2) :height (* rover-radius 2)}]
+              :probe {:x 105 :y 1205 :width 20 :height 20
+                      :theta 0 :type :probe}})
 
 (: map :bump_init world)
 (each [_ rover (pairs state.rovers)]
-  (: world :add rover rover.x rover.y rover-radius rover-radius))
+  (: world :add rover rover.x rover.y (* 2 rover.radius) (* 2 rover.radius)))
+(: world :add state.probe state.probe.x state.probe.y
+   state.probe.width state.probe.height)
 
 (local turn-speed math.pi)
 
 (set state.selected (. state.rovers 1))
 
 (let [layer (: map :addCustomLayer "player")]
-  (set layer.sprites state.rovers)
+  (set layer.sprites [(unpack state.rovers)])
+  (tset layer.sprites 0 state.probe)
   (set layer.draw (partial draw.draw-player state)))
 
 ;; so we can access this thru the repl
@@ -34,9 +47,9 @@
 
 (defn move-rover [dt]
   (when (love.keyboard.isDown "left")
-    (set state.selected.r (- state.selected.r (* dt turn-speed))))
+    (set state.selected.theta (- state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "right")
-    (set state.selected.r (+ state.selected.r (* dt turn-speed))))
+    (set state.selected.theta (+ state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "up")
     (let [x state.selected.x ;; todo: calculate trig
           y state.selected.y]
@@ -54,18 +67,25 @@
                                   -1024 0)))))
   (when (= :rover state.selected.type)
     (move-rover dt))
-  ;; TODO: only main probe can fire
   (set state.laser (and (love.keyboard.isDown "space")
-                        (laser.fire (+ state.selected.x rover-radius)
-                                    (+ state.selected.y rover-radius)
-                                    state.selected.r world []))))
+                        (= state.selected.type :probe)
+                        (let [[x y w h] (: world :getRect state.probe)]
+                          (laser.fire (+ x (/ w 2))
+                                      (+ y (/ h 2))
+                                      state.probe.theta world [])))))
 
-(defn select [n] (set state.selected (. state.rovers n)))
+(defn select [n]
+  (set state.selected (if (= n 0)
+                          state.probe
+                          (. state.rovers n))))
 
 (local keymap {:1 (partial select 1)
                :2 (partial select 2)
                :3 (partial select 3)
-               :4 (partial select 4)})
+               :4 (partial select 4)
+               :0 (partial select 0)
+               :5 (partial select 0)
+               "`" (partial select 0)})
 
 (defn keypressed [key set-mode]
   (let [f (. keymap key)]
