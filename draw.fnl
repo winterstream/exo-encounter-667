@@ -5,6 +5,7 @@
       (love.graphics.setColor 0.5 0.5 0.5)
       (love.graphics.setColor 0.2 0.2 0.2))
   (let [radius (/ rover.width 2)]
+    ;; x and y for rovers are the upper left corners
     (love.graphics.circle "fill" (+ rover.x radius) (+ rover.y radius)
                           rover.width)
     (love.graphics.setColor 0.1 0.1 0.1)

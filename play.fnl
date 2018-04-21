@@ -9,15 +9,14 @@
 (local probe-width 20)
 
 (local state {:tx 0 :ty -1024 ; <- viewport translation
-              :rovers [{:x 100 :y 1200 :width rover-radius :height rover-radius
-                        :r 0 :docked true}
-                       {:x 120 :y 1200 :width rover-radius :height rover-radius
-                        :r 0 :docked false}
-                       {:x 120 :y 1220 :width rover-radius :height rover-radius
-                        :r 0 :docked false}
-                       {:x 100 :y 1220 :width rover-radius :height rover-radius
-                        :r 0 :docked true}
-                       ]})
+              :rovers [{:x 100 :y 1200 :r 0 :docked true :type :rover}
+                       {:x 120 :y 1200 :r 0 :docked false :type :rover}
+                       {:x 120 :y 1220 :r 0 :docked false :type :rover}
+                       {:x 100 :y 1220 :r 0 :docked true :type :rover}]})
+
+(: map :bump_init world)
+(each [_ rover (pairs state.rovers)]
+  (: world :add rover rover.x rover.y rover-radius rover-radius))
 
 (local turn-speed math.pi)
 
@@ -32,6 +31,16 @@
 
 (local dirs {:home [0 -1] :end [0 1] :delete [-1 0] :pagedown [1 0]})
 
+(defn move-rover []
+  (when (love.keyboard.isDown "left")
+    (set state.selected.r (- state.selected.r (* dt turn-speed))))
+  (when (love.keyboard.isDown "right")
+    (set state.selected.r (+ state.selected.r (* dt turn-speed))))
+  (when (love.keyboard.isDown "up")
+    (let [x selected.x ;; todo: calculate trig
+          y selected.y]
+      (: world :move selected x y))))
+
 (defn update [dt set-mode]
   (: map :update dt)
   ;; placeholder: for now, you scroll manually
@@ -42,10 +51,8 @@
                                   -1280 0))
         (set state.ty (lume.clamp (- state.ty (* (* dy scroll-speed) dt))
                                   -1024 0)))))
-  (when (love.keyboard.isDown "left")
-    (set state.selected.r (- state.selected.r (* dt turn-speed))))
-  (when (love.keyboard.isDown "right")
-    (set state.selected.r (+ state.selected.r (* dt turn-speed)))))
+  (when (= :rover selected.type)
+    (move-rover)))
 
 (defn select [n] (set state.selected (. state.rovers n)))
 

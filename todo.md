@@ -1,27 +1,18 @@
 # TODO
 
-## immediately
+## epics
 
-* rover movement
-* selecting between rovers
-* main probe movement
-* initial area map
-* rocks that can be pushed
-
-## soon
-
-* laser aiming
-* laser reflection
-* russian base map
+* movement
+* pushing
+* laser
+* sensors/doors
 * terminals
-* american base map
-* reactor with activation
+* map design
 
 ## later
 
 * other map elements that can be activated by laser?
+* fog of war
 * HUD
-* in-game message system
-* writing for russian terminals
-* writing for american terminals
+* more lines of the intro (see design.md)
 * end game
