@@ -4,16 +4,23 @@
   (if (= rover state.selected)
       (love.graphics.setColor 0.5 0.5 0.5)
       (love.graphics.setColor 0.2 0.2 0.2))
-  ;; x and y for rovers are the upper left corners
-  (let [(x y w h) (: world :getRect rover)
+  (let [(corner-x corner-y w h) (: world :getRect rover)
         radius (/ w 2)
-        x1 (+ x radius)
-        y1 (+ y radius)
-        x2 (+ x1 (* (math.cos rover.theta) radius))
-        y2 (+ y1 (* (math.sin rover.theta) radius))]
-    (love.graphics.circle "fill" (+ x radius) (+ y radius) radius)
+        center-x (+ corner-x radius)
+        center-y (+ corner-y radius)
+        x2 (+ center-x (* (math.cos rover.theta) radius))
+        y2 (+ center-y (* (math.sin rover.theta) radius))]
+    (love.graphics.circle "fill" center-x center-y radius)
+    ;; forward indicator
     (love.graphics.setColor 0.1 0.1 0.1)
-    (love.graphics.line x1 y1 x2 y2)))
+    (love.graphics.line center-x center-y x2 y2)
+    ;; mirror indicator
+    (let [perpendicular (+ rover.theta (/ math.pi 2))
+          px1 (+ center-x (* (math.cos perpendicular) radius 0.8))
+          py1 (+ center-y (* (math.sin perpendicular) radius 0.8))
+          px2 (- center-x (* (math.cos perpendicular) radius 0.8))
+          py2 (- center-y (* (math.sin perpendicular) radius 0.8))]
+      (love.graphics.line px1 py1 px2 py2))))
 
 (defn draw-probe [world probe selected?]
   (if selected?
@@ -34,6 +41,8 @@
          (when state.laser
            (draw-laser state.laser))
          (love.graphics.pop))
+ ;; this gets called by the tiled library at the right time so other
+ ;; layers can obscure it when necessary
  :draw-player (fn [world state self]
                 (each [i rover (ipairs state.rovers)]
                   (draw-rover i rover world state))

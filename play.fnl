@@ -58,12 +58,17 @@
                                   -1024 0)))))
   (when (= :rover state.selected.type)
     (move-rover dt))
-  (set state.laser (and (love.keyboard.isDown "space")
-                        (= state.selected.type :probe)
-                        (let [(x y w h) (: world :getRect state.probe)]
-                          (laser.fire (+ x (/ w 2))
-                                      (+ y (/ h 2))
-                                      state.probe.theta world [])))))
+  (when (= state.selected.type :probe)
+    ;; we'll move all the controls to their own module soon
+    (when (love.keyboard.isDown ",")
+      (set state.probe.theta (- state.probe.theta (* dt turn-speed))))
+    (when (love.keyboard.isDown ".")
+      (set state.probe.theta (+ state.probe.theta (* dt turn-speed))))
+    (set state.laser (and (love.keyboard.isDown "space")
+                          (let [(x y w h) (: world :getRect state.probe)]
+                            (laser.fire (+ x (/ w 2))
+                                        (+ y (/ h 2))
+                                        state.probe.theta world [] 32))))))
 
 (defn select [n]
   (set state.selected (if (= n 0)

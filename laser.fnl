@@ -1,28 +1,37 @@
 ;; this is the max range only for each segment individually; no total limit
 (local range 720)
 
-(defn filter [item] (~= item.type :probe))
+(defn not-probe? [item] (~= item.type :probe))
+(defn opaque? [item] true) ; in the future, certain items will be transparent?
+(defn reflective? [item] (= item.type :rover))
 
-(defn reflect-theta [hit theta]
-  (if (or (= hit.x1 hit.item.x) ; left/right
-          (= hit.x1 (+ hit.item.x (or hit.item.width (* hit.item.radius 2)))))
-      (- theta)
-      (or (= hit.y1 hit.item.y) ; top/bottom
-          (= hit.y1 (+ hit.item.y (or hit.item.height (* hit.item.radius 2)))))
-      (- math.pi theta)))
+;; oops; this is only needed for reflecting off AABBs
+(defn reflect-theta-aabb [world hit theta]
+  (let [(x y w h) (: world :getRect hit.item)]
+    (if (or (= hit.x1 x) (= hit.x1 (+ x w))) ; left/right
+        (- theta)
+        (or (= hit.y1 y) (= hit.y1 (+ y h))) ; top/bottom
+        (- math.pi theta))))
 
-;; TODO: fennel defn doesn't allow recursion
-(local fire (fn fire [x y theta world segments]
-              (let [x2 (+ x (* (math.cos theta) range))
-                    y2 (+ y (* (math.sin theta) range))
-                    [hit] (: world :querySegmentWithCoords x y x2 y2 filter)]
-                (if hit
-                    (let [theta2 (reflect-theta hit theta)]
-                      (table.insert segments [x y hit.x1 hit.y1])
-                      (if (= hit.item.type :rover)
-                          (fire x2 y2 theta2 world segments)
-                          segments))
-                    (do (table.insert segments [x y x2 y2])
-                        segments)))))
+(defn reflect-mirror [world hit incoming]
+  (let [mirror-theta (- hit.item.theta (/ math.pi 2))]
+    ;; this is not close to correct
+    (- (- incoming) mirror-theta)))
 
-{:fire fire}
+{:fire (fn fire [x y theta world segments limit]
+         (let [x2 (+ x (* (math.cos theta) range))
+               y2 (+ y (* (math.sin theta) range))
+               filter (if (= (# segments) 0)
+                          not-probe?
+                          opaque?)
+               [hit] (: world :querySegmentWithCoords x y x2 y2 filter)]
+           (if (and hit (> limit 0))
+               (let [theta2 (reflect-mirror world hit theta)]
+                 (print :hit x y hit.x1 hit.y1)
+                 (table.insert segments [x y hit.x1 hit.y1])
+                 (if (reflective? hit.item)
+                     (fire hit.x1 hit.y1 theta2 world segments (- limit 1))
+                     segments))
+               (do (print :no-hit x y x2 y2)
+                   (table.insert segments [x y x2 y2])
+                   segments))))}
