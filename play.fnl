@@ -6,30 +6,21 @@
 
 (local map (tiled "map.lua" ["bump"]))
 (local world (bump.newWorld))
-(local rover-radius 5)
-(local probe-width 20)
 
 (local state {:tx 0 :ty -1024 ; <- viewport translation
-              :rovers [{:x 100 :y 1200 :theta 0 :docked true
-                        :type :rover :radius rover-radius
-                        :width (* rover-radius 2) :height (* rover-radius 2)}
-                       {:x 120 :y 1200 :theta 0 :docked false :type :rover
-                        :radius rover-radius
-                        :width (* rover-radius 2) :height (* rover-radius 2)}
-                       {:x 120 :y 1220 :theta 0 :docked false :type :rover
-                        :radius rover-radius
-                        :width (* rover-radius 2) :height (* rover-radius 2)}
-                       {:x 100 :y 1220 :theta 0 :docked true :type :rover
-                        :radius rover-radius
-                        :width (* rover-radius 2) :height (* rover-radius 2)}]
-              :probe {:x 105 :y 1205 :width 20 :height 20
-                      :theta 0 :type :probe}})
+              :rovers [{:theta 0 :docked true :type :rover}
+                       {:theta 0 :docked false :type :rover}
+                       {:theta 0 :docked false :type :rover}
+                       {:theta 0 :docked true :type :rover}]
+              :probe {:theta 0 :type :probe}})
 
 (: map :bump_init world)
-(each [_ rover (pairs state.rovers)]
-  (: world :add rover rover.x rover.y (* 2 rover.radius) (* 2 rover.radius)))
-(: world :add state.probe state.probe.x state.probe.y
-   state.probe.width state.probe.height)
+(let [radius 5]
+  (: world :add (. state.rovers 1) 100 1200 (* 2 radius) (* 2 radius))
+  (: world :add (. state.rovers 2) 120 1200 (* 2 radius) (* 2 radius))
+  (: world :add (. state.rovers 3) 120 1220 (* 2 radius) (* 2 radius))
+  (: world :add (. state.rovers 4) 100 1220 (* 2 radius) (* 2 radius)))
+(: world :add state.probe 105 1205 20 20)
 
 (local turn-speed math.pi)
 
@@ -38,7 +29,7 @@
 (let [layer (: map :addCustomLayer "player")]
   (set layer.sprites [(unpack state.rovers)])
   (tset layer.sprites 0 state.probe)
-  (set layer.draw (partial draw.draw-player state)))
+  (set layer.draw (partial draw.draw-player world state)))
 
 ;; so we can access this thru the repl
 (global st state)
@@ -69,7 +60,7 @@
     (move-rover dt))
   (set state.laser (and (love.keyboard.isDown "space")
                         (= state.selected.type :probe)
-                        (let [[x y w h] (: world :getRect state.probe)]
+                        (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))
                                       (+ y (/ h 2))
                                       state.probe.theta world [])))))
@@ -94,6 +85,6 @@
         (= (type f) "function")
         (f))))
 
-{:draw (partial draw.draw map state)
+{:draw (partial draw.draw map world state)
  :update update
  :keypressed keypressed}
