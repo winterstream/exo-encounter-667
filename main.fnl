@@ -37,7 +37,7 @@
   (mode.update dt set-mode))
 
 (defn love.keypressed [key]
-  (if (and (= key "f11") (= scale 1))
+  (if (and (= key "f11") (= scale 2))
       (let [(dw dh) (love.window.getDesktopDimensions)]
         (love.window.setMode dw dh {:fullscreen true
                                     :fullscreentype :desktop})

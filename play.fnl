@@ -1,25 +1,58 @@
 (local tiled (require "lib.tiled"))
 (local bump (require "lib.bump"))
+(local lume (require "lib.lume"))
+(local draw (require "draw"))
 
 (local map (tiled "map.lua" ["bump"]))
 (local world (bump.newWorld))
-(local state {:tx 0 :ty (- (* 50 20))})
+(local rover-radius 5)
+(local probe-width 20)
+
+(local state {:tx 0 :ty -1024 ; <- viewport translation
+              :rovers [{:x 100 :y 1200 :width rover-radius :height rover-radius
+                        :r 0 :docked true}
+                       {:x 120 :y 1200 :width rover-radius :height rover-radius
+                        :r 0 :docked false}
+                       {:x 120 :y 1220 :width rover-radius :height rover-radius
+                        :r 0 :docked false}
+                       {:x 100 :y 1220 :width rover-radius :height rover-radius
+                        :r 0 :docked true}
+                       ]})
+
+(local turn-speed math.pi)
+
+(set state.selected (. state.rovers 1))
+
+(let [layer (: map :addCustomLayer "player")]
+  (set layer.sprites state.rovers)
+  (set layer.draw (partial draw.draw-player state)))
 
 ;; so we can access this thru the repl
 (global st state)
 
-(local dirs {:up [0 -1] :down [0 1] :left [-1 0] :right [1 0]})
-(local speed 64)
+(local dirs {:home [0 -1] :end [0 1] :delete [-1 0] :pagedown [1 0]})
 
 (defn update [dt set-mode]
-  ;; placeholder: for now, the arrows allow scrolling
+  (: map :update dt)
+  ;; placeholder: for now, you scroll manually
   (each [key delta (pairs dirs)]
     (when (love.keyboard.isDown key)
-      (let [[dx dy] delta]
-        (set state.tx (- state.tx (* (* dx speed) dt)))
-        (set state.ty (- state.ty (* (* dy speed) dt)))))))
+      (let [[dx dy] delta scroll-speed 64]
+        (set state.tx (lume.clamp (- state.tx (* (* dx scroll-speed) dt))
+                                  -1280 0))
+        (set state.ty (lume.clamp (- state.ty (* (* dy scroll-speed) dt))
+                                  -1024 0)))))
+  (when (love.keyboard.isDown "left")
+    (set state.selected.r (- state.selected.r (* dt turn-speed))))
+  (when (love.keyboard.isDown "right")
+    (set state.selected.r (+ state.selected.r (* dt turn-speed)))))
 
-(local keymap {})
+(defn select [n] (set state.selected (. state.rovers n)))
+
+(local keymap {:1 (partial select 1)
+               :2 (partial select 2)
+               :3 (partial select 3)
+               :4 (partial select 4)})
 
 (defn keypressed [key set-mode]
   (let [f (. keymap key)]
@@ -28,6 +61,6 @@
         (= (type f) "function")
         (f))))
 
-{:draw (partial (require :draw) map state)
+{:draw (partial draw.draw map state)
  :update update
  :keypressed keypressed}

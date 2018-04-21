@@ -1,11 +1,14 @@
 # Credits
 
-* Intro image: https://commons.wikimedia.org/wiki/File:Gliese_667.jpg
+* [Intro image](https://commons.wikimedia.org/wiki/File:Gliese_667.jpg)
   [European Southern Observatory](https://en.wikipedia.org/wiki/European_Southern_Observatory)
   CC4 International Attribution
 
-* Hard Vacuum tileset:
-  http://www.lostgarden.com/2005/03/game-post-mortem-hard-vacuum.html (CC-BY-3.0)
-  http://www.lostgarden.com/search/label/License
+* [Hard Vacuum tileset](http://www.lostgarden.com/2005/03/game-post-mortem-hard-vacuum.html) (CC-BY-3.0)
+* [Fixedsys Excelsior font](http://www.fixedsysexcelsior.com/) (public domain)
 
-* Font: Fixedsys Excelsior: http://www.fixedsysexcelsior.com/ (public domain)
+* [LÖVE](https://love2d.org) Copyright © 2006-2018 LOVE Development Team, distributed under the zlib license
+* [Fennel](https://github.com/bakpakin/Fennel) Copyright © 2016-2018 Calvin Rose and contributors, distributed under the MIT/X11 License
+* [bump.lua](https://github.com/kikito/bump.lua) Copyright © 2012-2018 Enrique García Cota, distributed under the MIT/X11 License
+* [Simple Tiled Implementation](https://github.com/Karai17/Simple-Tiled-Implementation) Copyright © 2014-2018 Landon Manning, distributed under the MIT/X11 License
+* [lume](https://github.com/rxi/lume) Copyright © 2015-2018 rxi, distributed under the MIT/X11 License
