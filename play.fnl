@@ -2,6 +2,7 @@
 (local bump (require "lib.bump"))
 (local lume (require "lib.lume"))
 (local draw (require "draw"))
+(local laser (require "laser"))
 
 (local map (tiled "map.lua" ["bump"]))
 (local world (bump.newWorld))
@@ -9,10 +10,10 @@
 (local probe-width 20)
 
 (local state {:tx 0 :ty -1024 ; <- viewport translation
-              :rovers [{:x 100 :y 1200 :r 0 :docked true :type :rover}
-                       {:x 120 :y 1200 :r 0 :docked false :type :rover}
-                       {:x 120 :y 1220 :r 0 :docked false :type :rover}
-                       {:x 100 :y 1220 :r 0 :docked true :type :rover}]})
+              :rovers [{:x 100 :y 1200 :r 0 :docked true :type :rover :radius 5}
+                       {:x 120 :y 1200 :r 0 :docked false :type :rover :radius 5}
+                       {:x 120 :y 1220 :r 0 :docked false :type :rover :radius 5}
+                       {:x 100 :y 1220 :r 0 :docked true :type :rover :radius 5}]})
 
 (: map :bump_init world)
 (each [_ rover (pairs state.rovers)]
@@ -31,15 +32,15 @@
 
 (local dirs {:home [0 -1] :end [0 1] :delete [-1 0] :pagedown [1 0]})
 
-(defn move-rover []
+(defn move-rover [dt]
   (when (love.keyboard.isDown "left")
     (set state.selected.r (- state.selected.r (* dt turn-speed))))
   (when (love.keyboard.isDown "right")
     (set state.selected.r (+ state.selected.r (* dt turn-speed))))
   (when (love.keyboard.isDown "up")
-    (let [x selected.x ;; todo: calculate trig
-          y selected.y]
-      (: world :move selected x y))))
+    (let [x state.selected.x ;; todo: calculate trig
+          y state.selected.y]
+      (: world :move state.selected x y))))
 
 (defn update [dt set-mode]
   (: map :update dt)
@@ -51,8 +52,13 @@
                                   -1280 0))
         (set state.ty (lume.clamp (- state.ty (* (* dy scroll-speed) dt))
                                   -1024 0)))))
-  (when (= :rover selected.type)
-    (move-rover)))
+  (when (= :rover state.selected.type)
+    (move-rover dt))
+  ;; TODO: only main probe can fire
+  (set state.laser (and (love.keyboard.isDown "space")
+                        (laser.fire (+ state.selected.x rover-radius)
+                                    (+ state.selected.y rover-radius)
+                                    state.selected.r world []))))
 
 (defn select [n] (set state.selected (. state.rovers n)))
 
