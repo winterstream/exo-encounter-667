@@ -3,6 +3,7 @@
 (local lume (require "lib.lume"))
 (local draw (require "draw"))
 (local laser (require "laser"))
+(local sensor (require "sensor"))
 
 (local map (tiled "map.lua" ["bump"]))
 (local world (bump.newWorld))
@@ -31,8 +32,13 @@
   (tset layer.sprites 0 state.probe)
   (set layer.draw (partial draw.draw-player world state)))
 
-;; so we can access this thru the repl
+(set map.layers.sensors.draw draw.draw-sensors)
+(sensor.init state map)
+
+;; so we can access these thru the repl
 (global st state)
+(global m map)
+(global w world)
 
 (local dirs {:home [0 -1] :end [0 1] :delete [-1 0] :pagedown [1 0]})
 
@@ -47,6 +53,7 @@
       (: world :move state.selected x y))))
 
 (defn update [dt set-mode]
+  (sensor.update state map dt)
   (: map :update dt)
   ;; placeholder: for now, you scroll manually
   (each [key delta (pairs dirs)]

@@ -1,6 +1,7 @@
 ;; this is the max range only for each segment individually; no total limit
 (local lume (require "lib.lume"))
 (local intersect (require "lib.intersect"))
+(local sensor (require "sensor"))
 (local range 850)
 
 (defn reflective? [item] (= item.type :rover))
@@ -46,6 +47,10 @@
                                    [hit.item] (- limit 1)))
                          (do (table.insert ignore hit.item)
                              (fire x y theta world segments ignore limit))))
+                   (sensor.is? hit.item)
+                   (do (sensor.activate hit.item)
+                       (table.insert segments [x y hit.x1 hit.y1])
+                       segments)
                    (do (table.insert segments [x y hit.x1 hit.y1])
                        segments))
                (do (table.insert segments [x y x2 y2])
