@@ -24,6 +24,7 @@
 (: world :add state.probe 105 1205 20 20)
 
 (local turn-speed math.pi)
+(local move-speed 35)
 
 (set state.selected (. state.rovers 1))
 
@@ -42,15 +43,22 @@
 
 (local dirs {:home [0 -1] :end [0 1] :delete [-1 0] :pagedown [1 0]})
 
+(defn calculate-new-position [rover dt]
+  (let [(x y w h) (: world :getRect state.selected)
+        new-x (+ x (* (math.cos rover.theta) move-speed dt))
+        new-y (+ y (* (math.sin rover.theta) move-speed dt))]
+    (values new-x new-y)))
+
 (defn move-rover [dt]
   (when (love.keyboard.isDown "left")
     (set state.selected.theta (- state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "right")
     (set state.selected.theta (+ state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "up")
-    (let [x state.selected.x ;; todo: calculate trig
-          y state.selected.y]
-      (: world :move state.selected x y))))
+    (let [(new-x new-y) (calculate-new-position state.selected dt)
+          (actual-x actual-y cols len) (: world :move state.selected new-x new-y)]
+      (when (> len 0)
+        (print "collision")))))
 
 (defn update [dt set-mode]
   (sensor.update state map dt)
