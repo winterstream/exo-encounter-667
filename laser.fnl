@@ -1,33 +1,52 @@
 ;; this is the max range only for each segment individually; no total limit
-(local range 720)
+(local lume (require "lib.lume"))
+(local intersect (require "lib.intersect"))
+(local range 850)
 
 (defn reflective? [item] (= item.type :rover))
 
-;; oops; this is only needed for reflecting off AABBs
-(defn reflect-theta-aabb [world hit theta]
-  (let [(x y w h) (: world :getRect hit.item)]
-    (if (or (= hit.x1 x) (= hit.x1 (+ x w))) ; left/right
-        (- theta)
-        (or (= hit.y1 y) (= hit.y1 (+ y h))) ; top/bottom
-        (- math.pi theta))))
+;; a line segment for the mirror of a rover
+(defn mirror-segment [world rover mirror-theta]
+  (let [(x y w h) (: world :getRect rover)
+        radius (/ w 2)
+        center-x (+ x radius)
+        center-y (+ y radius)
+        x1 (+ center-x (* (math.cos mirror-theta) radius))
+        y1 (+ center-y (* (math.sin mirror-theta) radius))
+        x2 (- center-x (* (math.cos mirror-theta) radius))
+        y2 (- center-y (* (math.sin mirror-theta) radius))]
+    [x1 y1 x2 y2]))
 
-(defn reflect-mirror [world hit incoming]
-  (let [normalized (- incoming hit.item.theta)
-        reflected (- normalized)
-        absolutized (+ reflected hit.item.theta)]
-    absolutized))
+(defn normalize-angle [inbound-theta mirror-theta]
+  (let [normalized-inbound (- inbound-theta mirror-theta)
+        normalized-outbound (- normalized-inbound)
+        outbound (+ normalized-outbound mirror-theta)]
+    outbound))
 
-{:fire (fn fire [x y theta world segments from limit]
+;; returns the point where it hits the mirror and the outbound angle
+(defn reflect [world x1 y1 x2 y2 inbound-theta item]
+  (let [mirror-theta (+ item.theta (/ math.pi 2))
+        [mx1 my1 mx2 my2] (mirror-segment world item mirror-theta)
+        (x y) (intersect x1 y1 x2 y2 mx1 my1 mx2 my2)]
+    ;; just because the laser crossed the body doesn't mean it hit mirror
+    (if x (values x y (normalize-angle inbound-theta mirror-theta)))))
+
+{:fire (fn fire [x y theta world segments ignore limit]
          (let [x2 (+ x (* (math.cos theta) range))
                y2 (+ y (* (math.sin theta) range))
-               filter (fn [item] (~= item from))
+               filter (fn [item] (not (lume.find ignore item)))
                [hit] (: world :querySegmentWithCoords x y x2 y2 filter)]
            (if (and hit (> limit 0))
-               (let [theta2 (reflect-mirror world hit theta)]
-                 (table.insert segments [x y hit.x1 hit.y1])
-                 (if (reflective? hit.item)
-                     (fire hit.x1 hit.y1 theta2 world
-                           segments hit.item (- limit 1))
-                     segments))
+               (if (reflective? hit.item)
+                   (let [(new-x new-y theta2) (reflect world x y hit.x2 hit.y2
+                                                       theta hit.item)]
+                     (if theta2
+                         (do (table.insert segments [x y new-x new-y])
+                             (fire new-x new-y theta2 world segments
+                                   [hit.item] (- limit 1)))
+                         (do (table.insert ignore hit.item)
+                             (fire x y theta world segments ignore limit))))
+                   (do (table.insert segments [x y hit.x1 hit.y1])
+                       segments))
                (do (table.insert segments [x y x2 y2])
                    segments))))}

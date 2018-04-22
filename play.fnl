@@ -64,7 +64,7 @@
                           (laser.fire (+ x (/ w 2))
                                       (+ y (/ h 2))
                                       state.probe.theta world
-                                      [] state.probe 64))))
+                                      [] [state.probe] 64))))
   (let [turn-speed (if (love.keyboard.isDown "lshift" "rshift")
                        (* turn-speed 0.3)
                        turn-speed)]
