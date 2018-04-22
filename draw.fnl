@@ -2,7 +2,7 @@
 (local sensor-img (love.graphics.newImage "assets/sensor.png"))
 (local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
 
-(defn draw-rover [i rover world state]
+(defn draw-rover [rover world state]
   (if (= rover state.selected)
       (love.graphics.setColor 0.5 0.5 0.5)
       (love.graphics.setColor 0.2 0.2 0.2))
@@ -46,8 +46,8 @@
  ;; this gets called by the tiled library at the right time so other
  ;; layers can obscure it when necessary
  :draw-player (fn [world state]
-                (each [i rover (ipairs state.rovers)]
-                  (draw-rover i rover world state))
+                (each [i rover-num (ipairs state.probe.rovers)]
+                  (draw-rover (. state.rovers rover-num) world state))
                 (draw-probe world state.probe (= state.probe state.selected)))
  ;; Ideally we could just let the tiled lib draw this, but there seems to be
  ;; no way to change an object's sprite at runtime?

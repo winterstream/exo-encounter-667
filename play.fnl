@@ -13,21 +13,21 @@
                        {:theta 0 :docked false :type :rover}
                        {:theta 0 :docked false :type :rover}
                        {:theta 0 :docked true :type :rover}]
-              :probe {:theta 0 :type :probe}})
+              :probe {:theta 0 :type :probe :rovers []}})
 
 (: map :bump_init world)
-(let [radius 5]
-  (: world :add (. state.rovers 1) 100 1200 (* 2 radius) (* 2 radius))
-  (: world :add (. state.rovers 2) 120 1200 (* 2 radius) (* 2 radius))
-  (: world :add (. state.rovers 3) 120 1220 (* 2 radius) (* 2 radius))
-  (: world :add (. state.rovers 4) 100 1220 (* 2 radius) (* 2 radius)))
+;; (let [radius 5]
+;;   (: world :add (. state.rovers 1) 100 1200 (* 2 radius) (* 2 radius))
+;;   (: world :add (. state.rovers 2) 120 1200 (* 2 radius) (* 2 radius))
+;;   (: world :add (. state.rovers 3) 120 1220 (* 2 radius) (* 2 radius))
+;;   (: world :add (. state.rovers 4) 100 1220 (* 2 radius) (* 2 radius)))
 (: world :add state.probe 105 1205 20 20)
 
 (local turn-speed math.pi)
 (local rover-move-speed 35)
 (local probe-move-speed 20)
 
-(set state.selected (. state.rovers 1))
+(set state.selected state.probe)
 
 (let [layer (: map :addCustomLayer "player")]
   (set layer.sprites [(unpack state.rovers)])
@@ -109,6 +109,18 @@
     (when (love.keyboard.isDown ".")
       (set state.probe.theta (+ state.probe.theta (* dt turn-speed))))))
 
+(fn deploy-rover []
+  (when (= :probe state.selected.type)
+    ;; TODO: Bad Code Ahead!
+    ;; - How do we know which rover to deploy? What if you deploy #1
+    ;;   and #2, and then dock #1, and then deploy again. Should that
+    ;;   be #1 or #3?
+    ;; - Rovers are currently only drawn once they're deployed. This
+    ;;   is bad, but how should it work?
+    (table.insert state.probe.rovers 1)
+    (let [radius 5]
+      (: world :add (. state.rovers 1) 100 1200 (* 2 radius) (* 2 radius)))))
+
 (defn select [n]
   (set state.selected (if (= n 0)
                           state.probe
@@ -120,7 +132,8 @@
                :4 (partial select 4)
                :0 (partial select 0)
                :5 (partial select 0)
-               "`" (partial select 0)})
+               "`" (partial select 0)
+               :d deploy-rover})
 
 (defn keypressed [key set-mode]
   (let [f (. keymap key)]
