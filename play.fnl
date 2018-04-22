@@ -25,6 +25,7 @@
 
 (local turn-speed math.pi)
 (local rover-move-speed 35)
+(local probe-move-speed 20)
 
 (set state.selected (. state.rovers 1))
 
@@ -61,6 +62,24 @@
       (when (> len 0)
         (print "collision")))))
 
+(defn move-probe [dt]
+  (let [left? (if (love.keyboard.isDown "left") 1 0)
+        right? (if (love.keyboard.isDown "right") 1 0)
+        up? (if (love.keyboard.isDown "up") 1 0)
+        down? (if (love.keyboard.isDown "down") 1 0)]
+    (when (> (+ left? right? up? down?) 0)
+      (let [(x y w h) (: world :getRect state.selected)
+            new-x (+ x
+                     (- (* left? probe-move-speed dt))
+                     (* right? probe-move-speed dt))
+            new-y (+ y
+                     (- (* up? probe-move-speed dt))
+                     (* down? probe-move-speed dt))
+            (actual-x actual-y cols len) (: world :move
+                                            state.selected new-x new-y)]
+        (when (> len 0)
+          (print "collision"))))))
+
 (defn update [dt set-mode]
   (sensor.update state map dt)
   (: map :update dt)
@@ -74,7 +93,8 @@
                                   -1024 0)))))
   (when (= :rover state.selected.type)
     (move-rover dt))
-  ;; we'll move all the controls to their own module soon
+  (when (= :probe state.selected.type)
+    (move-probe dt))
   (set state.laser (and (love.keyboard.isDown "space")
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))
