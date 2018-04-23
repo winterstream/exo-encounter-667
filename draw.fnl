@@ -1,6 +1,8 @@
 (local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
 (local sensor-img (love.graphics.newImage "assets/sensor.png"))
 (local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
+(local door-img (love.graphics.newImage "assets/door.png"))
+(local door-open-img (love.graphics.newImage "assets/door-open.png"))
 
 (defn draw-rover [rover world state]
   (if (= rover state.selected)
@@ -43,8 +45,8 @@
          (when state.laser
            (draw-laser state.laser))
          (love.graphics.pop))
- ;; this gets called by the tiled library at the right time so other
- ;; layers can obscure it when necessary
+ ;; these layer draw functions get called by the tiled library at the right time
+ ;; so other layers can obscure them when necessary
  :draw-player (fn [world state]
                 (each [i rover-num (ipairs state.probe.rovers)]
                   (draw-rover (. state.rovers rover-num) world state))
@@ -55,4 +57,10 @@
                  (each [_ sensor (ipairs layer.objects)]
                    (love.graphics.draw (if sensor.properties.on
                                            sensor-on-img sensor-img)
-                                       sensor.x sensor.y)))}
+                                       ;; TODO: why is the y wrong?
+                                       sensor.x (- sensor.y sensor.height))))
+ :draw-doors (fn [layer]
+               (each [_ door (ipairs layer.objects)]
+                 (love.graphics.draw (if door.properties.collidable
+                                         door-img door-open-img)
+                                     door.x (- door.y door.height))))}

@@ -34,8 +34,9 @@
   (tset layer.sprites 0 state.probe)
   (set layer.draw (partial draw.draw-player world state)))
 
-(set map.layers.sensors.draw draw.draw-sensors)
 (sensor.init state map)
+(set map.layers.sensors.draw draw.draw-sensors)
+(set map.layers.doors.draw draw.draw-doors)
 
 ;; so we can access these thru the repl
 (global st state)
@@ -60,7 +61,7 @@
           (actual-x actual-y cols len) (: world :move
                                           state.selected new-x new-y)]
       (when (> len 0)
-        (print "collision")))))
+        nil))))
 
 (defn move-probe [dt]
   (let [left? (if (love.keyboard.isDown "left") 1 0)
@@ -78,7 +79,7 @@
             (actual-x actual-y cols len) (: world :move
                                             state.selected new-x new-y)]
         (when (> len 0)
-          (print "collision"))))))
+          nil)))))
 
 (defn update [dt set-mode]
   (sensor.update state map dt)
@@ -99,7 +100,7 @@
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))
                                       (+ y (/ h 2))
-                                      state.probe.theta world
+                                      state.probe.theta world map
                                       [] [state.probe] 64))))
   (let [turn-speed (if (love.keyboard.isDown "lshift" "rshift")
                        (* turn-speed 0.3)

@@ -6,6 +6,8 @@
 
 (defn reflective? [item] (= item.type :rover))
 
+(defn transparent? [item] (= item.layer.name :obstacles))
+
 ;; a line segment for the mirror of a rover
 (defn mirror-segment [world rover mirror-theta]
   (let [(x y w h) (: world :getRect rover)
@@ -32,11 +34,12 @@
     ;; just because the laser crossed the body doesn't mean it hit mirror
     (if x (values x y (normalize-angle inbound-theta mirror-theta)))))
 
-{:fire (fn fire [x y theta world segments ignore limit]
-         (let [x2 (+ x (* (math.cos theta) range))
-               y2 (+ y (* (math.sin theta) range))
+{:fire (fn fire [x y theta world map segments ignore limit]
+         (let [far-x (+ x (* (math.cos theta) range))
+               far-y (+ y (* (math.sin theta) range))
                filter (fn [item] (not (lume.find ignore item)))
-               [hit] (: world :querySegmentWithCoords x y x2 y2 filter)]
+               [hit] (: world :querySegmentWithCoords x y far-x far-y filter)]
+           (global i (and hit hit.item))
            (if (and hit (> limit 0))
                (if (reflective? hit.item)
                    (let [(new-x new-y theta2) (reflect world x y hit.x2 hit.y2
@@ -46,12 +49,18 @@
                              (fire new-x new-y theta2 world segments
                                    [hit.item] (- limit 1)))
                          (do (table.insert ignore hit.item)
-                             (fire x y theta world segments ignore limit))))
+                             (fire x y theta world map segments ignore limit))))
+
                    (sensor.is? hit.item)
-                   (do (sensor.activate hit.item)
+                   (do (sensor.activate world map hit.item)
                        (table.insert segments [x y hit.x1 hit.y1])
                        segments)
+
+                   (transparent? hit.item)
+                   (do (table.insert ignore hit.item)
+                             (fire x y theta world map segments ignore limit))
+
                    (do (table.insert segments [x y hit.x1 hit.y1])
                        segments))
-               (do (table.insert segments [x y x2 y2])
+               (do (table.insert segments [x y far-x far-y])
                    segments))))}
