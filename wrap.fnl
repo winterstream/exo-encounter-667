@@ -10,7 +10,9 @@
 
 (defn start-repl []
   (let [code (love.filesystem.read "stdio.fnl")
-        lua (love.filesystem.newFileData (fennel.compileString code) "io")
+        lua (if code
+                (love.filesystem.newFileData (fennel.compileString code) "io")
+                (love.filesystem.read "stdio.lua"))
         thread (love.thread.newThread lua)
         io-channel (love.thread.newChannel)]
     ;; this thread will send "eval" events for us to consume:

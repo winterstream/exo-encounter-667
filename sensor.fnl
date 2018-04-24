@@ -9,7 +9,6 @@
   ;; the map wraps it in another table, so we have to go thru our hacked
   ;; addition to the map which looks up the wrapper and uses that instead.
   (when (map.bump_wrap :hasItem door)
-    (print :removed)
     (map.bump_wrap :remove door)))
 
 (defn activate [world map item]

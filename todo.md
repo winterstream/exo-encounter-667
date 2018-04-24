@@ -4,9 +4,9 @@
 
 * movement
 * pushing
-* doors
 * terminals
 * map design
+
 ## later
 
 * show help text on pause screen
