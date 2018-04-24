@@ -14,9 +14,12 @@ LUA := $(wildcard *.lua)
 SRC := $(wildcard *.fnl)
 OUT := $(patsubst %.fnl,%.lua,$(SRC))
 
+check: $(OUT)
+	luacheck --std luajit+love+fennel $(OUT)
+
 clean: ; rm -rf releases/* $(OUT) lib/fennelview.lua
 
-%.lua: %.fnl ; fennel --compile $< > $@
+%.lua: %.fnl ; fennel --compile --correlate $< > $@
 lib/fennelview.lua: lib/fennelview.fnl ; fennel --compile $< > $@
 
 releases/exo-$(VERSION).love: $(LUA) $(OUT) $(LIBS) lib/fennelview.lua assets

@@ -10,7 +10,7 @@
 
 ;; a line segment for the mirror of a rover
 (defn mirror-segment [world rover mirror-theta]
-  (let [(x y w h) (: world :getRect rover)
+  (let [(x y w) (: world :getRect rover)
         radius (/ w 2)
         center-x (+ x radius)
         center-y (+ y radius)
@@ -39,7 +39,6 @@
                far-y (+ y (* (math.sin theta) range))
                filter (fn [item] (not (lume.find ignore item)))
                [hit] (: world :querySegmentWithCoords x y far-x far-y filter)]
-           (global i (and hit hit.item))
            (if (and hit (> limit 0))
                (if (reflective? hit.item)
                    (let [(new-x new-y theta2) (reflect world x y hit.x2 hit.y2
@@ -52,7 +51,7 @@
                              (fire x y theta world map segments ignore limit))))
 
                    (sensor.is? hit.item)
-                   (do (sensor.activate world map hit.item)
+                   (do (sensor.activate map hit.item)
                        (table.insert segments [x y hit.x1 hit.y1])
                        segments)
 

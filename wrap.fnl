@@ -20,7 +20,7 @@
     (set love.handlers.eval
          (fn [input]
            (let [(ok val) (pcall fennel.eval input)]
-             (: io-channel :push (view val)))))))
+             (: io-channel :push (if ok (view val) val)))))))
 
 (defn love.load []
   (: canvas :setFilter "nearest" "nearest")

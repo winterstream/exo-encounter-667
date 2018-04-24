@@ -1,4 +1,3 @@
-(local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
 (local sensor-img (love.graphics.newImage "assets/sensor.png"))
 (local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
 (local door-img (love.graphics.newImage "assets/door.png"))
@@ -8,7 +7,7 @@
   (if (= rover state.selected)
       (love.graphics.setColor 0.5 0.5 0.5)
       (love.graphics.setColor 0.2 0.2 0.2))
-  (let [(corner-x corner-y w h) (: world :getRect rover)
+  (let [(corner-x corner-y w) (: world :getRect rover)
         radius (/ w 2)
         center-x (+ corner-x radius)
         center-y (+ corner-y radius)
@@ -37,7 +36,7 @@
   (each [_ segment (ipairs laser)]
     (love.graphics.line (unpack segment))))
 
-{:draw (fn [map world state]
+{:draw (fn [map _world state]
          (: map :draw state.tx state.ty)
          (love.graphics.push)
          ;; drawing non-map stuff needs to apply our own translate
@@ -48,7 +47,7 @@
  ;; these layer draw functions get called by the tiled library at the right time
  ;; so other layers can obscure them when necessary
  :draw-player (fn [world state]
-                (each [i rover-num (ipairs state.probe.rovers)]
+                (each [_ rover-num (ipairs state.probe.rovers)]
                   (draw-rover (. state.rovers rover-num) world state))
                 (draw-probe world state.probe (= state.probe state.selected)))
  ;; Ideally we could just let the tiled lib draw this, but there seems to be

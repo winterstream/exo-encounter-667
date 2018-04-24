@@ -3,7 +3,7 @@
 
 (local lume (require "lib.lume"))
 
-(defn open [world map door]
+(defn open [map door]
   (set door.properties.open true)
   ;; we can't use an object from the map directly with the bump world, because
   ;; the map wraps it in another table, so we have to go thru our hacked
@@ -11,20 +11,20 @@
   (when (map.bump_wrap :hasItem door)
     (map.bump_wrap :remove door)))
 
-(defn activate [world map item]
+(defn activate [map item]
   (set item.properties.on true)
   (when item.properties.door
     (let [d (lume.match map.layers.doors.objects
                         (fn [d] (= d.name item.properties.door)))]
-      (open world map d))))
+      (open map d))))
 
 {:is? (fn [item] (and item.properties item.properties.sensor))
  :activate activate
- :update (fn [state map dt]
+ :update (fn [_state map]
            ;; each sensor starts the tick as off
            (each [_ sensor (ipairs map.layers.sensors.objects)]
              (set sensor.properties.on false)))
- :init (fn [state map]
+ :init (fn [_state map]
          (each [_ sensor (ipairs map.layers.sensors.objects)]
            (assert sensor.properties.collidable "Missing sensor collidable!")
            (set sensor.properties.sensor true)))}

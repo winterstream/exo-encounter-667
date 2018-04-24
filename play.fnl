@@ -46,7 +46,7 @@
 (local dirs {:home [0 -1] :end [0 1] :delete [-1 0] :pagedown [1 0]})
 
 (defn calculate-new-rover-position [rover dt]
-  (let [(x y w h) (: world :getRect state.selected)
+  (let [(x y) (: world :getRect state.selected)
         new-x (+ x (* (math.cos rover.theta) rover-move-speed dt))
         new-y (+ y (* (math.sin rover.theta) rover-move-speed dt))]
     (values new-x new-y)))
@@ -57,11 +57,8 @@
   (when (love.keyboard.isDown "right")
     (set state.selected.theta (+ state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "up")
-    (let [(new-x new-y) (calculate-new-rover-position state.selected dt)
-          (actual-x actual-y cols len) (: world :move
-                                          state.selected new-x new-y)]
-      (when (> len 0)
-        nil))))
+    (let [(new-x new-y) (calculate-new-rover-position state.selected dt)]
+      (: world :move state.selected new-x new-y))))
 
 (defn move-probe [dt]
   (let [left? (if (love.keyboard.isDown "left") 1 0)
@@ -69,19 +66,16 @@
         up? (if (love.keyboard.isDown "up") 1 0)
         down? (if (love.keyboard.isDown "down") 1 0)]
     (when (> (+ left? right? up? down?) 0)
-      (let [(x y w h) (: world :getRect state.selected)
+      (let [(x y) (: world :getRect state.selected)
             new-x (+ x
                      (- (* left? probe-move-speed dt))
                      (* right? probe-move-speed dt))
             new-y (+ y
                      (- (* up? probe-move-speed dt))
-                     (* down? probe-move-speed dt))
-            (actual-x actual-y cols len) (: world :move
-                                            state.selected new-x new-y)]
-        (when (> len 0)
-          nil)))))
+                     (* down? probe-move-speed dt))]
+        (: world :move state.selected new-x new-y)))))
 
-(defn update [dt set-mode]
+(defn update [dt _set-mode]
   (sensor.update state map dt)
   (: map :update dt)
   ;; placeholder: for now, you scroll manually
