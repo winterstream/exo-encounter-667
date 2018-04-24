@@ -61,6 +61,6 @@
                                        sensor.x (- sensor.y sensor.height))))
  :draw-doors (fn [layer]
                (each [_ door (ipairs layer.objects)]
-                 (love.graphics.draw (if door.properties.collidable
-                                         door-img door-open-img)
+                 (love.graphics.draw (if door.properties.open
+                                         door-open-img door-img)
                                      door.x (- door.y door.height))))}

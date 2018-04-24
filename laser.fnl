@@ -46,7 +46,7 @@
                                                        theta hit.item)]
                      (if theta2
                          (do (table.insert segments [x y new-x new-y])
-                             (fire new-x new-y theta2 world segments
+                             (fire new-x new-y theta2 world map segments
                                    [hit.item] (- limit 1)))
                          (do (table.insert ignore hit.item)
                              (fire x y theta world map segments ignore limit))))
@@ -58,7 +58,7 @@
 
                    (transparent? hit.item)
                    (do (table.insert ignore hit.item)
-                             (fire x y theta world map segments ignore limit))
+                       (fire x y theta world map segments ignore limit))
 
                    (do (table.insert segments [x y hit.x1 hit.y1])
                        segments))

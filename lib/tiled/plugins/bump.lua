@@ -6,6 +6,9 @@
 
 local lg = require((...):gsub('plugins.bump', 'graphics'))
 
+local wrappers = {}
+local bump_world = nil
+
 return {
 	bump_LICENSE        = "MIT/X11",
 	bump_URL            = "https://github.com/karai17/Simple-Tiled-Implementation",
@@ -17,6 +20,7 @@ return {
 	-- @return collidables table containing the handles to the objects in the Bump world.
 	bump_init = function(map, world)
 		local collidables = {}
+        bump_world = world
 
 		for _, tileset in ipairs(map.tilesets) do
 			for _, tile in ipairs(tileset.tiles) do
@@ -38,6 +42,7 @@ return {
 
 									}
 
+                                    wrappers[object] = t
 									world:add(t, t.x, t.y, t.width, t.height)
 									table.insert(collidables, t)
 								end
@@ -55,6 +60,7 @@ return {
 								properties = tile.properties
 							}
 
+                            wrappers[tile] = t
 							world:add(t, t.x, t.y, t.width, t.height)
 							table.insert(collidables, t)
 						end
@@ -82,6 +88,7 @@ return {
 											properties = object.properties
 										}
 
+                                        wrappers[object] = t
 										world:add(t, t.x, t.y, t.width, t.height)
 										table.insert(collidables, t)
 									end
@@ -98,6 +105,7 @@ return {
 								properties = tile.properties
 							}
 
+                            wrappers[tile] = t
 							world:add(t, t.x, t.y, t.width, t.height)
 							table.insert(collidables, t)
 						end
@@ -123,10 +131,12 @@ return {
 								properties = obj.properties
 							}
 
+                            -- PNH: what the hell?
 							if obj.gid then
 								t.y = t.y - obj.height
 							end
 
+                            wrappers[obj] = t
 							world:add(t, t.x, t.y, t.width, t.height)
 							table.insert(collidables, t)
 						end -- TODO implement other object shapes?
@@ -180,7 +190,15 @@ return {
 		end
 
 		lg.pop()
-	end
+	end,
+
+    -- PNH: we added this so we could work around STI shenanigans and actually
+    -- perform operations on the world directly. STI wraps each object in a
+    -- table before adding it to the bump world, so we look up the object in
+    -- the wrapper mapping before handing off to bump.
+    bump_wrap = function(method, object, ...)
+       return bump_world[method](bump_world, wrappers[object], ...)
+    end,
 }
 
 --- Custom Properties in Tiled are used to tell this plugin what to do.
