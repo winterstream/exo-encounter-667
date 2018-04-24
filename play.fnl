@@ -110,31 +110,30 @@
     (when (love.keyboard.isDown ".")
       (set state.probe.theta (+ state.probe.theta (* dt turn-speed))))))
 
-(fn deploy-rover []
-  (when (= :probe state.selected.type)
-    ;; TODO: Bad Code Ahead!
-    ;; - How do we know which rover to deploy? What if you deploy #1
-    ;;   and #2, and then dock #1, and then deploy again. Should that
-    ;;   be #1 or #3?
-    ;; - Rovers are currently only drawn once they're deployed. This
-    ;;   is bad, but how should it work?
-    (table.insert state.probe.rovers 1)
-    (let [radius 5]
-      (: world :add (. state.rovers 1) 100 1200 (* 2 radius) (* 2 radius)))))
+(local offsets [[-10 -10] [20 -10] [20 20] [-10 20]])
+
+(defn deploy [n]
+  (table.insert state.probe.rovers n)
+  (let [radius 5
+        [ox oy] (. offsets n)
+        (px py) (: world :getRect state.probe)]
+    (: world :add (. state.rovers n) (+ px ox) (+ py oy)
+       (* 2 radius) (* 2 radius))))
 
 (defn select [n]
-  (set state.selected (if (= n 0)
-                          state.probe
-                          (. state.rovers n))))
+  (set state.selected (if n
+                          (. state.rovers n)
+                          state.probe))
+  (when (and n (not (: world :hasItem (. state.rovers n))))
+    (deploy n)))
 
 (local keymap {:1 (partial select 1)
                :2 (partial select 2)
                :3 (partial select 3)
                :4 (partial select 4)
-               :0 (partial select 0)
-               :5 (partial select 0)
-               "`" (partial select 0)
-               :d deploy-rover})
+               :0 select
+               :5 select
+               "`" select})
 
 (defn keypressed [key set-mode]
   (let [f (. keymap key)]
