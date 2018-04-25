@@ -84,11 +84,11 @@ get_user_confirmation () {
 ## $1: LÖVE version string
 ## return: 0 - string matched, 1 - else
 gen_version () {
-    if [[ $1 =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+    if [[ $1 =~ ^([0-9]+)\.([0-9]+)(\.([0-9]+))?$ ]]; then
         LOVE_VERSION=$1
         LOVE_VERSION_MAJOR=${BASH_REMATCH[1]}
         LOVE_VERSION_MINOR=${BASH_REMATCH[2]}
-        LOVE_VERSION_REVISION=${BASH_REMATCH[3]}
+        LOVE_VERSION_REVISION=${BASH_REMATCH[4]}
         return 0
     fi
     return 1
@@ -352,7 +352,7 @@ init_module () {
 ## $1: Compression level 0-9
 create_love_file () {
     if [[ -r $LOVEFILE ]]; then
-        cp $LOVEFILE $RELEASE_DIR/$LOVE_FILE
+        cp "$LOVEFILE" $RELEASE_DIR/$LOVE_FILE
     else
         local dotfiles=()
         for file in .*; do
@@ -754,63 +754,32 @@ create_love_file 9
 cd "$RELEASE_DIR"
 
 
-## MacOS 64-bits ##
-if compare_version "$LOVE_VERSION" '>=' '0.9.0'; then
-    if [[ ! -f "$CACHE_DIR/love-$LOVE_VERSION-macosx-x64.zip" ]]; then
-        curl -L -C - -o $CACHE_DIR/love-$LOVE_VERSION-macosx-x64.zip https://bitbucket.org/rude/love/downloads/love-$LOVE_VERSION-macosx-x64.zip
-    fi
-    unzip -qq "$CACHE_DIR/love-$LOVE_VERSION-macosx-x64.zip"
+## MacOS ##
+if [[ ! -f "$CACHE_DIR/love-$LOVE_VERSION-macos.zip" ]]; then
+    curl -L -C - -o $CACHE_DIR/love-$LOVE_VERSION-macos.zip https://bitbucket.org/rude/love/downloads/love-$LOVE_VERSION-macos.zip
+fi
+unzip -qq "$CACHE_DIR/love-$LOVE_VERSION-macos.zip"
 
-    rm -rf "$TITLE-macosx-x64.zip" 2> /dev/null
-    mv love.app "${TITLE}.app"
-    cp "$LOVE_FILE" "${TITLE}.app/Contents/Resources"
-    if [[ -n $ICON ]]; then
-        cd "$PROJECT_DIR"
-        cp "$ICON" "$RELEASE_DIR/$icon"
-        cd "$RELEASE_DIR"
-        mv "$icon" "${TITLE}.app/Contents/Resources"
-    fi
-
-    sed -i.bak -e '/<key>UTExportedTypeDeclarations<\/key>/,/^\t<\/array>/d' \
-        -e "s/>org.love2d.love</>org.${AUTHOR}.$IDENTITY</" \
-        -e "s/$LOVE_VERSION/$GAME_VERSION/" \
-        -e "s/Love.icns/$icon/" \
-        -e "s/>LÖVE</>$TITLE</" \
-        "${TITLE}.app/Contents/Info.plist"
-    rm "${TITLE}.app/Contents/Info.plist.bak"
-
-    zip -9 -qyr "${TITLE}-macosx-x64.zip" "${TITLE}.app"
-    rm -rf love-$LOVE_VERSION-macosx-x64.zip "${TITLE}.app" __MACOSX
-
-    ## MacOS 32-bits ##
-else
-    if [[ ! -f "$CACHE_DIR/love-$LOVE_VERSION-macosx-ub.zip" ]]; then
-        curl -L -C - -o $CACHE_DIR/love-$LOVE_VERSION-macosx-ub.zip https://bitbucket.org/rude/love/downloads/love-$LOVE_VERSION-macosx-ub.zip
-    fi
-    unzip -qq "$CACHE_DIR/love-$LOVE_VERSION-macosx-ub.zip"
-
-    rm -rf "$TITLE-macosx-ub.zip" 2> /dev/null
-    mv love.app "${TITLE}.app"
-    cp "$LOVE_FILE" "${TITLE}.app/Contents/Resources"
-    if [[ -n $ICON ]]; then
-        cd "$PROJECT_DIR"
-        cp "$ICON" "$RELEASE_DIR/$icon"
-        cd "$RELEASE_DIR"
-        mv "$icon" "${TITLE}.app/Contents/Resources"
-    fi
-
-    sed -i.bak -e '/<key>UTExportedTypeDeclarations<\/key>/,/^\t<\/array>/d' \
-        -e "s/>org.love2d.love</>org.${AUTHOR}.$IDENTITY</" \
-        -e "s/$LOVE_VERSION/$GAME_VERSION/" \
-        -e "s/Love.icns/$icon/" \
-        -e "s/>LÖVE</>$TITLE</" \
-        "${TITLE}.app/Contents/Info.plist"
-    rm "${TITLE}.app/Contents/Info.plist.bak"
-
-    zip -9 -qyr "${TITLE}-macosx-ub.zip" "${TITLE}.app"
-    rm -rf love-$LOVE_VERSION-macosx-ub.zip "${TITLE}.app" __MACOSX
+rm -rf "$TITLE-macos.zip" 2> /dev/null
+mv love.app "${TITLE}.app"
+cp "$LOVE_FILE" "${TITLE}.app/Contents/Resources"
+if [[ -n $ICON ]]; then
+    cd "$PROJECT_DIR"
+    cp "$ICON" "$RELEASE_DIR/$icon"
+    cd "$RELEASE_DIR"
+    mv "$icon" "${TITLE}.app/Contents/Resources"
 fi
 
+sed -i.bak -e '/<key>UTExportedTypeDeclarations<\/key>/,/^\t<\/array>/d' \
+    -e "s/>org.love2d.love</>org.${AUTHOR}.$IDENTITY</" \
+    -e "s/$LOVE_VERSION/$GAME_VERSION/" \
+    -e "s/Love.icns/$icon/" \
+    -e "s/>LÖVE</>$TITLE</" \
+    "${TITLE}.app/Contents/Info.plist"
+rm "${TITLE}.app/Contents/Info.plist.bak"
+
+zip -9 -qyr "${TITLE}-macos.zip" "${TITLE}.app"
+rm -rf love-$LOVE_VERSION-macos.zip "${TITLE}.app" __MACOSX
 
 exit_module
 EndOfModule
@@ -995,11 +964,7 @@ cd "$RELEASE_DIR"
 if [[ $X32 == true ]]; then
 
     if [[ ! -f "$CACHE_DIR/love-$LOVE_VERSION-win32.zip" ]]; then
-        if compare_version "$LOVE_VERSION" '>=' '0.9.0'; then
-            curl -L -C - -o "$CACHE_DIR/love-$LOVE_VERSION-win32.zip" "https://bitbucket.org/rude/love/downloads/love-$LOVE_VERSION-win32.zip"
-        else
-            curl -L -C - -o "$CACHE_DIR/love-$LOVE_VERSION-win32.zip" "https://bitbucket.org/rude/love/downloads/love-$LOVE_VERSION-win-x86.zip"
-        fi
+        curl -L -C - -o "$CACHE_DIR/love-$LOVE_VERSION-win32.zip" "https://bitbucket.org/rude/love/downloads/love-$LOVE_VERSION-win32.zip"
     fi
 
     unzip -qq "$CACHE_DIR/love-$LOVE_VERSION-win32.zip"
@@ -1009,6 +974,8 @@ if [[ $X32 == true ]]; then
             -addoverwrite "love-$LOVE_VERSION-win32/love.exe,love-$LOVE_VERSION-win32/love.exe,$ICON,ICONGROUP,MAINICON,0" 2>&1 /dev/null
     fi
 
+    # version number is incorrect inside zip file; oops
+    LOVE_VERSION="$LOVE_VERSION".0
     cat love-$LOVE_VERSION-win32/love.exe "$LOVE_FILE" > "love-$LOVE_VERSION-win32/${TITLE}.exe"
     rm love-$LOVE_VERSION-win32/love.exe
     mv love-$LOVE_VERSION-win32 "$TITLE"-win32
