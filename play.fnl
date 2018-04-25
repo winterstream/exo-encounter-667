@@ -32,6 +32,7 @@
 (sensor.init state map)
 (set map.layers.sensors.draw draw.draw-sensors)
 (set map.layers.doors.draw draw.draw-doors)
+(set map.layers.terms.draw draw.draw-terms)
 
 ;; so we can access these thru the repl
 (global st state)
@@ -46,11 +47,19 @@
         new-y (+ y (* (math.sin rover.theta) rover-move-speed dt))]
     (values new-x new-y)))
 
-(defn terminal-check [cols set-mode]
-  ;; TODO: only when going from not-entered-all-the-way to all-the-way-in
+(defn within? [item box]
+  (let [(x y width height) (: world :getRect item)
+        margin 3]
+    (and (< (+ box.x margin) x (+ x width) (- (+ box.x box.width) margin))
+         (< (+ box.y margin) y (+ y height) (- (+ box.y box.height) margin)))))
+
+(defn terminal-check [cols unit set-mode]
   (each [_ col (ipairs cols)]
-    (when (and col.other.properties col.other.properties.terminal)
-      (set-mode :term col.other.properties.terminal))))
+    (when (and col.other.properties col.other.properties.terminal
+               (within? col.item col.other))
+      (set unit.in-term? true)
+      (when (not unit.in-term-last-tick?)
+        (set-mode :term col.other.properties.terminal)))))
 
 (defn collide-filter [_item other]
   (if (and other.properties other.properties.terminal)
@@ -63,9 +72,10 @@
   (when (love.keyboard.isDown "right")
     (set state.selected.theta (+ state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "up")
+    (set state.selected.in-term? false)
     (let [(new-x new-y) (calculate-new-rover-position state.selected dt)
           (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
-      (terminal-check cols set-mode))))
+      (terminal-check cols state.selected set-mode))))
 
 (defn move-probe [dt set-mode]
   (let [left? (if (love.keyboard.isDown "left") 1 0)
@@ -81,7 +91,7 @@
                      (- (* up? probe-move-speed dt))
                      (* down? probe-move-speed dt))
             (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
-        (terminal-check cols set-mode)))))
+        (terminal-check cols state.selected set-mode)))))
 
 (defn update [dt set-mode]
   (sensor.update state map dt)
@@ -110,7 +120,9 @@
     (when (love.keyboard.isDown ",")
       (set state.probe.theta (- state.probe.theta (* dt turn-speed))))
     (when (love.keyboard.isDown ".")
-      (set state.probe.theta (+ state.probe.theta (* dt turn-speed))))))
+      (set state.probe.theta (+ state.probe.theta (* dt turn-speed)))))
+  (draw.update dt) ; for animations
+  (set state.selected.in-term-last-tick? state.selected.in-term?))
 
 (local offsets [[-10 -10] [20 -10] [20 20] [-10 20]])
 
