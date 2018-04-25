@@ -2,7 +2,7 @@
 
 ## epics
 
-* movement
+* draw docked rovers
 * pushing
 * terminals
 * map design

@@ -11,7 +11,7 @@
   (when (map.bump_wrap :hasItem door)
     (map.bump_wrap :remove door)))
 
-(defn activate [map item]
+(defn on [map item]
   (set item.properties.on true)
   (when item.properties.door
     (let [d (lume.match map.layers.doors.objects
@@ -19,7 +19,7 @@
       (open map d))))
 
 {:is? (fn [item] (and item.properties item.properties.sensor))
- :activate activate
+ :on on
  :update (fn [_state map]
            ;; each sensor starts the tick as off
            (each [_ sensor (ipairs map.layers.sensors.objects)]

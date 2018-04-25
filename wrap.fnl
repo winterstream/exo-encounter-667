@@ -5,8 +5,10 @@
 (var scale 2)
 (var mode (require :intro))
 
-(defn set-mode [mode-name]
-  (set mode (require mode-name)))
+(defn set-mode [mode-name ...]
+  (set mode (require mode-name))
+  (when mode.activate
+    (mode.activate ...)))
 
 (defn start-repl []
   (let [code (love.filesystem.read "stdio.fnl")

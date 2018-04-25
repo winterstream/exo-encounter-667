@@ -16,11 +16,6 @@
               :probe {:theta 0 :type :probe :rovers []}})
 
 (: map :bump_init world)
-;; (let [radius 5]
-;;   (: world :add (. state.rovers 1) 100 1200 (* 2 radius) (* 2 radius))
-;;   (: world :add (. state.rovers 2) 120 1200 (* 2 radius) (* 2 radius))
-;;   (: world :add (. state.rovers 3) 120 1220 (* 2 radius) (* 2 radius))
-;;   (: world :add (. state.rovers 4) 100 1220 (* 2 radius) (* 2 radius)))
 (: world :add state.probe 105 1205 20 20)
 
 (local turn-speed math.pi)
@@ -51,16 +46,28 @@
         new-y (+ y (* (math.sin rover.theta) rover-move-speed dt))]
     (values new-x new-y)))
 
-(defn move-rover [dt]
+(defn terminal-check [cols set-mode]
+  ;; TODO: only when going from not-entered-all-the-way to all-the-way-in
+  (each [_ col (ipairs cols)]
+    (when (and col.other.properties col.other.properties.terminal)
+      (set-mode :term col.other.properties.terminal))))
+
+(defn collide-filter [_item other]
+  (if (and other.properties other.properties.terminal)
+      :cross
+      :slide))
+
+(defn move-rover [dt set-mode]
   (when (love.keyboard.isDown "left")
     (set state.selected.theta (- state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "right")
     (set state.selected.theta (+ state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "up")
-    (let [(new-x new-y) (calculate-new-rover-position state.selected dt)]
-      (: world :move state.selected new-x new-y))))
+    (let [(new-x new-y) (calculate-new-rover-position state.selected dt)
+          (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
+      (terminal-check cols set-mode))))
 
-(defn move-probe [dt]
+(defn move-probe [dt set-mode]
   (let [left? (if (love.keyboard.isDown "left") 1 0)
         right? (if (love.keyboard.isDown "right") 1 0)
         up? (if (love.keyboard.isDown "up") 1 0)
@@ -72,10 +79,11 @@
                      (* right? probe-move-speed dt))
             new-y (+ y
                      (- (* up? probe-move-speed dt))
-                     (* down? probe-move-speed dt))]
-        (: world :move state.selected new-x new-y)))))
+                     (* down? probe-move-speed dt))
+            (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
+        (terminal-check cols set-mode)))))
 
-(defn update [dt _set-mode]
+(defn update [dt set-mode]
   (sensor.update state map dt)
   (: map :update dt)
   ;; placeholder: for now, you scroll manually
@@ -87,9 +95,9 @@
         (set state.ty (lume.clamp (- state.ty (* (* dy scroll-speed) dt))
                                   -1024 0)))))
   (when (= :rover state.selected.type)
-    (move-rover dt))
+    (move-rover dt set-mode))
   (when (= :probe state.selected.type)
-    (move-probe dt))
+    (move-probe dt set-mode))
   (set state.laser (and (love.keyboard.isDown "space")
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))

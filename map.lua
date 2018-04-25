@@ -8,7 +8,7 @@ return {
   height = 64,
   tilewidth = 20,
   tileheight = 20,
-  nextobjectid = 7,
+  nextobjectid = 8,
   properties = {},
   tilesets = {
     {
@@ -645,6 +645,25 @@ return {
       terrains = {},
       tilecount = 1,
       tiles = {}
+    },
+    {
+      name = "termpad",
+      firstgid = 1251,
+      tilewidth = 40,
+      tileheight = 61,
+      spacing = 0,
+      margin = 0,
+      image = "assets/termpad.png",
+      imagewidth = 201,
+      imageheight = 61,
+      tileoffset = {
+        x = 0,
+        y = 0
+      },
+      properties = {},
+      terrains = {},
+      tilecount = 5,
+      tiles = {}
     }
   },
   layers = {
@@ -863,6 +882,35 @@ return {
           visible = true,
           properties = {
             ["collidable"] = true
+          }
+        }
+      }
+    },
+    {
+      type = "objectgroup",
+      name = "terms",
+      visible = true,
+      opacity = 1,
+      offsetx = 0,
+      offsety = 0,
+      draworder = "topdown",
+      properties = {},
+      objects = {
+        {
+          id = 7,
+          name = "",
+          type = "",
+          shape = "rectangle",
+          x = 300,
+          y = 1120,
+          width = 40,
+          height = 61,
+          rotation = 0,
+          gid = 1251,
+          visible = true,
+          properties = {
+            ["collidable"] = true,
+            ["terminal"] = "first"
           }
         }
       }
