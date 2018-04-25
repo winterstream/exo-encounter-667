@@ -16,7 +16,7 @@
               :probe {:theta 0 :type :probe :rovers []}})
 
 (: map :bump_init world)
-(: world :add state.probe 105 1205 20 20)
+(: world :add state.probe 105 1205 30 24)
 
 (local turn-speed math.pi)
 (local rover-move-speed 35)

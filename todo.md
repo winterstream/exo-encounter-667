@@ -3,8 +3,7 @@
 ## epics
 
 * draw docked rovers
-* pushing
-* terminals
+* pushing rocks
 * map design
 
 ## later

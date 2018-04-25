@@ -6,7 +6,10 @@
 
 (defn reflective? [item] (= item.type :rover))
 
-(defn transparent? [item] (= (and item.layer item.layer.name) :obstacles))
+(defn transparent? [item]
+  (let [layer-name (and item.layer item.layer.name)]
+    (or (= layer-name :obstacles)
+        (= layer-name :terms))))
 
 ;; a line segment for the mirror of a rover
 (defn mirror-segment [world rover mirror-theta]
