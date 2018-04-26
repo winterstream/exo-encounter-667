@@ -2,6 +2,7 @@
 (local bump (require "lib.bump"))
 (local lume (require "lib.lume"))
 (local draw (require "draw"))
+(local hud (require "hud"))
 (local laser (require "laser"))
 (local sensor (require "sensor"))
 
@@ -9,11 +10,12 @@
 (local world (bump.newWorld))
 
 (local state {:tx 0 :ty -1024 ; <- viewport translation
-              :rovers [{:theta 0 :docked true :type :rover}
-                       {:theta 0 :docked false :type :rover}
-                       {:theta 0 :docked false :type :rover}
-                       {:theta 0 :docked true :type :rover}]
-              :probe {:theta 0 :type :probe :rovers []}})
+              :rovers [{:theta 0 :docked? true :type :rover}
+                       {:theta 0 :docked? true :type :rover}
+                       {:theta 0 :docked? true :type :rover}
+                       {:theta 0 :docked? true :type :rover}]
+              :probe {:theta 0 :type :probe :rovers []}
+              :messages []})
 
 (: map :bump_init world)
 (: world :add state.probe 105 1205 30 24)
@@ -95,6 +97,7 @@
 
 (defn update [dt set-mode]
   (sensor.update state map dt)
+  (hud.update state dt)
   (: map :update dt)
   ;; placeholder: for now, you scroll manually
   (each [key delta (pairs dirs)]

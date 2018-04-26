@@ -1,5 +1,7 @@
+(local help (love.filesystem.read "text/help"))
+
 (let [intro (require :intro)]
-  {:draw (partial intro.draw "press any key")
+  {:draw (partial intro.draw help)
    :update (fn [])
    :keypressed (fn [key set-mode]
                  (if (= key "q")

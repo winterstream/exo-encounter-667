@@ -1,0 +1,21 @@
+Commencing self-diagnostic of probe systems...
+
+Reactor:            [ WARN ]
+Sensors:            [  ok  ]
+Primary locomotion: [ FAIL ]
+Rover 1:            [  ok  ]
+Rover 2:            [  ok  ]
+Rover 3:            [  ok  ]
+Rover 4:            [  ok  ]
+Comm laser:         [  ok  ]
+Orbiter uplink:     [ FAIL ]
+
+Enabling secondary rover-based locomotion.
+
+Objective: investigate signs of intelligence.
+
+
+
+
+
+

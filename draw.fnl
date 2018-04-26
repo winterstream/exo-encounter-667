@@ -1,5 +1,7 @@
 (local anim8 (require "lib.anim8"))
 
+(local hud (require "hud"))
+
 (local probe-img (love.graphics.newImage "assets/probe.png"))
 (local sensor-img (love.graphics.newImage "assets/sensor.png"))
 (local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
@@ -10,7 +12,7 @@
                                 (: term-img :getHeight)))
 (local term-anim (anim8.newAnimation (term-grid "1-5" 1) 0.1))
 
-(defn draw-rover [rect theta selected?]
+(defn draw-rover [rect theta selected? docked?]
   (let [[corner-x corner-y w] rect
         radius (/ w 2)
         center-x (+ corner-x radius)
@@ -18,11 +20,12 @@
         x2 (+ center-x (* (math.cos theta) radius))
         y2 (+ center-y (* (math.sin theta) radius))]
     (love.graphics.setColor 0 0 0)
-    (love.graphics.circle "line" center-x center-y radius)
+    (when (not docked?)
+      (love.graphics.circle "line" center-x center-y radius))
     (if selected?
       (love.graphics.setColor 0.5 0.5 0.5)
       (love.graphics.setColor 0.2 0.2 0.2))
-    (love.graphics.circle "fill" center-x center-y (- radius 1))
+    (love.graphics.circle "fill" center-x center-y radius)
     ;; forward indicator
     (love.graphics.setColor 0.1 0.1 0.1)
     (love.graphics.line center-x center-y x2 y2)
@@ -60,7 +63,8 @@
          (love.graphics.translate state.tx state.ty)
          (when state.laser
            (draw-laser state.laser))
-         (love.graphics.pop))
+         (love.graphics.pop)
+         (hud.draw state))
  ;; these layer draw functions get called by the tiled library at the right time
  ;; so other layers can obscure them when necessary
  :draw-player (fn [world state]
@@ -69,7 +73,8 @@
                     (let [rect (if rover.docked?
                                    (docked-rect prect i)
                                    [(: world :getRect rover)])]
-                      (draw-rover rect rover.theta (= state.selected rover))))
+                      (draw-rover rect rover.theta
+                                  (= state.selected rover) rover.docked?)))
                   (draw-probe prect (= state.probe state.selected))))
  ;; Ideally we could just let the tiled lib draw this, but there seems to be
  ;; no way to change an object's sprite at runtime?
