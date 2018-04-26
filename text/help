@@ -2,6 +2,8 @@ arrows: navigate
 0-4: select unit
 space: laser
 period, comma: aim
+enter: dock rover
+
 f11: toggle fullscreen
 
 escape: toggle pause

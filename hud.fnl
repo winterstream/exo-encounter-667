@@ -9,7 +9,7 @@
          (love.graphics.setColor 1 1 1)
          (for [i 1 6]
            (when (. state.messages i)
-             (love.graphics.print (. state.messages i) 12 (- 213 (* 18 i))))))
+             (love.graphics.print (. state.messages i) 10 (- 213 (* 18 i))))))
  :update (fn [state dt]
            (when (. messages 1)
              (set counter (+ counter dt))

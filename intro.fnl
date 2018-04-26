@@ -29,9 +29,10 @@
              (love.graphics.setFont font)
              (set-mode :play)))
  :keypressed (fn [key set-mode]
-               (if (or (= key "space") (= key "return"))
+               (if (= key "space")
                    (set counter (if (> counter 8)
-                                    (set-mode :play)
+                                    (do (love.graphics.setFont font)
+                                        (set-mode :play))
                                     (* 2 (math.ceil (/ counter 2)))))
                    (do (love.graphics.setFont font)
                        (set-mode :play))))}

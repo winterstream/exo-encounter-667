@@ -1,4 +1,4 @@
-Commencing self-diagnostic of probe systems...
+Commencing diagnostic of probe systems...
 
 Reactor:            [ WARN ]
 Sensors:            [  ok  ]
@@ -12,8 +12,10 @@ Orbiter uplink:     [ FAIL ]
 
 Enabling secondary rover-based locomotion.
 
-Objective: investigate signs of intelligence.
+Mission: investigate signs of intelligence.
 
+Select rover 2; bring it near main probe
+and press enter to dock.
 
 
 
