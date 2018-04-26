@@ -1,15 +1,16 @@
 (local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
 (local bg (love.graphics.newImage "assets/term.bmp"))
 
+(var text (love.filesystem.read "text/first"))
 (var offset 0)
-(var which :first)
 
 {:draw (fn []
          (love.graphics.draw bg 0 0)
-         (let [txt (love.filesystem.read (.. "text/" which))]
-           (love.graphics.print txt 12 (+ 12 (* offset 18)))))
+         (love.graphics.print text 12 (+ 12 (* offset 18))))
  :update (fn [])
- :activate (fn [new] (set which new))
+ :activate (fn [which]
+             (love.graphics.setFont font)
+             (set text (love.filesystem.read (.. "text/" which))))
  :keypressed (fn [key set-mode]
                (if (= key "up")
                    (set offset (math.max 0 (- offset 1)))

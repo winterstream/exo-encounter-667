@@ -10,16 +10,16 @@
                                 (: term-img :getHeight)))
 (local term-anim (anim8.newAnimation (term-grid "1-5" 1) 0.1))
 
-(defn draw-rover [rover world state]
-  (let [(corner-x corner-y w) (: world :getRect rover)
+(defn draw-rover [rect theta selected?]
+  (let [[corner-x corner-y w] rect
         radius (/ w 2)
         center-x (+ corner-x radius)
         center-y (+ corner-y radius)
-        x2 (+ center-x (* (math.cos rover.theta) radius))
-        y2 (+ center-y (* (math.sin rover.theta) radius))]
+        x2 (+ center-x (* (math.cos theta) radius))
+        y2 (+ center-y (* (math.sin theta) radius))]
     (love.graphics.setColor 0 0 0)
     (love.graphics.circle "line" center-x center-y radius)
-    (if (= rover state.selected)
+    (if selected?
       (love.graphics.setColor 0.5 0.5 0.5)
       (love.graphics.setColor 0.2 0.2 0.2))
     (love.graphics.circle "fill" center-x center-y (- radius 1))
@@ -27,18 +27,25 @@
     (love.graphics.setColor 0.1 0.1 0.1)
     (love.graphics.line center-x center-y x2 y2)
     ;; mirror indicator
-    (let [perpendicular (+ rover.theta (/ math.pi 2))
+    (let [perpendicular (+ theta (/ math.pi 2))
           px1 (+ center-x (* (math.cos perpendicular) radius 0.8))
           py1 (+ center-y (* (math.sin perpendicular) radius 0.8))
           px2 (- center-x (* (math.cos perpendicular) radius 0.8))
           py2 (- center-y (* (math.sin perpendicular) radius 0.8))]
       (love.graphics.line px1 py1 px2 py2))))
 
-(defn draw-probe [world probe selected?]
+(local offsets [[-5 -5] [25 -5] [25 19] [-5 19]])
+
+(defn docked-rect [prect i]
+  (let [[px py] prect
+        [ox oy] (. offsets i)]
+    [(+ px ox) (+ py oy) 10 10]))
+
+(defn draw-probe [rect selected?]
   (if selected?
       (love.graphics.setColor 1 1 1)
       (love.graphics.setColor 0.8 0.8 0.8))
-  (let [(x y) (: world :getRect probe)]
+  (let [[x y] rect]
     (love.graphics.draw probe-img (math.floor x) (math.floor y))))
 
 (defn draw-laser [laser]
@@ -57,9 +64,13 @@
  ;; these layer draw functions get called by the tiled library at the right time
  ;; so other layers can obscure them when necessary
  :draw-player (fn [world state]
-                (each [_ rover-num (ipairs state.probe.rovers)]
-                  (draw-rover (. state.rovers rover-num) world state))
-                (draw-probe world state.probe (= state.probe state.selected)))
+                (let [prect [(: world :getRect state.probe)]]
+                  (each [i rover (ipairs state.rovers)]
+                    (let [rect (if rover.docked?
+                                   (docked-rect prect i)
+                                   [(: world :getRect rover)])]
+                      (draw-rover rect rover.theta (= state.selected rover))))
+                  (draw-probe prect (= state.probe state.selected))))
  ;; Ideally we could just let the tiled lib draw this, but there seems to be
  ;; no way to change an object's sprite at runtime?
  :draw-sensors (fn [layer]

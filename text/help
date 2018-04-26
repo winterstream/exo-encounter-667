@@ -1,0 +1,7 @@
+arrows: navigate
+0-4: select unit
+space: laser
+period, comma: aim
+f11: toggle fullscreen
+
+escape: toggle pause

@@ -1,7 +1,6 @@
 -- bootstrap the compiler
 fennel = require("lib.fennel")
 table.insert(package.loaders, fennel.make_searcher({correlate=true}))
--- table.insert(package.loaders, fennel.searcher)
 pp = function(x) print(require("lib.fennelview")(x)) end
 lume = require("lib.lume")
 

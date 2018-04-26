@@ -127,12 +127,19 @@
 (local offsets [[-10 -10] [20 -10] [20 20] [-10 20]])
 
 (defn deploy [n]
-  (table.insert state.probe.rovers n)
-  (let [radius 5
+  (tset (. state.rovers n) :docked? false)
+  (let [diameter 10
         [ox oy] (. offsets n)
         (px py) (: world :getRect state.probe)]
-    (: world :add (. state.rovers n) (+ px ox) (+ py oy)
-       (* 2 radius) (* 2 radius))))
+    (: world :add (. state.rovers n) (+ px ox) (+ py oy) diameter diameter)))
+
+(defn xywh [x y w h] {:x x :y y :width w :height h})
+
+(defn dock []
+  (when (and (= state.selected.type :rover)
+             (within? state.selected (xywh (: world :getRect state.probe))))
+    (set state.selected.docked? true)
+    (: world :remove state.selected)))
 
 (defn select [n]
   (set state.selected (if n
@@ -147,7 +154,8 @@
                :4 (partial select 4)
                :0 select
                :5 select
-               "`" select})
+               "`" select
+               :return dock})
 
 (defn keypressed [key set-mode]
   (let [f (. keymap key)]

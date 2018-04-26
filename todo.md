@@ -2,7 +2,6 @@
 
 ## epics
 
-* draw docked rovers
 * pushing rocks
 * map design
 

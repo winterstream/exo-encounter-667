@@ -5,7 +5,18 @@ this directory.
 
 ## Keys
 
-* `f11` - toggle fullscreen
-* `ctrl-q` - quit
+* *arrows*: navigate
+* *0-4*: select unit
+* *space*: laser
+* *period, comma*: aim
+* *f11*: toggle fullscreen
 
 By [Dan Larkin](https://danlarkin.org/) and [Phil Hagelberg](https://technomancy.us).
+
+## Licenses
+
+Original code, prose, and images copyright © 2018 Dan Larkin and Phil Hagelberg
+
+Distributed under the GNU General Public License version 3 or later; see file COPYING.
+
+Licensing of third-party art and libraries described in [credits](credits.md)
