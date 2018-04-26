@@ -17,7 +17,7 @@ check: $(OUT)
 
 clean: ; rm -rf releases/* $(OUT)
 
-%.lua: %.fnl ; fennel --compile --correlate $< > $@
+%.lua: %.fnl ; lua lib/fennel --compile --correlate $< > $@
 
 LOVEFILE=releases/$(NAME)-$(VERSION).love
 
