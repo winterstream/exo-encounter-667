@@ -5,6 +5,7 @@
 (local hud (require "hud"))
 (local laser (require "laser"))
 (local sensor (require "sensor"))
+(local lint (require "lint"))
 
 (local map (tiled "map.lua" ["bump"]))
 (local world (bump.newWorld))
@@ -33,9 +34,9 @@
   (tset layer.sprites 0 state.probe)
   (set layer.draw (partial draw.draw-player world state)))
 
-(sensor.init state map)
 (set map.layers.sensors.draw draw.draw-sensors)
 (set map.layers.doors.draw draw.draw-doors)
+(lint map)
 
 ;; so we can access these thru the repl
 (global s state)

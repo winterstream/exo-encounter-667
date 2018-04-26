@@ -23,8 +23,4 @@
  :update (fn [_state map]
            ;; each sensor starts the tick as off
            (each [_ sensor (ipairs map.layers.sensors.objects)]
-             (set sensor.properties.on false)))
- :init (fn [_state map]
-         (each [_ sensor (ipairs map.layers.sensors.objects)]
-           (assert sensor.properties.collidable "Missing sensor collidable!")
-           (set sensor.properties.sensor true)))}
+             (set sensor.properties.on false)))}

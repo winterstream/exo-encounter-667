@@ -77,14 +77,6 @@ and the alien home world; you win.
 All the Russian text can be google-translated (we don't actually want
 the translation to be very good) and the English text should also be mangled.
 
-## HUD
-
-* indicators for rovers 1,2,3,4
-* aim indicator for laser
-* mobile indicator for probe
-* x,y indicator for whatever is selected?
-* messages on left scrolling up from bottom
-
 ## Skill Progression
 
 * moving rovers
