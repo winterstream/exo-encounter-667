@@ -34,7 +34,6 @@
 (sensor.init state map)
 (set map.layers.sensors.draw draw.draw-sensors)
 (set map.layers.doors.draw draw.draw-doors)
-(set map.layers.terms.draw draw.draw-terms)
 
 ;; so we can access these thru the repl
 (global st state)
@@ -124,7 +123,6 @@
       (set state.probe.theta (- state.probe.theta (* dt turn-speed))))
     (when (love.keyboard.isDown ".")
       (set state.probe.theta (+ state.probe.theta (* dt turn-speed)))))
-  (draw.update dt) ; for animations
   (set state.selected.in-term-last-tick? state.selected.in-term?))
 
 (local offsets [[-10 -10] [20 -10] [20 20] [-10 20]])

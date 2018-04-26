@@ -663,7 +663,33 @@ return {
       properties = {},
       terrains = {},
       tilecount = 5,
-      tiles = {}
+      tiles = {
+        {
+          id = 0,
+          animation = {
+            {
+              tileid = "0",
+              duration = "100"
+            },
+            {
+              tileid = "1",
+              duration = "100"
+            },
+            {
+              tileid = "2",
+              duration = "100"
+            },
+            {
+              tileid = "3",
+              duration = "100"
+            },
+            {
+              tileid = "4",
+              duration = "100"
+            }
+          }
+        }
+      }
     }
   },
   layers = {

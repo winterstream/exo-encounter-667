@@ -1,5 +1,3 @@
-(local anim8 (require "lib.anim8"))
-
 (local hud (require "hud"))
 
 (local probe-img (love.graphics.newImage "assets/probe.png"))
@@ -7,10 +5,6 @@
 (local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
 (local door-img (love.graphics.newImage "assets/door.png"))
 (local door-open-img (love.graphics.newImage "assets/door-open.png"))
-(local term-img (love.graphics.newImage "assets/termpad.png"))
-(local term-grid (anim8.newGrid 40 61 (: term-img :getWidth)
-                                (: term-img :getHeight)))
-(local term-anim (anim8.newAnimation (term-grid "1-5" 1) 0.1))
 
 (defn draw-rover [rect theta selected? docked?]
   (let [[corner-x corner-y w] rect
@@ -88,9 +82,4 @@
                (each [_ door (ipairs layer.objects)]
                  (love.graphics.draw (if door.properties.open
                                          door-open-img door-img)
-                                     door.x (- door.y door.height))))
- :draw-terms (fn [layer]
-               (each [_ term (ipairs layer.objects)]
-                 (: term-anim :draw term-img term.x (- term.y term.height))))
- :update (fn [dt]
-           (: term-anim :update dt))}
+                                     door.x (- door.y door.height))))}
