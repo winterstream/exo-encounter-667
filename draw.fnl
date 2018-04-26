@@ -51,10 +51,10 @@
     (love.graphics.line (unpack segment))))
 
 {:draw (fn [map _world state]
-         (: map :draw state.tx state.ty)
+         (: map :draw (- state.tx) (- state.ty))
          (love.graphics.push)
          ;; drawing non-map stuff needs to apply our own translate
-         (love.graphics.translate state.tx state.ty)
+         (love.graphics.translate (- state.tx) (- state.ty))
          (when state.laser
            (draw-laser state.laser))
          (love.graphics.pop)

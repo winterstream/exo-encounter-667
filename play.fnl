@@ -9,7 +9,7 @@
 (local map (tiled "map.lua" ["bump"]))
 (local world (bump.newWorld))
 
-(local state {:tx 0 :ty -1024 ; <- viewport translation
+(local state {:tx 0 :ty 1024 ; <- viewport translation
               :rovers [{:theta 0 :docked? true :type :rover}
                        {:theta 0 :docked? true :type :rover}
                        {:theta 0 :docked? true :type :rover}
@@ -21,7 +21,7 @@
 (: world :add state.probe 105 1205 30 24)
 
 (local turn-speed math.pi)
-(local rover-move-speed 42)
+(local rover-move-speed 64)
 (local probe-move-speed 24)
 
 (set state.selected state.probe)
@@ -36,11 +36,9 @@
 (set map.layers.doors.draw draw.draw-doors)
 
 ;; so we can access these thru the repl
-(global st state)
+(global s state)
 (global m map)
 (global w world)
-
-(local dirs {:home [0 -1] :end [0 1] :delete [-1 0] :pagedown [1 0]})
 
 (defn calculate-new-rover-position [rover dt]
   (let [(x y) (: world :getRect state.selected)
@@ -95,18 +93,23 @@
             (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
         (terminal-check cols state.selected set-mode)))))
 
+(local scroll-margin 60)
+
+(defn scroll [state x y]
+  (when (< (+ state.tx 300) x 1560)
+    (set state.tx (+ state.tx 1)))
+  (when (< x (+ state.tx 60))
+    (set state.tx (math.max (- state.tx 1) 0)))
+  (when (< (+ state.ty 165) y 1215)
+    (set state.ty (math.min (+ state.ty 1) 1215)))
+  (when (< y (+ state.ty 60))
+    (set state.ty (math.max (- state.ty 1) 0))))
+
 (defn update [dt set-mode]
   (sensor.update state map dt)
   (hud.update state dt)
   (: map :update dt)
-  ;; placeholder: for now, you scroll manually
-  (each [key delta (pairs dirs)]
-    (when (love.keyboard.isDown key)
-      (let [[dx dy] delta scroll-speed 64]
-        (set state.tx (lume.clamp (- state.tx (* (* dx scroll-speed) dt))
-                                  -1280 0))
-        (set state.ty (lume.clamp (- state.ty (* (* dy scroll-speed) dt))
-                                  -1024 0)))))
+  (scroll state (: world :getRect state.selected))
   (when (= :rover state.selected.type)
     (move-rover dt set-mode))
   (when (= :probe state.selected.type)

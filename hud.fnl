@@ -6,7 +6,7 @@
 (var counter 0)
 
 {:draw (fn [state]
-         (love.graphics.setFont font)
+         (love.graphics.setColor 1 1 1)
          (for [i 1 6]
            (when (. state.messages i)
              (love.graphics.print (. state.messages i) 12 (- 213 (* 18 i))))))
