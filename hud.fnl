@@ -1,8 +1,6 @@
 (local lume (require "lib.lume"))
 (local messages (lume.split (love.filesystem.read "text/intro") "\n"))
 
-(local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
-
 (var counter 0)
 
 {:draw (fn [state]

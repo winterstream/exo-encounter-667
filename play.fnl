@@ -95,8 +95,6 @@
             (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
         (terminal-check cols state.selected set-mode)))))
 
-(local scroll-margin 60)
-
 (defn scroll [state x y]
   (when (< (+ state.tx 300) x 1560)
     (set state.tx (+ state.tx 1)))

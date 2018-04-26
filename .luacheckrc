@@ -9,4 +9,4 @@ max_line_length = false
 -- the latest love2d API
 new_globals = {"love"}
 
-stds.fennel = {globals ={"fennel", "pp", "lume", "st", "w", "m"}}
+stds.fennel = {globals ={"fennel", "pp", "lume", "s", "w", "m"}}
