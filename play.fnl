@@ -48,16 +48,15 @@
         new-y (+ y (* (math.sin rover.theta) rover-move-speed dt))]
     (values new-x new-y)))
 
-(defn within? [item box]
-  (let [(x y width height) (: world :getRect item)
-        margin 3]
-    (and (< (+ box.x margin) x (+ x width) (- (+ box.x box.width) margin))
-         (< (+ box.y margin) y (+ y height) (- (+ box.y box.height) margin)))))
+(defn within? [item box margin]
+  (let [(x y width height) (: world :getRect item)]
+    (and (< (- box.x margin) x (+ x width) (+ (+ box.x box.width) margin))
+         (< (- box.y margin) y (+ y height) (+ (+ box.y box.height) margin)))))
 
 (defn terminal-check [cols unit set-mode]
   (each [_ col (ipairs cols)]
     (when (and col.other.properties col.other.properties.terminal
-               (within? col.item col.other))
+               (within? col.item col.other -3))
       (set unit.in-term? true)
       (when (not unit.in-term-last-tick?)
         (set-mode :term col.other.properties.terminal)))))
@@ -78,12 +77,14 @@
           (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
       (terminal-check cols state.selected set-mode))))
 
+(defn enough-docked? [] (< 2 (# (lume.filter state.rovers :docked?))))
+
 (defn move-probe [dt set-mode]
   (let [left? (if (love.keyboard.isDown "left") 1 0)
         right? (if (love.keyboard.isDown "right") 1 0)
         up? (if (love.keyboard.isDown "up") 1 0)
         down? (if (love.keyboard.isDown "down") 1 0)]
-    (when (> (+ left? right? up? down?) 0)
+    (when (and (> (+ left? right? up? down?) 0) (enough-docked?))
       (let [(x y) (: world :getRect state.selected)
             new-x (+ x
                      (- (* left? probe-move-speed dt))
@@ -134,13 +135,13 @@
         (px py) (: world :getRect state.probe)]
     (: world :add (. state.rovers n) (+ px ox) (+ py oy) diameter diameter)))
 
-(defn xywh [x y w h] {:x x :y y :width w :height h})
-
 (defn dock []
-  (when (and (= state.selected.type :rover)
-             (within? state.selected (xywh (: world :getRect state.probe))))
-    (set state.selected.docked? true)
-    (: world :remove state.selected)))
+  (let [(x y w h) (: world :getRect state.probe)]
+    (when (and (= state.selected.type :rover)
+               (within? state.selected {:x x :y y :width w :height h} 12))
+      (set state.selected.docked? true)
+      (: world :remove state.selected)
+      (set state.selected state.probe))))
 
 (defn select [n]
   (set state.selected (if n
