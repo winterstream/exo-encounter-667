@@ -9,16 +9,18 @@
 (local map (tiled "map.lua" ["bump"]))
 (local world (bump.newWorld))
 
-(local state {:tx 0 :ty 1024 ; <- viewport translation
+(local state {:tx 200 :ty 500 ; <- viewport translation
               :rovers [{:theta 0 :docked? true :type :rover}
-                       {:theta 0 :docked? true :type :rover}
-                       {:theta 0 :docked? true :type :rover}
+                       {:theta 0 :docked? false :type :rover}
+                       {:theta 0 :docked? false :type :rover}
                        {:theta 0 :docked? true :type :rover}]
               :probe {:theta 0 :type :probe :rovers []}
               :messages []})
 
 (: map :bump_init world)
 (: world :add state.probe 105 1205 30 24)
+(: world :add (. state.rovers 2) 165 1200 10 10)
+(: world :add (. state.rovers 3) 145 1231 10 10)
 
 (local turn-speed math.pi)
 (local rover-move-speed 64)
