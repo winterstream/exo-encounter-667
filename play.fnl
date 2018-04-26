@@ -21,8 +21,8 @@
 (: world :add state.probe 105 1205 30 24)
 
 (local turn-speed math.pi)
-(local rover-move-speed 35)
-(local probe-move-speed 20)
+(local rover-move-speed 42)
+(local probe-move-speed 24)
 
 (set state.selected state.probe)
 
