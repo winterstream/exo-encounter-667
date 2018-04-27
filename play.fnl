@@ -10,7 +10,7 @@
 (local map (lint (tiled "map.lua" ["bump"])))
 (local world (bump.newWorld))
 
-(local state {:tx 200 :ty 500 ; <- viewport translation
+(local state {:tx 200 :ty (if (os.getenv "QUICK") 1024 500)
               :rovers [{:theta 0 :docked? true :type :rover}
                        {:theta 0 :docked? false :type :rover}
                        {:theta 0 :docked? false :type :rover}
@@ -31,7 +31,7 @@
 
 (set state.selected state.probe)
 
-(let [layer (: map :addCustomLayer "player")]
+(let [layer (: map :addCustomLayer "player" 82)]
   (set layer.sprites [(unpack state.rovers)])
   (tset layer.sprites 0 state.probe)
   (set layer.draw (partial draw.draw-player world state)))

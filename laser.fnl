@@ -2,7 +2,7 @@
 (local intersect (require "lib.intersect"))
 (local sensor (require "sensor"))
 ;; this is the max range only for each segment individually; no total limit
-(local range 300)
+(local range 360)
 
 (defn reflective? [item] (= item.type :rover))
 

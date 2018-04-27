@@ -25,7 +25,7 @@
                  (love.graphics.print (. messages i) 8 (+ (* 18 i) 120))))))
  :update (fn [dt set-mode]
            (set counter (+ counter dt))
-           (when (> counter 16)
+           (when (> counter (if (os.getenv "QUICK") 1 16))
              (love.graphics.setFont font)
              (set-mode :play)))
  :keypressed (fn [key set-mode]

@@ -17,10 +17,10 @@
              (let [x 4 y (- (* i 22) 18) w 18]
                (love.graphics.rectangle "line" x (- y 2) w w)
                (love.graphics.print (tostring i) 6 y)))
-           (love.graphics.rectangle "line" 4 110 18 18)
+           (love.graphics.rectangle "line" 4 105 18 18)
            (love.graphics.setColor 1 0 0)
            (let [lx (+ 13 (* (math.cos state.probe.theta) 8))
-                 ly (+ 119 (* (math.sin state.probe.theta) 8))]
-             (love.graphics.line 13 119 lx ly))))
+                 ly (+ 114 (* (math.sin state.probe.theta) 8))]
+             (love.graphics.line 13 114 lx ly))))
  :update (fn [state dt]
            (tutorial.update state dt))}

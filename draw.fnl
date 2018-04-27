@@ -82,4 +82,6 @@
                (each [_ door (ipairs layer.objects)]
                  (love.graphics.draw (if door.properties.open
                                          door-open-img door-img)
-                                     door.x (- door.y door.height))))}
+                                     door.x (if door.properties.open
+                                                (- door.y door.height)
+                                                (- door.y door.height 21)))))}
