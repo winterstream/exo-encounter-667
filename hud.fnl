@@ -1,16 +1,26 @@
-(local lume (require "lib.lume"))
-(local messages (lume.split (love.filesystem.read "text/intro") "\n"))
+(local tutorial (require "tutorial"))
 
 (var counter 0)
 
 {:draw (fn [state]
          (love.graphics.setColor 1 1 1)
-         (for [i 1 6]
-           (when (. state.messages i)
-             (love.graphics.print (. state.messages i) 10 (- 213 (* 18 i))))))
+         (when (not state.no-hud)
+           (when state.probe.stuck?
+             (love.graphics.print "immobile; dock at least 3 rovers" 26 4))
+           (for [i 1 5] ; show the most recent 5 messages
+             (love.graphics.print (or (. state.messages i) "")
+                                  10 (- 213 (* 18 i))))
+           (each [i rover (ipairs state.rovers)]
+             (if rover.docked?
+                 (love.graphics.setColor 1 1 1)
+                 (love.graphics.setColor 0.5 0.5 0.5))
+             (let [x 4 y (- (* i 22) 18) w 18]
+               (love.graphics.rectangle "line" x (- y 2) w w)
+               (love.graphics.print (tostring i) 6 y)))
+           (love.graphics.rectangle "line" 4 110 18 18)
+           (love.graphics.setColor 1 0 0)
+           (let [lx (+ 13 (* (math.cos state.probe.theta) 8))
+                 ly (+ 119 (* (math.sin state.probe.theta) 8))]
+             (love.graphics.line 13 119 lx ly))))
  :update (fn [state dt]
-           (when (. messages 1)
-             (set counter (+ counter dt))
-             (when (> counter 1)
-               (table.insert state.messages 1 (table.remove messages 1))
-               (set counter 0))))}
+           (tutorial.update state dt))}

@@ -1,8 +1,8 @@
-;; this is the max range only for each segment individually; no total limit
 (local lume (require "lib.lume"))
 (local intersect (require "lib.intersect"))
 (local sensor (require "sensor"))
-(local range 850)
+;; this is the max range only for each segment individually; no total limit
+(local range 300)
 
 (defn reflective? [item] (= item.type :rover))
 

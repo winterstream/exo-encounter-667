@@ -11,7 +11,7 @@
             (.. "Unknown door:" sensor.properties.door))
     (set sensor.properties.sensor true))
   (each [_ term (ipairs map.layers.terms.objects)]
-    (print :term term)
     (assert term.properties.collidable "Missing term collidable!")
     (assert term.properties.terminal "Missing term text!")
-    (assert (love.filesystem.isFile (.. "text/" term.properties.terminal)))))
+    (assert (love.filesystem.getInfo (.. "text/" term.properties.terminal))))
+  map)

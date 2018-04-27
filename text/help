@@ -3,6 +3,8 @@ arrows: navigate
 space: laser
 period, comma: aim
 enter: dock rover
+shift: move/turn slowly
+tab: toggle HUD
 
 f11: toggle fullscreen
 

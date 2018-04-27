@@ -7,7 +7,7 @@
 (local sensor (require "sensor"))
 (local lint (require "lint"))
 
-(local map (tiled "map.lua" ["bump"]))
+(local map (lint (tiled "map.lua" ["bump"])))
 (local world (bump.newWorld))
 
 (local state {:tx 200 :ty 500 ; <- viewport translation
@@ -16,11 +16,13 @@
                        {:theta 0 :docked? false :type :rover}
                        {:theta 0 :docked? true :type :rover}]
               :probe {:theta 0 :type :probe :rovers []}
-              :messages []})
+              :flags {}
+              :messages []
+              :echo (fn [s msg] (table.insert s.messages 1 msg))})
 
 (: map :bump_init world)
 (: world :add state.probe 105 1205 30 24)
-(: world :add (. state.rovers 2) 165 1200 10 10)
+(: world :add (. state.rovers 2) 165 1200 10 10) ; start undocked
 (: world :add (. state.rovers 3) 145 1231 10 10)
 
 (local turn-speed math.pi)
@@ -34,9 +36,10 @@
   (tset layer.sprites 0 state.probe)
   (set layer.draw (partial draw.draw-player world state)))
 
+;; layers where we change the drawing of the sprites based on gameplay can't
+;; be drawn by tiled; we have to write our own draw.
 (set map.layers.sensors.draw draw.draw-sensors)
 (set map.layers.doors.draw draw.draw-doors)
-(lint map)
 
 ;; so we can access these thru the repl
 (global s state)
@@ -78,14 +81,14 @@
           (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
       (terminal-check cols state.selected set-mode))))
 
-(defn enough-docked? [] (< 2 (# (lume.filter state.rovers :docked?))))
-
 (defn move-probe [dt set-mode]
   (let [left? (if (love.keyboard.isDown "left") 1 0)
         right? (if (love.keyboard.isDown "right") 1 0)
         up? (if (love.keyboard.isDown "up") 1 0)
         down? (if (love.keyboard.isDown "down") 1 0)]
-    (when (and (> (+ left? right? up? down?) 0) (enough-docked?))
+    (set state.probe.stuck? (and (> (+ left? right? up? down?) 0)
+                                 (not state.probe.mobile?)))
+    (when (and (> (+ left? right? up? down?) 0) state.probe.mobile?)
       (let [(x y) (: world :getRect state.selected)
             new-x (+ x
                      (- (* left? probe-move-speed dt))
@@ -96,44 +99,50 @@
             (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
         (terminal-check cols state.selected set-mode)))))
 
-(defn scroll [state x y]
-  (when (< (+ state.tx 300) x 1560)
-    (set state.tx (+ state.tx 1)))
-  (when (< x (+ state.tx 60))
-    (set state.tx (math.max (- state.tx 1) 0)))
-  (when (< (+ state.ty 165) y 1215)
-    (set state.ty (math.min (+ state.ty 1) 1215)))
-  (when (< y (+ state.ty 60))
-    (set state.ty (math.max (- state.ty 1) 0))))
+;; there is surely a smarter way to write this but I'm tired and it's late
+(defn scroll [state dt x y]
+  (let [delta (* dt 64)]
+    (when (< (+ state.tx 300) x 1560)
+      (set state.tx (+ state.tx delta)))
+    (when (< x (+ state.tx 60))
+      (set state.tx (math.max (- state.tx delta) 0)))
+    (when (< (+ state.ty 165) y 1215)
+      (set state.ty (math.min (+ state.ty delta) 1215)))
+    (when (< y (+ state.ty 60))
+      (set state.ty (math.max (- state.ty delta) 0)))))
 
 (defn update [dt set-mode]
+  (set state.probe.stuck? false)
   (sensor.update state map dt)
   (hud.update state dt)
   (: map :update dt)
-  (scroll state (: world :getRect state.selected))
-  (when (= :rover state.selected.type)
-    (move-rover dt set-mode))
-  (when (= :probe state.selected.type)
-    (move-probe dt set-mode))
+  (scroll state dt (: world :getRect state.selected))
+  ;; controls
+  (let [dt2 (if (love.keyboard.isDown "lshift" "rshift") (* dt 0.5) dt)]
+    (when (= :rover state.selected.type)
+      (move-rover dt2 set-mode))
+    (when (= :probe state.selected.type)
+      (move-probe dt2 set-mode))
+    (when (love.keyboard.isDown ",")
+      (set state.probe.theta (- state.probe.theta (* dt2 turn-speed))))
+    (when (love.keyboard.isDown ".")
+      (set state.probe.theta (+ state.probe.theta (* dt2 turn-speed)))))
   (set state.laser (and (love.keyboard.isDown "space")
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))
                                       (+ y (/ h 2))
                                       state.probe.theta world map
                                       [] [state.probe] 64))))
-  (let [turn-speed (if (love.keyboard.isDown "lshift" "rshift")
-                       (* turn-speed 0.3)
-                       turn-speed)]
-    (when (love.keyboard.isDown ",")
-      (set state.probe.theta (- state.probe.theta (* dt turn-speed))))
-    (when (love.keyboard.isDown ".")
-      (set state.probe.theta (+ state.probe.theta (* dt turn-speed)))))
   (set state.selected.in-term-last-tick? state.selected.in-term?))
+
+;; can't move unless 3 or 4 rovers are docked
+(defn enough-docked? [] (< 2 (# (lume.filter state.rovers :docked?))))
 
 (local offsets [[-10 -10] [20 -10] [20 20] [-10 20]])
 
 (defn deploy [n]
   (tset (. state.rovers n) :docked? false)
+  (set state.probe.mobile? (enough-docked?))
   (let [diameter 10
         [ox oy] (. offsets n)
         (px py) (: world :getRect state.probe)]
@@ -144,6 +153,7 @@
     (when (and (= state.selected.type :rover)
                (within? state.selected {:x x :y y :width w :height h} 12))
       (set state.selected.docked? true)
+      (set state.probe.mobile? (enough-docked?))
       (: world :remove state.selected)
       (set state.selected state.probe))))
 
@@ -161,7 +171,8 @@
                :0 select
                :5 select
                "`" select
-               :return dock})
+               :return dock
+               :tab (fn [] (set state.no-hud (not state.no-hud)))})
 
 (defn keypressed [key set-mode]
   (let [f (. keymap key)]

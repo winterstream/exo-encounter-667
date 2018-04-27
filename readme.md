@@ -9,6 +9,9 @@ this directory.
 * *0-4*: select unit
 * *space*: laser
 * *period, comma*: aim
+* *enter*: dock rover
+* *shift*: move/turn slowly
+* *tab*: toggle HUD
 * *f11*: toggle fullscreen
 
 By [Dan Larkin](https://danlarkin.org/) and [Phil Hagelberg](https://technomancy.us).
