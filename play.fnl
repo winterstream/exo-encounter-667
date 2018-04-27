@@ -31,7 +31,7 @@
 
 (set state.selected state.probe)
 
-(let [layer (: map :addCustomLayer "player" 82)]
+(let [layer (: map :addCustomLayer "player" 8)]
   (set layer.sprites [(unpack state.rovers)])
   (tset layer.sprites 0 state.probe)
   (set layer.draw (partial draw.draw-player world state)))
