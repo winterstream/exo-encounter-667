@@ -51,7 +51,7 @@
       (do (set scale 2)
           (love.window.setMode (* w scale) (* h scale)))
 
-      (and (love.keyboard.isDown "lctrl" "rctrl" "capslock") (= key "q"))
+      (and (love.keyboard.isDown "lctrl" "rctrl" "capslock") (= key "q" "x"))
       (love.event.quit)
 
       :else

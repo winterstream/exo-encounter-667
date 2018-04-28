@@ -60,7 +60,7 @@
 (defn terminal-check [cols unit set-mode]
   (each [_ col (ipairs cols)]
     (when (and col.other.properties col.other.properties.terminal
-               (within? col.item col.other -3))
+               (within? col.item col.other 0))
       (set unit.in-term? true)
       (when (not unit.in-term-last-tick?)
         (set-mode :term col.other.properties.terminal)))))
@@ -89,20 +89,23 @@
     (set state.probe.stuck? (and (> (+ left? right? up? down?) 0)
                                  (not state.probe.mobile?)))
     (when (and (> (+ left? right? up? down?) 0) state.probe.mobile?)
-      (let [(x y) (: world :getRect state.selected)
+      (let [speed (if (love.keyboard.isDown "rctrl") 164 probe-move-speed)
+            (x y) (: world :getRect state.selected)
             new-x (+ x
-                     (- (* left? probe-move-speed dt))
-                     (* right? probe-move-speed dt))
+                     (- (* left? speed dt))
+                     (* right? speed dt))
             new-y (+ y
-                     (- (* up? probe-move-speed dt))
-                     (* down? probe-move-speed dt))
+                     (- (* up? speed dt))
+                     (* down? speed dt))
             (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
         (terminal-check cols state.selected set-mode)))))
 
 ;; there is surely a smarter way to write this but I'm tired and it's late
 (defn scroll [state dt x y]
   ;; TODO: intro should scroll slowly; during gameplay it should be quicker
-  (let [delta (* dt 64)]
+  (let [delta (if (love.keyboard.isDown "rctrl")
+                  (* dt 164)
+                  (* dt 64))]
     (when (< (+ state.tx 300) x 1860)
       (set state.tx (+ state.tx delta)))
     (when (< x (+ state.tx 60))
@@ -124,9 +127,9 @@
       (move-rover dt2 set-mode))
     (when (= :probe state.selected.type)
       (move-probe dt2 set-mode))
-    (when (love.keyboard.isDown ",")
+    (when (love.keyboard.isDown "," "w")
       (set state.probe.theta (- state.probe.theta (* dt2 turn-speed))))
-    (when (love.keyboard.isDown ".")
+    (when (love.keyboard.isDown "." "v")
       (set state.probe.theta (+ state.probe.theta (* dt2 turn-speed)))))
   (set state.laser (and (love.keyboard.isDown "space")
                         (let [(x y w h) (: world :getRect state.probe)]
