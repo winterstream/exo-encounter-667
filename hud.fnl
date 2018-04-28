@@ -1,7 +1,5 @@
 (local tutorial (require "tutorial"))
 
-(var counter 0)
-
 {:draw (fn [state]
          (love.graphics.setColor 1 1 1)
          (when (not state.no-hud)

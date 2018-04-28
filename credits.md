@@ -4,8 +4,7 @@
   [European Southern Observatory](https://en.wikipedia.org/wiki/European_Southern_Observatory)
   CC4 International Attribution
 
-*
-  [Hard Vacuum tileset](http://www.lostgarden.com/2005/03/game-post-mortem-hard-vacuum.html) Copyright © Daniel Cook (CC-BY-3.0)
+* [Hard Vacuum tileset](http://www.lostgarden.com/2005/03/game-post-mortem-hard-vacuum.html) Copyright © Daniel Cook (CC-BY-3.0)
 * [Fixedsys Excelsior font](http://www.fixedsysexcelsior.com/) (public domain)
 
 * [LÖVE](https://love2d.org) Copyright © 2006-2018 LOVE Development Team, distributed under the zlib license

@@ -17,6 +17,11 @@ check: $(OUT)
 
 clean: ; rm -rf releases/* $(OUT)
 
+TEXT ?= first
+
+textview:
+	urxvt -fn "xft:Fixedsys Excelsior 3.01:style=Regular" -e less text/$(TEXT)
+
 %.lua: %.fnl ; lua lib/fennel --compile --correlate $< > $@
 
 LOVEFILE=releases/$(NAME)-$(VERSION).love

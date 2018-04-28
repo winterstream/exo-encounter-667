@@ -27,6 +27,7 @@
   (step state :first-dock (fn [] (. state.rovers 2 :docked?))
         ["Press 2 to select rover 2; bring it near"
          "main probe and press enter to dock."])
+  ;; TODO: what if they dock rovers in the opposite order?
   (: state :echo "")
   (: state :echo "With at least 3 rovers docked, the main")
   (: state :echo "probe has mobility.")
@@ -36,6 +37,6 @@
 
   ;; TODO: explain laser, aiming
   ;; TODO: explain deploy
-  (while true (coroutine.yield)))
+  (while (coroutine.yield) (coroutine.yield)))
 
 {:update (coroutine.wrap tutorial)}

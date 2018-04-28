@@ -77,6 +77,24 @@ and the alien home world; you win.
 All the Russian text can be google-translated (we don't actually want
 the translation to be very good) and the English text should also be mangled.
 
+## Timing
+
+* outpost constructed 1956 (-3024.55 orbits)
+* outpost abandoned 1999 (-2463.75 orbits)
+* expedition launched on 2035
+* arrived 2188 (153 year trip @ 0.15c)
+ * trip took 1994 orbits
+
+## Base story
+
+* landing, constructing base
+* calibrating radio telescopes, preparing probes
+
+* prefect k'teq meli second class (459)
+* science adjunct satik
+* prefect nijam b'kol first class (105)
+* linguistics commissioner pak megal (341)
+
 ## Skill Progression
 
 * moving rovers

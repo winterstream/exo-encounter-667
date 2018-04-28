@@ -10,12 +10,13 @@
          (love.graphics.setColor 0.8 0.8 0.8)
          (love.graphics.draw bg 0 0)
          (love.graphics.setColor 0 0.7 0)
-         (for [i 1 12]
+         (for [i 1 11]
            (love.graphics.print (or (. lines (+ offset i)) "")
-                                12 (- (* i 18) 9))))
+                                16 (- (* i 18) 6))))
  :update (fn [])
  :activate (fn [which]
              (love.graphics.setFont font)
+             (set offset 0)
              (set lines (lume.split (love.filesystem.read (.. "text/" which))
                                     "\n")))
  :keypressed (fn [key set-mode]

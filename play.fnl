@@ -101,8 +101,9 @@
 
 ;; there is surely a smarter way to write this but I'm tired and it's late
 (defn scroll [state dt x y]
+  ;; TODO: intro should scroll slowly; during gameplay it should be quicker
   (let [delta (* dt 64)]
-    (when (< (+ state.tx 300) x 1560)
+    (when (< (+ state.tx 300) x 1860)
       (set state.tx (+ state.tx delta)))
     (when (< x (+ state.tx 60))
       (set state.tx (math.max (- state.tx delta) 0)))
@@ -130,7 +131,7 @@
   (set state.laser (and (love.keyboard.isDown "space")
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))
-                                      (+ y (/ h 2))
+                                      (+ y (/ h 2) -6)
                                       state.probe.theta world map
                                       [] [state.probe] 64))))
   (set state.selected.in-term-last-tick? state.selected.in-term?))
