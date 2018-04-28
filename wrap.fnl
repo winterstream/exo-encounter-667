@@ -2,6 +2,8 @@
 (local (w h) (values (/ 1440 2) (/ 900 2)))
 (local canvas (love.graphics.newCanvas w h))
 
+(local music (require "music"))
+
 (var scale 2)
 (var mode (require :intro))
 
@@ -26,7 +28,8 @@
 
 (defn love.load []
   (: canvas :setFilter "nearest" "nearest")
-  (start-repl))
+  (start-repl)
+  (music.choose :temple))
 
 (defn love.draw []
   (love.graphics.setCanvas canvas)
@@ -51,8 +54,12 @@
       (do (set scale 2)
           (love.window.setMode (* w scale) (* h scale)))
 
-      (and (love.keyboard.isDown "lctrl" "rctrl" "capslock") (= key "q" "x"))
+      (and (love.keyboard.isDown "lctrl" "rctrl" "capslock")
+           (or (= key "q") (= key "x")))
       (love.event.quit)
+
+      (love.keyboard.isDown "m")
+      (music.toggle)
 
       :else
       (mode.keypressed key set-mode)))
