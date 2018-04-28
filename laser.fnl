@@ -53,6 +53,9 @@
                          (do (table.insert ignore hit.item)
                              (fire x y theta world map segments ignore limit))))
 
+                   (and hit.item hit.item.properties hit.item.properties.emitter)
+                   :win
+
                    (sensor.is? hit.item)
                    (do (sensor.on map hit.item)
                        (table.insert segments [x y hit.x1 hit.y1])

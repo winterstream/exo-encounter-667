@@ -3,7 +3,7 @@
 (local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
 (local bg (love.graphics.newImage "assets/term.bmp"))
 
-(var lines (lume.split (love.filesystem.read "text/first") "\n"))
+(var lines [])
 (var offset 0)
 
 {:draw (fn []
@@ -24,6 +24,6 @@
                    (set offset (math.max 0 (- offset 1)))
                    (= key "down")
                    (when (< offset (- (# lines) 12))
-                     (set offset (math.min 16 (+ offset 1))))
+                     (set offset (+ offset 1)))
                    (or (= key "return") (= key "escape"))
                    (set-mode :play)))}

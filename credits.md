@@ -1,8 +1,8 @@
 # Credits
 
 * [Intro image](https://commons.wikimedia.org/wiki/File:Gliese_667.jpg)
-  [European Southern Observatory](https://en.wikipedia.org/wiki/European_Southern_Observatory)
-  CC4 International Attribution
+  [European Southern Observatory](https://en.wikipedia.org/wiki/European_Southern_Observatory) CC4 International Attribution
+* [Endgame image](https://commons.wikimedia.org/wiki/File:Sky_around_Gliese_667C.jpg) [European Southern Observatory](https://en.wikipedia.org/wiki/European_Southern_Observatory) CC4 International Attribution
 
 * [Hard Vacuum tileset](http://www.lostgarden.com/2005/03/game-post-mortem-hard-vacuum.html) Copyright © Daniel Cook (CC-BY-3.0)
 * [Fixedsys Excelsior font](http://www.fixedsysexcelsior.com/) (public domain)

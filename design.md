@@ -84,6 +84,7 @@ the translation to be very good) and the English text should also be mangled.
 * expedition launched on 2035
 * arrived 2188 (153 year trip @ 0.15c)
  * trip took 1994 orbits
+* signal arrived in Sol 23 years after the game: 2211
 
 ## Base story
 

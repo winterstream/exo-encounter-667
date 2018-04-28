@@ -134,6 +134,8 @@
                                       (+ y (/ h 2) -6)
                                       state.probe.theta world map
                                       [] [state.probe] 64))))
+  (when (= :win state.laser)
+    (set-mode :win))
   (set state.selected.in-term-last-tick? state.selected.in-term?))
 
 ;; can't move unless 3 or 4 rovers are docked
