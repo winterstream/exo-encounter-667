@@ -4,7 +4,7 @@
   (each [_ door (ipairs map.layers.doors.objects)]
     (tset door-names door.name true))
   (each [_ sensor (ipairs map.layers.sensors.objects)]
-    (assert sensor.properties.door "Missing sensor door!")
+    (assert sensor.properties.door (.. "Missing sensor door:" sensor.name))
     (assert (. door-names sensor.properties.door)
             (.. "Unknown door:" sensor.properties.door))
     (set sensor.properties.sensor true))
