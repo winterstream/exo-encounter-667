@@ -58,10 +58,12 @@
          (< (- box.y margin) y (+ y height) (+ (+ box.y box.height) margin)))))
 
 (defn terminal-check [cols unit set-mode]
+  (set state.selected.in-term? false)
   (each [_ col (ipairs cols)]
     (when (and col.other.properties col.other.properties.terminal
                (within? col.item col.other 0))
       (set unit.in-term? true)
+      (print :in-term state.selected unit.in-term-last-tick?)
       (when (not unit.in-term-last-tick?)
         (set-mode :term col.other.properties.terminal)))))
 
@@ -76,7 +78,6 @@
   (when (love.keyboard.isDown "right")
     (set state.selected.theta (+ state.selected.theta (* dt turn-speed))))
   (when (love.keyboard.isDown "up")
-    (set state.selected.in-term? false)
     (let [(new-x new-y) (calculate-new-rover-position state.selected dt)
           (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
       (terminal-check cols state.selected set-mode))))
