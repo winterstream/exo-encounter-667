@@ -4,7 +4,6 @@
 
 * pushing rocks
 * level design
-* end game
 
 ## wishlist
 

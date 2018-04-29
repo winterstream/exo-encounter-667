@@ -26,8 +26,8 @@
 (: world :add (. state.rovers 3) 145 1231 10 10)
 
 (local turn-speed math.pi)
-(local rover-move-speed 64)
-(local probe-move-speed 24)
+(local rover-move-speed 72)
+(local probe-move-speed 64)
 
 (set state.selected state.probe)
 
@@ -63,7 +63,6 @@
     (when (and col.other.properties col.other.properties.terminal
                (within? col.item col.other 0))
       (set unit.in-term? true)
-      (print :in-term state.selected unit.in-term-last-tick?)
       (when (not unit.in-term-last-tick?)
         (set-mode :term col.other.properties.terminal)))))
 
@@ -103,15 +102,15 @@
 
 ;; there is surely a smarter way to write this but I'm tired and it's late
 (defn scroll [state dt x y]
-  ;; TODO: intro should scroll slowly; during gameplay it should be quicker
+  ;; TODO: scroll faster when your selected unit is offscreen
   (let [delta (if (love.keyboard.isDown "rctrl")
-                  (* dt 164)
+                  (* dt 256)
                   (* dt 64))]
     (when (< (+ state.tx 300) x 1860)
       (set state.tx (+ state.tx delta)))
     (when (< x (+ state.tx 60))
       (set state.tx (math.max (- state.tx delta) 0)))
-    (when (< (+ state.ty 165) y 1215)
+    (when (< (+ state.ty 165) y 1220)
       (set state.ty (math.min (+ state.ty delta) 1215)))
     (when (< y (+ state.ty 60))
       (set state.ty (math.max (- state.ty delta) 0)))))

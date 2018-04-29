@@ -18,7 +18,8 @@ By [Dan Larkin](https://danlarkin.org/) and [Phil Hagelberg](https://technomancy
 
 ## Licenses
 
-Original code, prose, and images copyright © 2018 Dan Larkin and Phil Hagelberg
+Original code, prose, and images copyright © 2018 Dan Larkin, Phil
+Hagelberg and Zach Hagelberg
 
 Distributed under the GNU General Public License version 3 or later; see file COPYING.
 

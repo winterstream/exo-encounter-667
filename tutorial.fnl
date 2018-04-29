@@ -3,7 +3,7 @@
 
 ;; (local intro-msgs [:HI]) ; TODO: delete
 
-(defn step [state flag check msgs]
+(defn step [state flag check]
   (while (not (or (check state) (. state.flags flag)))
     (coroutine.yield))
   ;; save our progress so we can restart or reload this module
