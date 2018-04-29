@@ -3,6 +3,8 @@
 (local probe-img (love.graphics.newImage "assets/probe.png"))
 (local sensor-img (love.graphics.newImage "assets/sensor.png"))
 (local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
+(local sensor-m-on-img (love.graphics.newImage "assets/sensor-m-on.png"))
+(local sensor-m-img (love.graphics.newImage "assets/sensor-m.png"))
 (local door-img (love.graphics.newImage "assets/door.png"))
 (local door-open-img (love.graphics.newImage "assets/door-open.png"))
 
@@ -74,8 +76,14 @@
  ;; no way to change an object's sprite at runtime?
  :draw-sensors (fn [layer]
                  (each [_ sensor (ipairs layer.objects)]
-                   (love.graphics.draw (if sensor.properties.on
-                                           sensor-on-img sensor-img)
+                   (love.graphics.draw (if (and sensor.properties.momentary
+                                                sensor.properties.on)
+                                           sensor-m-on-img
+                                           sensor.properties.momentary
+                                           sensor-m-img
+                                           sensor.properties.on
+                                           sensor-on-img
+                                           sensor-img)
                                        ;; TODO: why is the y wrong?
                                        sensor.x (- sensor.y sensor.height))))
  :draw-doors (fn [layer]

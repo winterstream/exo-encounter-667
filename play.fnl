@@ -117,7 +117,6 @@
 
 (defn update [dt set-mode]
   (set state.probe.stuck? false)
-  (sensor.update state map dt)
   (hud.update state dt)
   (: map :update dt)
   (scroll state dt (: world :getRect state.selected))
@@ -131,6 +130,7 @@
       (set state.probe.theta (- state.probe.theta (* dt2 turn-speed))))
     (when (love.keyboard.isDown "." "v")
       (set state.probe.theta (+ state.probe.theta (* dt2 turn-speed)))))
+  (sensor.update state map world dt)
   (set state.laser (and (love.keyboard.isDown "space")
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))

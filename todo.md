@@ -2,14 +2,10 @@
 
 ## epics
 
-* pushing rocks
+* beam splitter
 * level design
 
 ## wishlist
 
-* doors that close again
-* other map elements that can be activated by laser?
- * beam splitter
- * laser capacitor (charge it up and after you charge it emits laser)
- * a rover can become a splitter?
-* fog of war
+* laser capacitor (charge it up and after you charge it emits laser)
+* a rover can become a splitter?
