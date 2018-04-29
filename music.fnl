@@ -1,4 +1,6 @@
 (local songs {:temple (love.audio.newSource "assets/GalacticTemple.ogg"
+                                            "stream")
+              :bazaar (love.audio.newSource "assets/bazaarnet.ogg"
                                             "stream")})
 
 (var current songs.temple)
@@ -11,11 +13,11 @@
           (: current :stop))))
 
 (defn choose [name]
-  (when (and (not (= current (. songs name))) (: current :isPlaying))
-    (: current :stop))
+  (: current :stop)
   (set current (. songs name))
   (: current :setLooping true)
-  (: current :play))
+  (when (not (love.filesystem.getInfo "mute"))
+    (: current :play)))
 
 {:toggle toggle
  :choose choose}

@@ -9,7 +9,9 @@
              (love.graphics.print (or (. state.messages i) "")
                                   10 (- 213 (* 18 i))))
            (each [i rover (ipairs state.rovers)]
-             (if rover.docked?
+             (if (= state.selected rover)
+                 (love.graphics.setColor 0.7 1 0.7)
+                 rover.docked?
                  (love.graphics.setColor 1 1 1)
                  (love.graphics.setColor 0.5 0.5 0.5))
              (let [x 4 y (- (* i 22) 18) w 18]

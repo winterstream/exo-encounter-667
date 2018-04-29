@@ -1,4 +1,6 @@
 (local lume (require "lib.lume"))
+(local music (require "music"))
+
 (local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
 (local bg (love.graphics.newImage "assets/win.jpg"))
 (local lines (lume.split (love.filesystem.read "text/win") "\n"))
@@ -15,7 +17,9 @@
            (love.graphics.print (or (. lines i) "")
                                 16 (math.floor (+ (* i 18)
                                                   (* counter text-speed))))))
- :activate (fn [] (love.graphics.setFont font))
+ :activate (fn []
+             (love.graphics.setFont font)
+             (music.choose :bazaar))
  :update (fn [dt]
            (set counter (math.min (math.max 0 (+ counter dt)) 90)))
  :keypressed (fn [key]
