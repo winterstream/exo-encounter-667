@@ -6,6 +6,8 @@
 
 (defn reflective? [item] (= item.type :rover))
 
+(defn splitter? [item] (and item.properties item.properties.splitter))
+
 (defn transparent? [item]
   (let [layer-name (and item.layer item.layer.name)]
     (or (= layer-name :obstacles)
@@ -37,6 +39,15 @@
     ;; just because the laser crossed the body doesn't mean it hit mirror
     (if x (values x y (normalize-angle inbound-theta mirror-theta)))))
 
+(defn split [fire x y hit theta world map segments ignore limit]
+  (let [cx (/ (+ hit.x1 hit.x2) 2)
+        cy (/ (+ hit.y1 hit.y2) 2)
+        theta1 (+ theta (/ math.pi 4))
+        theta2 (- theta (/ math.pi 4))]
+    (table.insert segments [x y cx cy])
+    (fire cx cy theta1 world map segments ignore limit)
+    (fire cx cy theta2 world map segments ignore limit)))
+
 {:fire (fn fire [x y theta world map segments ignore limit]
          (let [far-x (+ x (* (math.cos theta) range))
                far-y (+ y (* (math.sin theta) range))
@@ -52,6 +63,9 @@
                                    [hit.item] (- limit 1)))
                          (do (table.insert ignore hit.item)
                              (fire x y theta world map segments ignore limit))))
+                   (splitter? hit.item)
+                   (split fire x y hit theta world map segments
+                          [hit.item] (- limit 2))
 
                    (and hit.item hit.item.properties hit.item.properties.emitter)
                    :win

@@ -58,6 +58,8 @@
            (or (= key "q") (= key "x")))
       (love.event.quit)
 
+      (= key "f5") (set-mode :win)
+
       (love.keyboard.isDown "m")
       (music.toggle)
 

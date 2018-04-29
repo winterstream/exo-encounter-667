@@ -2,8 +2,7 @@
 
 ## epics
 
-* beam splitter
-* level design
+* level design for north of river
 
 ## wishlist
 

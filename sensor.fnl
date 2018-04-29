@@ -13,11 +13,12 @@
     (map.bump_wrap :remove door))
   (set door.properties.open true))
 
-(defn close [map world door]
+(defn close [map door]
   ;; TODO: hitbox for momentary doors starts off too small; gets fixed after
   ;; first open/close cycle.
   (when door.properties.open        ; ???
     (map.bump_wrap :add door door.x (- door.y 61) door.width 61))
+  ;; TODO: closing door can push you all the way off the map!
   (set door.properties.open false))
 
 (defn on [map item]
@@ -28,10 +29,10 @@
 
 {:is? (fn [item] (and item.properties item.properties.sensor))
  :on on
- :update (fn [_state map world _dt]
+ :update (fn [_state map _world _dt]
            (each [_ sensor (ipairs map.layers.sensors.objects)]
              (when sensor.properties.momentary
-               (close map world (lume.match map.layers.doors.objects
-                                            (finder sensor.properties.door))))
+               (close map (lume.match map.layers.doors.objects
+                                      (finder sensor.properties.door))))
              ;; each sensor starts the tick as off
              (set sensor.properties.on false)))}
