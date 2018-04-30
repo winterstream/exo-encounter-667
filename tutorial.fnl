@@ -1,8 +1,6 @@
 (local lume (require "lib.lume"))
 (local intro-msgs (lume.split (love.filesystem.read "text/intro") "\n"))
 
-;; (local intro-msgs [:HI]) ; TODO: delete
-
 (defn step [state flag check]
   (while (not (or (check state) (. state.flags flag)))
     (coroutine.yield))

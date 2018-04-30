@@ -12,8 +12,8 @@
 
 (local state {:tx 200 :ty (if (os.getenv "QUICK") 1024 500)
               :rovers [{:theta 0 :docked? true :type :rover}
-                       {:theta 0 :docked? false :type :rover}
-                       {:theta 0 :docked? false :type :rover}
+                       {:theta 3 :docked? false :type :rover}
+                       {:theta 2 :docked? false :type :rover}
                        {:theta 0 :docked? true :type :rover}]
               :probe {:theta 0 :type :probe :rovers []}
               :flags {}
@@ -23,7 +23,7 @@
 (: map :bump_init world)
 (: world :add state.probe 105 1205 30 24)
 (: world :add (. state.rovers 2) 165 1200 10 10) ; start undocked
-(: world :add (. state.rovers 3) 145 1231 10 10)
+(: world :add (. state.rovers 3) 145 1212 10 10)
 
 (local turn-speed math.pi)
 (local rover-move-speed 72)
@@ -67,7 +67,8 @@
         (set-mode :term col.other.properties.terminal)))))
 
 (defn collide-filter [_item other]
-  (if (and other.properties other.properties.terminal)
+  (if (or (love.keyboard.isDown "backspace") ; noclip
+          (and other.properties other.properties.terminal))
       :cross
       :slide))
 
@@ -117,7 +118,7 @@
 
 (defn update [dt set-mode]
   (set state.probe.stuck? false)
-  (hud.update state dt)
+  (pcall hud.update state dt)
   (: map :update dt)
   (scroll state dt (: world :getRect state.selected))
   ;; controls

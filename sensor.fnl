@@ -1,5 +1,6 @@
 ;; sensors are represented in tiled as any item on the "sensor" layer.
-;; they must have the collidable property set to work.
+;; they must have the collidable property set to work. they must have
+;; a "door" property which corresponds to the name of a door object.
 
 (local lume (require "lib.lume"))
 
@@ -33,6 +34,6 @@
            (each [_ sensor (ipairs map.layers.sensors.objects)]
              (when sensor.properties.momentary
                (close map (lume.match map.layers.doors.objects
-                                      (finder sensor.properties.door))))
-             ;; each sensor starts the tick as off
-             (set sensor.properties.on false)))}
+                                      (finder sensor.properties.door)))
+               ;; each momentary sensor starts the tick as off
+               (set sensor.properties.on false))))}

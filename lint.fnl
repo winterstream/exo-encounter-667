@@ -1,3 +1,5 @@
+;; check for common map errors
+
 (local door-names {})
 
 (fn [map]
