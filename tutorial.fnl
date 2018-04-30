@@ -7,9 +7,14 @@
   ;; save our progress so we can restart or reload this module
   (tset state.flags flag true))
 
+(defn first-sensor? [map]
+  (let [sensor (lume.match map.layers.sensors.objects
+                           (fn [s] (= s.name "first")))]
+    sensor.properties.on))
+
 (var counter 0)
 
-(fn echo-intro [state dt]
+(fn echo-intro [state _world _map dt]
   (when (. intro-msgs 1)
     (set counter (+ counter dt))
     (when (> counter 0.5)
@@ -17,12 +22,11 @@
       (set counter 0))
     (echo-intro (coroutine.yield))))
 
-(defn tutorial [state dt]
-  (echo-intro state dt)
+(defn tutorial [state world map dt]
+  (echo-intro state world map dt)
   (: state :echo "Press 2 to select rover 2; bring it near")
   (: state :echo "main probe and press enter to dock.")
   (step state :first-dock (fn [] (. state.rovers 2 :docked?)))
-  ;; TODO: what if they dock rovers in the opposite order?
   (: state :echo "")
   (: state :echo "With at least 3 rovers docked, the main")
   (: state :echo "probe has mobility.")
@@ -37,10 +41,29 @@
   (step state :laser (fn [] state.laser))
   (: state :echo "")
   (: state :echo "")
-  (: state :echo "There is a nearby structure which sensors")
-  (: state :echo "indicate might respond to the laser. Go")
-  (: state :echo "north and aim the laser at it.")
-  ;; TODO: explain deploy
+  (: state :echo "")
+  (: state :echo "SENSORS: detected nearby structure to")
+  (: state :echo "the north which may react to the laser.")
+  (step state :first-sensor (partial first-sensor? map))
+  (: state :echo "")
+  (: state :echo "")
+  (: state :echo "")
+  (: state :echo "MISSION: proceed thru the door and")
+  (: state :echo "investigate signs of civilization.")
+  (step state :gap (fn [] (> (: world :getRect state.selected) 730)))
+  (: state :echo "")
+  (: state :echo "")
+  (: state :echo "")
+  (: state :echo "DEPLOY: press 2 to deploy a rover to")
+  (: state :echo "investigate the gap in the north wall.")
+  (step state :gap2 (fn []
+                      (let [(x y) (: world :getRect state.selected)]
+                        (and (> x 720) (< y 1030)))))
+  (: state :echo "")
+  (: state :echo "")
+  (: state :echo "")
+  (: state :echo "")
+  (: state :echo "REFLECT: aim the laser at the rover.")
   (while (coroutine.yield) (coroutine.yield)))
 
 {:update (coroutine.wrap tutorial)}

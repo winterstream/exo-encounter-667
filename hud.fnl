@@ -22,5 +22,4 @@
            (let [lx (+ 13 (* (math.cos state.probe.theta) 8))
                  ly (+ 114 (* (math.sin state.probe.theta) 8))]
              (love.graphics.line 13 114 lx ly))))
- :update (fn [state dt]
-           (tutorial.update state dt))}
+ :update tutorial.update}

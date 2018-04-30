@@ -118,7 +118,8 @@
 
 (defn update [dt set-mode]
   (set state.probe.stuck? false)
-  (pcall hud.update state dt)
+  (let [(ok err) (pcall (fn [] (hud.update state world map dt)))]
+    (when (not ok) (print err)))
   (: map :update dt)
   (scroll state dt (: world :getRect state.selected))
   ;; controls
