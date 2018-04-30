@@ -19,10 +19,10 @@
          (love.graphics.print "EXO_encounter 667" 32 16)
          (love.graphics.setFont small-font)
          (if message
-             (love.graphics.print message 16 72)
+             (love.graphics.print message 16 62)
              (for [i 1 (# messages)]
                (when (> counter (* i 2))
-                 (love.graphics.print (. messages i) 8 (+ (* 18 i) 120))))))
+                 (love.graphics.print (. messages i) 8 (+ (* 18 i) 110))))))
  :update (fn [dt set-mode]
            (set counter (+ counter dt))
            (when (> counter (if (os.getenv "QUICK") 1 16))

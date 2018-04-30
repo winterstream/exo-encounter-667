@@ -26,7 +26,7 @@
 (: world :add (. state.rovers 3) 145 1212 10 10)
 
 (local turn-speed math.pi)
-(local rover-move-speed 72)
+(local rover-move-speed 82)
 (local probe-move-speed 64)
 
 (set state.selected state.probe)
@@ -90,7 +90,7 @@
     (set state.probe.stuck? (and (> (+ left? right? up? down?) 0)
                                  (not state.probe.mobile?)))
     (when (and (> (+ left? right? up? down?) 0) state.probe.mobile?)
-      (let [speed (if (love.keyboard.isDown "rctrl") 164 probe-move-speed)
+      (let [speed (if (love.keyboard.isDown "=") 164 probe-move-speed)
             (x y) (: world :getRect state.selected)
             new-x (+ x
                      (- (* left? speed dt))
@@ -104,16 +104,16 @@
 ;; there is surely a smarter way to write this but I'm tired and it's late
 (defn scroll [state dt x y]
   ;; TODO: scroll faster when your selected unit is offscreen
-  (let [delta (if (love.keyboard.isDown "rctrl")
+  (let [delta (if (love.keyboard.isDown "lctrl" "rctrl" "capslock")
                   (* dt 256)
                   (* dt 64))]
-    (when (< (+ state.tx 300) x 1860)
+    (when (< (+ state.tx 260) x 1860)
       (set state.tx (+ state.tx delta)))
-    (when (< x (+ state.tx 60))
+    (when (< x (+ state.tx 80))
       (set state.tx (math.max (- state.tx delta) 0)))
     (when (< (+ state.ty 165) y 1220)
       (set state.ty (math.min (+ state.ty delta) 1215)))
-    (when (< y (+ state.ty 60))
+    (when (< y (+ state.ty 100))
       (set state.ty (math.max (- state.ty delta) 0)))))
 
 (defn update [dt set-mode]

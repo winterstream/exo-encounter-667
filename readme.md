@@ -16,10 +16,15 @@ this directory.
 
 By [Dan Larkin](https://danlarkin.org/) and [Phil Hagelberg](https://technomancy.us).
 
+## Bugs
+
+* Closing a door while a rover is inside it can push the bug into weird places.
+* It won't always autoscroll to units which are along the very bottom.
+
 ## Licenses
 
 Original code, prose, and images copyright © 2018 Dan Larkin, Phil
-Hagelberg and Zach Hagelberg
+Hagelberg, Zach Hagelberg, and Noah Hagelberg.
 
 Distributed under the GNU General Public License version 3 or later; see file COPYING.
 

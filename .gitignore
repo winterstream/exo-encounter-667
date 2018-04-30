@@ -11,3 +11,6 @@ stdio.lua
 term.lua
 wrap.lua
 /hud.lua
+/lint.lua
+/tutorial.lua
+/win.lua
