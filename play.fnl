@@ -123,7 +123,7 @@
   (: map :update dt)
   (scroll state dt (: world :getRect state.selected))
   ;; controls
-  (let [dt2 (if (love.keyboard.isDown "lshift" "rshift") (* dt 0.5) dt)]
+  (let [dt2 (if (love.keyboard.isDown "lshift" "rshift") (* dt 0.1) dt)]
     (when (= :rover state.selected.type)
       (move-rover dt2 set-mode))
     (when (= :probe state.selected.type)

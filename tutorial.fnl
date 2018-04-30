@@ -10,7 +10,7 @@
 (defn sensor? [map name]
   (let [sensor (lume.match map.layers.sensors.objects
                            (fn [s] (= s.name name)))]
-    sensor.properties.on))
+    (and sensor sensor.properties.on)))
 
 (var counter 0)
 
@@ -36,7 +36,7 @@
   (: state :echo "")
   (: state :echo "")
   (: state :echo "The probe's communications laser can be")
-  (: state :echo "activated by pressing space. Comma and")
+  (: state :echo "activated by holding space. Comma and")
   (: state :echo "period change the aim of the laser.")
   (step state :laser (fn [] (or state.laser
                                 (> (: world :getRect state.selected) 730)
