@@ -3,14 +3,15 @@ NAME=exo
 URL=https://technomancy.itch.io/exo-encounter-667
 AUTHOR="Phil Hagelberg and Dan Larkin"
 DESCRIPTION="A game of exploration."
-run: ; love .
-
-count: ; cloc *.fnl --force-lang=clojure
 
 LIBS := $(wildcard lib/*)
 LUA := $(wildcard *.lua)
 SRC := $(wildcard *.fnl)
 OUT := $(patsubst %.fnl,%.lua,$(SRC))
+
+run: $(OUT) ; love .
+
+count: ; cloc *.fnl --force-lang=clojure
 
 check: $(OUT)
 	luacheck --std luajit+love+fennel $(OUT)

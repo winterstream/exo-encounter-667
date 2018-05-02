@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=EXO_encounter 667
+Comment=A game of distant exploration
+MimeType=application/x-love-game;
+Exec=%BINARY% %f
+Type=Application
+Categories=Game;
+Terminal=false
+Icon=love
+NoDisplay=true
