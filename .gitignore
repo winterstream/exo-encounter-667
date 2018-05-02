@@ -1,5 +1,7 @@
-.unused
-releases
+/.unused
+/dest
+/releases
+
 draw.lua
 intro.lua
 laser.lua
@@ -10,7 +12,8 @@ sensor.lua
 stdio.lua
 term.lua
 wrap.lua
-/hud.lua
-/lint.lua
-/tutorial.lua
-/win.lua
+hud.lua
+lint.lua
+tutorial.lua
+win.lua
+

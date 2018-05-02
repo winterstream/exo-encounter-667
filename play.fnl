@@ -15,7 +15,7 @@
                        {:theta 3 :docked? false :type :rover}
                        {:theta 2 :docked? false :type :rover}
                        {:theta 0 :docked? true :type :rover}]
-              :probe {:theta 0 :type :probe :rovers []}
+              :probe {:theta math.pi :type :probe :rovers []}
               :flags {}
               :messages []
               :echo (fn [s msg] (table.insert s.messages 1 msg))})
@@ -25,7 +25,7 @@
 (: world :add (. state.rovers 2) 165 1200 10 10) ; start undocked
 (: world :add (. state.rovers 3) 145 1212 10 10)
 
-(local turn-speed math.pi)
+(local turn-speed 1)
 (local rover-move-speed 82)
 (local probe-move-speed 64)
 
@@ -74,11 +74,12 @@
 
 (defn move-rover [dt set-mode]
   (when (love.keyboard.isDown "left")
-    (set state.selected.theta (- state.selected.theta (* dt turn-speed))))
+    (set state.selected.theta (- state.selected.theta (* 2 dt turn-speed))))
   (when (love.keyboard.isDown "right")
-    (set state.selected.theta (+ state.selected.theta (* dt turn-speed))))
-  (when (love.keyboard.isDown "up")
-    (let [(new-x new-y) (calculate-new-rover-position state.selected dt)
+    (set state.selected.theta (+ state.selected.theta (* 2 dt turn-speed))))
+  (when (or (love.keyboard.isDown "up") (love.keyboard.isDown "down"))
+    (let [delta (if (love.keyboard.isDown "up") dt (- dt))
+          (new-x new-y) (calculate-new-rover-position state.selected delta)
           (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
       (terminal-check cols state.selected set-mode))))
 
@@ -123,7 +124,7 @@
   (: map :update dt)
   (scroll state dt (: world :getRect state.selected))
   ;; controls
-  (let [dt2 (if (love.keyboard.isDown "lshift" "rshift") (* dt 0.1) dt)]
+  (let [dt2 (if (love.keyboard.isDown "lshift" "rshift") (* dt 0.2) dt)]
     (when (= :rover state.selected.type)
       (move-rover dt2 set-mode))
     (when (= :probe state.selected.type)

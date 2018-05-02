@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="96" height="64" tilewidth="20" tileheight="20" nextobjectid="124">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="96" height="64" tilewidth="20" tileheight="20" nextobjectid="125">
  <tileset firstgid="1" name="hard-vacuum" tilewidth="20" tileheight="20" tilecount="1248" columns="32">
   <image source="assets/hard-vacuum.png" trans="008a76" width="640" height="780"/>
   <terraintypes>
@@ -665,22 +665,19 @@
    </properties>
   </object>
   <object id="49" gid="1373" x="1460" y="80" width="37" height="45"/>
-  <object id="50" gid="1373" x="1560" y="80" width="37" height="45"/>
-  <object id="51" gid="1373" x="1660" y="80" width="37" height="45"/>
-  <object id="52" gid="1373" x="1760" y="80" width="37" height="45"/>
-  <object id="53" gid="1373" x="1860" y="80" width="37" height="45"/>
+  <object id="50" gid="1373" x="1580" y="80" width="37" height="45"/>
+  <object id="51" gid="1373" x="1700" y="80" width="37" height="45"/>
+  <object id="52" gid="1373" x="1820" y="80" width="37" height="45"/>
   <object id="54" gid="1373" x="1460" y="160" width="37" height="45"/>
-  <object id="55" gid="1373" x="1560" y="160" width="37" height="45"/>
-  <object id="56" gid="1373" x="1660" y="160" width="37" height="45"/>
-  <object id="57" gid="1373" x="1760" y="160" width="37" height="45"/>
-  <object id="58" gid="1373" x="1860" y="160" width="37" height="45"/>
+  <object id="55" gid="1373" x="1580" y="160" width="37" height="45"/>
+  <object id="56" gid="1373" x="1700" y="160" width="37" height="45"/>
+  <object id="57" gid="1373" x="1820" y="160" width="37" height="45"/>
   <object id="71" gid="1373" x="380" y="1200" width="37" height="45"/>
   <object id="75" gid="1395" x="920" y="1040" width="48" height="56"/>
   <object id="84" gid="1378" x="1320" y="1240" width="40" height="52"/>
-  <object id="95" gid="1373" x="1860" y="240" width="37" height="45"/>
-  <object id="96" gid="1373" x="1760" y="240" width="37" height="45"/>
-  <object id="97" gid="1373" x="1660" y="240" width="37" height="45"/>
-  <object id="98" gid="1373" x="1560" y="240" width="37" height="45"/>
+  <object id="96" gid="1373" x="1820" y="240" width="37" height="45"/>
+  <object id="97" gid="1373" x="1700" y="240" width="37" height="45"/>
+  <object id="98" gid="1373" x="1580" y="240" width="37" height="45"/>
   <object id="99" gid="1373" x="1460" y="240" width="37" height="45"/>
   <object id="113" gid="1378" x="1800" y="340" width="40" height="52"/>
   <object id="114" gid="1250" x="540" y="260" width="40" height="61"/>

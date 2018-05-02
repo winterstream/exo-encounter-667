@@ -57,8 +57,6 @@
          (love.graphics.push)
          ;; drawing non-map stuff needs to apply our own translate
          (love.graphics.translate (- state.tx) (- state.ty))
-         (when state.laser
-           (draw-laser state.laser))
          (love.graphics.pop)
          (hud.draw state))
  ;; these layer draw functions get called by the tiled library at the right time
@@ -71,7 +69,9 @@
                                    [(: world :getRect rover)])]
                       (draw-rover rect rover.theta
                                   (= state.selected rover) rover.docked?)))
-                  (draw-probe prect (= state.probe state.selected))))
+                  (draw-probe prect (= state.probe state.selected)))
+                (when state.laser
+                  (draw-laser state.laser)))
  ;; Ideally we could just let the tiled lib draw this, but there seems to be
  ;; no way to change an object's sprite at runtime?
  :draw-sensors (fn [layer]
