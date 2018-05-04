@@ -185,7 +185,7 @@
 
 (defn keypressed [key set-mode]
   (let [f (. keymap key)]
-    (if (= "escape" key)
+    (if (or (= "escape" key) (= "f1" key))
         (set-mode :pause)
         (= (type f) "function")
         (f))))

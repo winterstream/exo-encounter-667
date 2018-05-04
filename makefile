@@ -42,7 +42,8 @@ FLAGS=-a "$(AUTHOR)" --description $(DESCRIPTION) \
 releases/$(NAME)-$(VERSION)-macos.zip: love
 	$(REL) $(FLAGS) -M
 
-mac: releases/$(NAME)-$(VERSION)-macos.zip
-
-windows: love
+releases/$(NAME)-$(VERSION)-win.zip: love
 	$(REL) $(FLAGS) -W32
+
+mac: releases/$(NAME)-$(VERSION)-macos.zip
+windows: releases/$(NAME)-$(VERSION)-win.zip

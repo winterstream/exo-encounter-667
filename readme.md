@@ -3,29 +3,17 @@
 Install [LÖVE](https://love2d.org) version 11.1 and run `love .` in
 this directory.
 
-## Keys
+Downloads for Windows, Macs and GNU/Linux are [available on itch.io](https://technomancy.itch.io/exo-encounter-667).
 
-* *arrows*: navigate
-* *0-4*: select unit
-* *space*: laser
-* *period, comma*: aim
-* *enter*: dock rover
-* *shift*: move/turn slowly
-* *tab*: toggle HUD
-* *f11*: toggle fullscreen
+Press `escape` in the game to see a list of key bindings.
 
 By [Dan Larkin](https://danlarkin.org/) and [Phil Hagelberg](https://technomancy.us).
 
-## Bugs
-
-* Closing a door while a rover is inside it can push the bug into weird places.
-* It won't always autoscroll to units which are along the very bottom.
-
 ## Licenses
 
-Original code, prose, and images copyright © 2018 Dan Larkin, Phil
+Original code, prose, map, and images copyright © 2018 Dan Larkin, Phil
 Hagelberg, Zach Hagelberg, and Noah Hagelberg.
 
-Distributed under the GNU General Public License version 3 or later; see file COPYING.
+Distributed under the GNU General Public License version 3 or later; see file license.txt.
 
 Licensing of third-party art and libraries described in [credits](credits.md)

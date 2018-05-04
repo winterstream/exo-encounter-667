@@ -5,11 +5,42 @@
 * [x] move rovers backwards
 * [x] start the game with the laser aimed backwards
 * [x] draw laser under "high" layer
+* [ ] sound effects
+ * [ ] laser hum
+ * [ ] door opening
+ * [ ] dock/undock
+ * [ ] terminal activation bleep
+* [ ] animate opening of doors
 * [ ] scroll bug
-* [ ] docked rovers draw over walls
 * [ ] number unselected deployed rovers
 * [ ] make the emitter actually look like a satellite dish
 * [ ] give HUD messages transparent bg
-* [ ] sound effects
+
 * [ ] build appimage files
 * [ ] automate uploads to itch.io
+
+# during jam
+
+* [X] rover movement
+* [X] selecting between rovers
+* [X] main probe movement
+* [X] initial area map
+* [-] rocks that can be pushed
+* [X] laser aiming
+* [X] laser reflection
+* [-] russian base map
+* [X] doors
+* [X] terminals
+* [-] reactor with activation
+* [X] tutorial
+* [-] other map elements that can be activated by laser?
+* [X] writing terminal text
+* [X] level design
+* [X] HUD
+* [X] in-game message system
+* [-] writing for russian terminals
+* [X] writing for american terminals
+* [X] end game
+* [X] hold down shift to decrease speed
+* [X] show help text on pause screen
+* [X] beam splitter
