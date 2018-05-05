@@ -1,6 +1,7 @@
 /.unused
 /dest
 /releases
+/appimage/*
 
 draw.lua
 intro.lua

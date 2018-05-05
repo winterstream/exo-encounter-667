@@ -5,6 +5,7 @@
 * [x] move rovers backwards
 * [x] start the game with the laser aimed backwards
 * [x] draw laser under "high" layer
+* [ ] out-of-order tutorial items
 * [ ] sound effects
  * [ ] laser hum
  * [ ] door opening
@@ -16,8 +17,8 @@
 * [ ] make the emitter actually look like a satellite dish
 * [ ] give HUD messages transparent bg
 
-* [ ] build appimage files
-* [ ] automate uploads to itch.io
+* [X] build appimage files
+* [X] automate uploads to itch.io
 
 # during jam
 

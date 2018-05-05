@@ -17,11 +17,7 @@ check: $(OUT)
 	luacheck --std luajit+love+fennel $(OUT)
 
 clean: ; rm -rf releases/* $(OUT)
-
-TEXT ?= first
-
-textview:
-	urxvt -fn "xft:Fixedsys Excelsior 3.01:style=Regular" -e less text/$(TEXT)
+cleansrc: ; rm -rf $(OUT)
 
 %.lua: %.fnl ; lua lib/fennel --compile --correlate $< > $@
 
@@ -39,11 +35,27 @@ REL="$(PWD)/love-release.sh" # https://p.hagelb.org/love-release.sh
 FLAGS=-a "$(AUTHOR)" --description $(DESCRIPTION) \
 	--love 11.1 --url $(URL) --version $(VERSION) --lovefile $(LOVEFILE)
 
-releases/$(NAME)-$(VERSION)-macos.zip: love
+releases/$(NAME)-$(VERSION)-x86_64.AppImage: $(LOVEFILE)
+	cd appimage && ./build.sh 11.1 $(PWD)/$(LOVEFILE)
+	mv appimage/game-x86_64.AppImage $@
+
+releases/$(NAME)-$(VERSION)-macos.zip: $(LOVEFILE)
 	$(REL) $(FLAGS) -M
+	mv releases/EXO_encounter-667-macos.zip $@
 
-releases/$(NAME)-$(VERSION)-win.zip: love
+releases/$(NAME)-$(VERSION)-win.zip: $(LOVEFILE)
 	$(REL) $(FLAGS) -W32
+	mv releases/EXO_encounter-667-win32.zip $@
 
+linux: releases/$(NAME)-$(VERSION)-x86_64.AppImage
 mac: releases/$(NAME)-$(VERSION)-macos.zip
 windows: releases/$(NAME)-$(VERSION)-win.zip
+
+uploadlinux: releases/$(NAME)-$(VERSION)-x86_64.AppImage
+	butler push $^ technomancy/exo-encounter-667:linux
+uploadmac: releases/$(NAME)-$(VERSION)-macos.zip
+	butler push $^ technomancy/exo-encounter-667:mac
+uploadwindows: releases/$(NAME)-$(VERSION)-win.zip
+	butler push $^ technomancy/exo-encounter-667:windows
+
+upload: uploadlinux uploadmac uploadwindows
