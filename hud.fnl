@@ -1,6 +1,6 @@
 (local tutorial (require "tutorial"))
 
-{:draw (fn [state]
+{:draw (fn draw [state]
          (love.graphics.setColor 1 1 1)
          (when (not state.no-hud)
            (when state.probe.stuck?

@@ -6,7 +6,7 @@
 (var lines [])
 (var offset 0)
 
-{:draw (fn []
+{:draw (fn draw []
          (love.graphics.setColor 0.8 0.8 0.8)
          (love.graphics.draw bg 0 0)
          (love.graphics.setColor 0 0.7 0)
@@ -14,12 +14,12 @@
            (love.graphics.print (or (. lines (+ offset i)) "")
                                 16 (- (* i 18) 6))))
  :update (fn [])
- :activate (fn [which]
+ :activate (fn activate [which]
              (love.graphics.setFont font)
              (set offset 0)
              (set lines (lume.split (love.filesystem.read (.. "text/" which))
                                     "\n")))
- :keypressed (fn [key set-mode]
+ :keypressed (fn keypressed [key set-mode]
                (if (= key "up")
                    (set offset (math.max 0 (- offset 1)))
                    (= key "down")

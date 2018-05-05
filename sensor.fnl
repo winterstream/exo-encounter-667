@@ -4,9 +4,9 @@
 
 (local lume (require "lib.lume"))
 
-(defn finder [name] (fn [d] (= d.name name)))
+(fn finder [name] (fn [d] (= d.name name)))
 
-(defn open [map door]
+(fn open [map door]
   ;; we can't use an object from the map directly with the bump world, because
   ;; the map wraps it in another table, so we have to go thru our hacked
   ;; addition to the map which looks up the wrapper and uses that instead.
@@ -14,7 +14,7 @@
     (map.bump_wrap :remove door))
   (set door.properties.open true))
 
-(defn close [map door]
+(fn close [map door]
   ;; TODO: hitbox for momentary doors starts off too small; gets fixed after
   ;; first open/close cycle.
   (when door.properties.open        ; ???
@@ -22,15 +22,15 @@
   ;; TODO: closing door can push you all the way off the map!
   (set door.properties.open false))
 
-(defn on [map item]
+(fn on [map item]
   (set item.properties.on true)
   (when item.properties.door
     (let [d (lume.match map.layers.doors.objects (finder item.properties.door))]
       (open map d))))
 
-{:is? (fn [item] (and item.properties item.properties.sensor))
+{:is? (fn is [item] (and item.properties item.properties.sensor))
  :on on
- :update (fn [_state map _world _dt]
+ :update (fn update [_state map _world _dt]
            (each [_ sensor (ipairs map.layers.sensors.objects)]
              (when sensor.properties.momentary
                (close map (lume.match map.layers.doors.objects

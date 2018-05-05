@@ -2,7 +2,7 @@
 
 (local door-names {})
 
-(fn [map]
+(fn lint [map]
   (each [_ door (ipairs map.layers.doors.objects)]
     (tset door-names door.name true))
   (each [_ sensor (ipairs map.layers.sensors.objects)]

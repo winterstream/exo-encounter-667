@@ -8,7 +8,7 @@
 (local door-img (love.graphics.newImage "assets/door.png"))
 (local door-open-img (love.graphics.newImage "assets/door-open.png"))
 
-(defn draw-rover [rect theta selected? docked?]
+(fn draw-rover [rect theta selected? docked?]
   (let [[corner-x corner-y w] rect
         radius (/ w 2)
         center-x (+ corner-x radius)
@@ -35,19 +35,19 @@
 
 (local offsets [[-5 -5] [25 -5] [25 19] [-5 19]])
 
-(defn docked-rect [prect i]
+(fn docked-rect [prect i]
   (let [[px py] prect
         [ox oy] (. offsets i)]
     [(+ px ox) (+ py oy) 10 10]))
 
-(defn draw-probe [rect selected?]
+(fn draw-probe [rect selected?]
   (if selected?
       (love.graphics.setColor 1 1 1)
       (love.graphics.setColor 0.8 0.8 0.8))
   (let [[x y] rect]
     (love.graphics.draw probe-img (math.floor x) (math.floor y))))
 
-(defn draw-laser [laser]
+(fn draw-laser [laser]
   (love.graphics.setColor 1 0 0)
   (each [_ segment (ipairs laser)]
     (love.graphics.line (unpack segment))))
@@ -61,7 +61,7 @@
          (hud.draw state))
  ;; these layer draw functions get called by the tiled library at the right time
  ;; so other layers can obscure them when necessary
- :draw-player (fn [world state]
+ :draw-player (fn player [world state]
                 (let [prect [(: world :getRect state.probe)]]
                   (each [i rover (ipairs state.rovers)]
                     (let [rect (if rover.docked?
@@ -74,7 +74,7 @@
                   (draw-laser state.laser)))
  ;; Ideally we could just let the tiled lib draw this, but there seems to be
  ;; no way to change an object's sprite at runtime?
- :draw-sensors (fn [layer]
+ :draw-sensors (fn sensors [layer]
                  (each [_ sensor (ipairs layer.objects)]
                    (love.graphics.draw (if (and sensor.properties.momentary
                                                 sensor.properties.on)
@@ -86,7 +86,7 @@
                                            sensor-img)
                                        ;; TODO: why is the y wrong?
                                        sensor.x (- sensor.y sensor.height))))
- :draw-doors (fn [layer]
+ :draw-doors (fn doors [layer]
                (each [_ door (ipairs layer.objects)]
                  (love.graphics.draw (if door.properties.open
                                          door-open-img door-img)

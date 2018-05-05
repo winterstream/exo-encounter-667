@@ -9,7 +9,7 @@
 (local text-speed -8)
 (var counter 0)
 
-{:draw (fn []
+{:draw (fn draw []
          (love.graphics.setColor 0.8 0.8 0.8)
          (love.graphics.draw bg 0 (math.floor (* counter speed)))
          (love.graphics.setColor 1 1 1)
@@ -17,12 +17,12 @@
            (love.graphics.print (or (. lines i) "")
                                 16 (math.floor (+ (* i 18)
                                                   (* counter text-speed))))))
- :activate (fn []
+ :activate (fn activate []
              (love.graphics.setFont font)
              (music.choose :pressure))
- :update (fn [dt]
+ :update (fn update [dt]
            (set counter (math.min (math.max 0 (+ counter dt)) 90)))
- :keypressed (fn [key]
+ :keypressed (fn keypressed [key]
                (if (= key "up")
                    (set counter (- counter 1))
                    (= key "down")

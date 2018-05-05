@@ -46,18 +46,18 @@
 (global m map)
 (global w world)
 
-(defn calculate-new-rover-position [rover dt]
+(fn calculate-new-rover-position [rover dt]
   (let [(x y) (: world :getRect state.selected)
         new-x (+ x (* (math.cos rover.theta) rover-move-speed dt))
         new-y (+ y (* (math.sin rover.theta) rover-move-speed dt))]
     (values new-x new-y)))
 
-(defn within? [item box margin]
+(fn within? [item box margin]
   (let [(x y width height) (: world :getRect item)]
     (and (< (- box.x margin) x (+ x width) (+ (+ box.x box.width) margin))
          (< (- box.y margin) y (+ y height) (+ (+ box.y box.height) margin)))))
 
-(defn terminal-check [cols unit set-mode]
+(fn terminal-check [cols unit set-mode]
   (set state.selected.in-term? false)
   (each [_ col (ipairs cols)]
     (when (and col.other.properties col.other.properties.terminal
@@ -66,13 +66,13 @@
       (when (not unit.in-term-last-tick?)
         (set-mode :term col.other.properties.terminal)))))
 
-(defn collide-filter [_item other]
+(fn collide-filter [_item other]
   (if (or (love.keyboard.isDown "backspace") ; noclip
           (and other.properties other.properties.terminal))
       :cross
       :slide))
 
-(defn move-rover [dt set-mode]
+(fn move-rover [dt set-mode]
   (when (love.keyboard.isDown "left")
     (set state.selected.theta (- state.selected.theta (* 2 dt turn-speed))))
   (when (love.keyboard.isDown "right")
@@ -83,7 +83,7 @@
           (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
       (terminal-check cols state.selected set-mode))))
 
-(defn move-probe [dt set-mode]
+(fn move-probe [dt set-mode]
   (let [left? (if (love.keyboard.isDown "left") 1 0)
         right? (if (love.keyboard.isDown "right") 1 0)
         up? (if (love.keyboard.isDown "up") 1 0)
@@ -103,7 +103,7 @@
         (terminal-check cols state.selected set-mode)))))
 
 ;; there is surely a smarter way to write this but I'm tired and it's late
-(defn scroll [state dt x y]
+(fn scroll [state dt x y]
   ;; TODO: scroll faster when your selected unit is offscreen
   (let [delta (if (love.keyboard.isDown "lctrl" "rctrl" "capslock")
                   (* dt 256)
@@ -117,7 +117,7 @@
     (when (< y (+ state.ty 100))
       (set state.ty (math.max (- state.ty delta) 0)))))
 
-(defn update [dt set-mode]
+(fn update [dt set-mode]
   (set state.probe.stuck? false)
   (let [(ok err) (pcall (fn [] (hud.update state world map dt)))]
     (when (not ok) (print err)))
@@ -145,11 +145,11 @@
   (set state.selected.in-term-last-tick? state.selected.in-term?))
 
 ;; can't move unless 3 or 4 rovers are docked
-(defn enough-docked? [] (< 2 (# (lume.filter state.rovers :docked?))))
+(fn enough-docked? [] (< 2 (# (lume.filter state.rovers :docked?))))
 
 (local offsets [[-10 -10] [20 -10] [20 20] [-10 20]])
 
-(defn deploy [n]
+(fn deploy [n]
   (tset (. state.rovers n) :docked? false)
   (set state.probe.mobile? (enough-docked?))
   (let [diameter 10
@@ -157,7 +157,7 @@
         (px py) (: world :getRect state.probe)]
     (: world :add (. state.rovers n) (+ px ox) (+ py oy) diameter diameter)))
 
-(defn dock []
+(fn dock []
   (let [(x y w h) (: world :getRect state.probe)]
     (when (and (= state.selected.type :rover)
                (within? state.selected {:x x :y y :width w :height h} 12))
@@ -166,7 +166,7 @@
       (: world :remove state.selected)
       (set state.selected state.probe))))
 
-(defn select [n]
+(fn select [n]
   (set state.selected (if n
                           (. state.rovers n)
                           state.probe))
@@ -183,7 +183,7 @@
                :return dock
                :tab (fn [] (set state.no-hud (not state.no-hud)))})
 
-(defn keypressed [key set-mode]
+(fn keypressed [key set-mode]
   (let [f (. keymap key)]
     (if (or (= "escape" key) (= "f1" key))
         (set-mode :pause)

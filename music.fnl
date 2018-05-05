@@ -5,14 +5,14 @@
 
 (var current songs.temple)
 
-(defn toggle []
+(fn toggle []
   (if (love.filesystem.getInfo "mute")
       (do (love.filesystem.remove "mute")
           (: current :play))
       (do (love.filesystem.write "mute" "true")
           (: current :stop))))
 
-(defn choose [name]
+(fn choose [name]
   (: current :stop)
   (set current (. songs name))
   (: current :setLooping true)

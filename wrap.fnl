@@ -7,12 +7,12 @@
 (var scale 2)
 (var mode (require :intro))
 
-(defn set-mode [mode-name ...]
+(fn set-mode [mode-name ...]
   (set mode (require mode-name))
   (when mode.activate
     (mode.activate ...)))
 
-(defn start-repl []
+(fn start-repl []
   (let [code (love.filesystem.read "stdio.fnl")
         lua (if code
                 (love.filesystem.newFileData (fennel.compileString code) "io")
@@ -26,12 +26,12 @@
            (let [(ok val) (pcall fennel.eval input)]
              (: io-channel :push (if ok (view val) val)))))))
 
-(defn love.load []
+(fn love.load []
   (: canvas :setFilter "nearest" "nearest")
   (start-repl)
   (music.choose :temple))
 
-(defn love.draw []
+(fn love.draw []
   (love.graphics.setCanvas canvas)
   (love.graphics.clear)
   (love.graphics.setColor 1 1 1)
@@ -40,10 +40,10 @@
   (love.graphics.setColor 1 1 1)
   (love.graphics.draw canvas 0 0 0 scale scale))
 
-(defn love.update [dt]
+(fn love.update [dt]
   (mode.update dt set-mode))
 
-(defn love.keypressed [key]
+(fn love.keypressed [key]
   (if (and (= key "f11") (= scale 2))
       (let [(dw dh) (love.window.getDesktopDimensions)]
         (love.window.setMode dw dh {:fullscreen true

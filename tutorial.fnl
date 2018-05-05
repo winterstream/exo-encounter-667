@@ -1,13 +1,13 @@
 (local lume (require "lib.lume"))
 (local intro-msgs (lume.split (love.filesystem.read "text/intro") "\n"))
 
-(defn step [state flag check]
+(fn step [state flag check]
   (while (not (or (check state) (. state.flags flag)))
     (coroutine.yield))
   ;; save our progress so we can restart or reload this module
   (tset state.flags flag true))
 
-(defn sensor? [map name]
+(fn sensor? [map name]
   (let [sensor (lume.match map.layers.sensors.objects
                            (fn [s] (= s.name name)))]
     (and sensor sensor.properties.on)))
@@ -27,7 +27,7 @@
       (set counter 0))
     (echo-intro (coroutine.yield))))
 
-(defn tutorial [state world map dt]
+(fn tutorial [state world map dt]
   (echo-intro state world map dt)
   (echo state "Press 2 to select rover 2; bring it near the"
         "main probe and press enter to dock.")
