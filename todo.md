@@ -11,7 +11,7 @@
  * [ ] door opening
  * [ ] dock/undock
  * [ ] terminal activation bleep
-* [ ] animate opening of doors
+* [X] animate opening of doors
 * [ ] scroll bug/speed up
 * [ ] number unselected deployed rovers
 * [ ] make the emitter actually look like a satellite dish

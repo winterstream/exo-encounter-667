@@ -89,8 +89,6 @@
  :draw-doors (fn doors [layer]
                (each [_ door (ipairs layer.objects)]
                  (love.graphics.draw door-below-img door.x (- door.y 21))
-                 (let [y (if door.properties.open
-                             0
-                             (- 21 (* (or door.properties.level 0) 21)))]
+                 (let [y (- 21 (* (or door.properties.level 0) 21))]
                    (love.graphics.draw door-img
                                        door.x (- door.y door.height y)))))}

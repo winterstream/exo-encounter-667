@@ -7,36 +7,66 @@
 (fn finder [name] (fn [d] (= d.name name)))
 
 (fn open [map door]
-  ;; we can't use an object from the map directly with the bump world, because
-  ;; the map wraps it in another table, so we have to go thru our hacked
-  ;; addition to the map which looks up the wrapper and uses that instead.
-  (when (and (not door.properties.open)
-             (map.bump_wrap :hasItem door))
+  ;; we can't use an object from the map directly with the bump world,
+  ;; because the map wraps it in another table, so we have to go thru
+  ;; our hacked addition to the map which looks up the wrapper and
+  ;; uses that instead.
+  (when (map.bump_wrap :hasItem door)
     (map.bump_wrap :remove door))
-  (set door.properties.open true))
+  (set door.properties.level 1)
+  (set door.properties.open true)
+  (set door.properties.opening nil)
+  (set door.properties.closing nil))
 
-(fn close [map door]
+(fn close [_map door]
+  ;; TODO: closing door can push you all the way off the map!
   ;; TODO: hitbox for momentary doors starts off too small; gets fixed after
   ;; first open/close cycle.
-  (when (and door.properties.open
-             (not (map.bump_wrap :hasItem door)))
-                                        ; ???
-    (map.bump_wrap :add door door.x (- door.y 61) door.width 61))
-  ;; TODO: closing door can push you all the way off the map!
-  (set door.properties.open false))
+  (set door.properties.open false)
+  (set door.properties.level 0)
+  (set door.properties.opening nil)
+  (set door.properties.closing nil))
 
 (fn on [map item]
   (set item.properties.on true)
   (when item.properties.door
-    (let [d (lume.match map.layers.doors.objects (finder item.properties.door))]
-      (open map d))))
+    (let [door (lume.match map.layers.doors.objects
+                           (finder item.properties.door))]
+      (set door.properties.opening true)
+      (set door.properties.hit true))))
+
+(fn update-door [map door dt]
+  (when door.properties.opening
+    (set door.properties.level (+ (or door.properties.level 0) dt))
+    (when (> door.properties.level 1)
+      (open map door)))
+  (when door.properties.closing
+    ;; Don't add it back when it finishes closing but when it starts
+    (when (not (map.bump_wrap :hasItem door))
+                                        ; ???
+      (map.bump_wrap :add door door.x (- door.y 61) door.width 61))
+    (set door.properties.level (- (or door.properties.level 1) dt))
+    (when (> 0 door.properties.level)
+      (close map door))))
+
+(fn update-sensor [map sensor]
+  (when sensor.properties.momentary
+    (let [door (lume.match map.layers.doors.objects
+                           (finder sensor.properties.door))]
+      (set door.properties.closing (not door.properties.hit))
+      (when door.properties.closing
+        (set door.properties.opening false))
+      ;; set it to false at the end of the update call; the laser
+      ;; check will happen later this tick, and then we'll check it
+      ;; again in the next tick.
+      (set door.properties.hit false))
+    ;; each momentary sensor starts the tick as off
+    (set sensor.properties.on false)))
 
 {:is? (fn is [item] (and item.properties item.properties.sensor))
  :on on
- :update (fn update [_state map _world _dt]
+ :update (fn update [_state map _world dt]
+           (each [_ door (ipairs map.layers.doors.objects)]
+             (update-door map door dt))
            (each [_ sensor (ipairs map.layers.sensors.objects)]
-             (when sensor.properties.momentary
-               (close map (lume.match map.layers.doors.objects
-                                      (finder sensor.properties.door)))
-               ;; each momentary sensor starts the tick as off
-               (set sensor.properties.on false))))}
+             (update-sensor map sensor)))}
