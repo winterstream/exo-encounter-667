@@ -10,14 +10,17 @@
   ;; we can't use an object from the map directly with the bump world, because
   ;; the map wraps it in another table, so we have to go thru our hacked
   ;; addition to the map which looks up the wrapper and uses that instead.
-  (when (not door.properties.open)
+  (when (and (not door.properties.open)
+             (map.bump_wrap :hasItem door))
     (map.bump_wrap :remove door))
   (set door.properties.open true))
 
 (fn close [map door]
   ;; TODO: hitbox for momentary doors starts off too small; gets fixed after
   ;; first open/close cycle.
-  (when door.properties.open        ; ???
+  (when (and door.properties.open
+             (not (map.bump_wrap :hasItem door)))
+                                        ; ???
     (map.bump_wrap :add door door.x (- door.y 61) door.width 61))
   ;; TODO: closing door can push you all the way off the map!
   (set door.properties.open false))

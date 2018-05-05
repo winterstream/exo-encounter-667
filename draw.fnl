@@ -5,8 +5,8 @@
 (local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
 (local sensor-m-on-img (love.graphics.newImage "assets/sensor-m-on.png"))
 (local sensor-m-img (love.graphics.newImage "assets/sensor-m.png"))
-(local door-img (love.graphics.newImage "assets/door.png"))
-(local door-open-img (love.graphics.newImage "assets/door-open.png"))
+(local door-below-img (love.graphics.newImage "assets/door-below.png"))
+(local door-img (love.graphics.newImage "assets/door-open.png"))
 
 (fn draw-rover [rect theta selected? docked?]
   (let [[corner-x corner-y w] rect
@@ -88,8 +88,9 @@
                                        sensor.x (- sensor.y sensor.height))))
  :draw-doors (fn doors [layer]
                (each [_ door (ipairs layer.objects)]
-                 (love.graphics.draw (if door.properties.open
-                                         door-open-img door-img)
-                                     door.x (if door.properties.open
-                                                (- door.y door.height)
-                                                (- door.y door.height 21)))))}
+                 (love.graphics.draw door-below-img door.x (- door.y 21))
+                 (let [y (if door.properties.open
+                             0
+                             (- 21 (* (or door.properties.level 0) 21)))]
+                   (love.graphics.draw door-img
+                                       door.x (- door.y door.height y)))))}
