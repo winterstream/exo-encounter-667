@@ -1,7 +1,7 @@
 (local songs {:temple (love.audio.newSource "assets/GalacticTemple.ogg"
                                             "stream")
-              :bazaar (love.audio.newSource "assets/bazaarnet.ogg"
-                                            "stream")})
+              :pressure (love.audio.newSource "assets/Pressure.ogg"
+                                              "stream")})
 
 (var current songs.temple)
 

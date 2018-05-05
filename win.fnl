@@ -19,7 +19,7 @@
                                                   (* counter text-speed))))))
  :activate (fn []
              (love.graphics.setFont font)
-             (music.choose :bazaar))
+             (music.choose :pressure))
  :update (fn [dt]
            (set counter (math.min (math.max 0 (+ counter dt)) 90)))
  :keypressed (fn [key]
