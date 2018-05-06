@@ -39,22 +39,27 @@
         "activated by holding space. Comma and"
         "period change the aim of the laser.")
   (step state :laser (fn []
-                       (or (and state.laser
-                                (~= state.selected.theta math.pi))
-                                (> (: world :getRect state.selected) 730)
-                                (sensor? map "first"))))
+                       (or (and state.laser (~= state.selected.theta math.pi))
+                           (sensor? map "first")
+                           (sensor? map "second")
+                           (sensor? map "third"))))
   (echo state "SENSORS: detected nearby structure to"
         "the north which may react to the laser.")
-  (step state :first-sensor (fn [] (or (> (: world :getRect state.selected) 730)
-                                       (sensor? map "first"))))
+  (step state :first-sensor (fn [] (or (sensor? map "first")
+                                       (sensor? map "second")
+                                       (sensor? map "third"))))
   (echo state "MISSION: proceed thru the door and"
         "investigate signs of civilization.")
-  (step state :gap (fn [] (> (: world :getRect state.selected) 730)))
+  (step state :gap (fn [] (or (> (: world :getRect state.selected) 730)
+                              (sensor? map "second")
+                              (sensor? map "third"))))
   (echo state "DEPLOY: press 2 to deploy a rover to"
         "investigate the gap in the north wall.")
   (step state :gap2 (fn []
                       (let [(x y) (: world :getRect state.selected)]
-                        (and (> x 720) (< y 1050)))))
+                        (or (and (> x 720) (< y 1050))
+                            (sensor? map "second")
+                            (sensor? map "third")))))
   (echo state "REFLECT: aim the laser at the rover to"
         "target the obscured sensor.")
   (step state :second-sensor (fn [] (or (> (: world :getRect state.selected)
