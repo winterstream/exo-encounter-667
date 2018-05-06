@@ -1,6 +1,8 @@
+(local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
 (local tutorial (require "tutorial"))
 
 {:draw (fn draw [state]
+         (love.graphics.setFont font)
          (love.graphics.setColor 1 1 1)
          (when (not state.no-hud)
            (when state.probe.stuck?

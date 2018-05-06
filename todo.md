@@ -14,7 +14,7 @@
  * [ ] terminal activation bleep
 * [X] animate opening of doors
 * [ ] scroll bug/speed up
-* [ ] number unselected deployed rovers
+* [X] number unselected deployed rovers
 * [ ] make the emitter actually look like a satellite dish
 * [ ] give HUD messages transparent bg
 

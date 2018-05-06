@@ -1,5 +1,7 @@
 (local hud (require "hud"))
 
+(local small-font (love.graphics.newFont "assets/FSEX300.ttf" 12))
+
 (local probe-img (love.graphics.newImage "assets/probe.png"))
 (local sensor-img (love.graphics.newImage "assets/sensor.png"))
 (local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
@@ -33,6 +35,11 @@
           py2 (- center-y (* (math.sin perpendicular) radius 0.8))]
       (love.graphics.line px1 py1 px2 py2))))
 
+(fn label-rover [world rover number selected?]
+  (when (and (not selected?) (not rover.docked?))
+    (let [(x y) (: world :getRect rover)]
+      (love.graphics.print number (+ x 2) (- y 2)))))
+
 (local offsets [[-5 -5] [25 -5] [25 19] [-5 19]])
 
 (fn docked-rect [prect i]
@@ -52,11 +59,15 @@
   (each [_ segment (ipairs laser)]
     (love.graphics.line (unpack segment))))
 
-{:draw (fn [map _world state]
+{:draw (fn [map world state]
          (: map :draw (- state.tx) (- state.ty))
          (love.graphics.push)
          ;; drawing non-map stuff needs to apply our own translate
          (love.graphics.translate (- state.tx) (- state.ty))
+         (love.graphics.setColor 1 1 1)
+         (love.graphics.setFont small-font)
+         (each [i rover (ipairs state.rovers)]
+           (label-rover world rover i (= rover state.selected)))
          (love.graphics.pop)
          (hud.draw state))
  ;; these layer draw functions get called by the tiled library at the right time
