@@ -6,6 +6,7 @@
 * [x] start the game with the laser aimed backwards
 * [x] draw laser under "high" layer
 * [ ] out-of-order tutorial items
+* [x] immobilize rovers that get stuck in doors
 * [ ] sound effects
  * [ ] laser hum
  * [ ] door opening

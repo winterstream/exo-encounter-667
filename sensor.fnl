@@ -6,13 +6,26 @@
 
 (fn finder [name] (fn [d] (= d.name name)))
 
-(fn open [map door]
+;; when a rover gets stuck in a door that's closed, set immobilized?
+(fn immobilize [map world door]
+  (let [(x y w h) (map.bump_wrap :getRect door)
+        items (: world :queryRect x y w h)]
+    (each [_ item (ipairs items)]
+      (when (= :rover item.type)
+        (set item.immobilized? true)))))
+
+(fn open [map world door]
   ;; we can't use an object from the map directly with the bump world,
   ;; because the map wraps it in another table, so we have to go thru
   ;; our hacked addition to the map which looks up the wrapper and
   ;; uses that instead.
   (when (map.bump_wrap :hasItem door)
-    (map.bump_wrap :remove door))
+    (let [(x y w h) (map.bump_wrap :getRect door)
+          items (: world :queryRect x y w h)]
+      (map.bump_wrap :remove door)
+      (each [_ item (ipairs items)]
+        (when (= :rover item.type)
+          (set item.immobilized? false)))))
   (set door.properties.level 1)
   (set door.properties.open true)
   (set door.properties.opening nil)
@@ -20,8 +33,6 @@
 
 (fn close [_map door]
   ;; TODO: closing door can push you all the way off the map!
-  ;; TODO: hitbox for momentary doors starts off too small; gets fixed after
-  ;; first open/close cycle.
   (set door.properties.open false)
   (set door.properties.level 0)
   (set door.properties.opening nil)
@@ -35,16 +46,17 @@
       (set door.properties.opening true)
       (set door.properties.hit true))))
 
-(fn update-door [map door dt]
+(fn update-door [map world door dt]
   (when door.properties.opening
     (set door.properties.level (+ (or door.properties.level 0) dt))
     (when (> door.properties.level 1)
-      (open map door)))
+      (open map world door)))
   (when door.properties.closing
     ;; Don't add it back when it finishes closing but when it starts
     (when (not (map.bump_wrap :hasItem door))
                                         ; ???
-      (map.bump_wrap :add door door.x (- door.y 61) door.width 61))
+      (map.bump_wrap :add door door.x (- door.y 61) door.width 61)
+      (immobilize map world door))
     (set door.properties.level (- (or door.properties.level 1) dt))
     (when (> 0 door.properties.level)
       (close map door))))
@@ -65,8 +77,8 @@
 
 {:is? (fn is [item] (and item.properties item.properties.sensor))
  :on on
- :update (fn update [_state map _world dt]
+ :update (fn update [_state map world dt]
            (each [_ door (ipairs map.layers.doors.objects)]
-             (update-door map door dt))
+             (update-door map world door dt))
            (each [_ sensor (ipairs map.layers.sensors.objects)]
              (update-sensor map sensor)))}
