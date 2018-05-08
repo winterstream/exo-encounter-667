@@ -1,8 +1,8 @@
-(local view (require "lib.fennelview"))
+(local repl (require "lib.stdio"))
 (local (w h) (values (/ 1440 2) (/ 900 2)))
 (local canvas (love.graphics.newCanvas w h))
 
-(local music (require "music"))
+(local sound (require "sound"))
 
 (var scale 2)
 (var mode (require :intro))
@@ -12,24 +12,10 @@
   (when mode.activate
     (mode.activate ...)))
 
-(fn start-repl []
-  (let [code (love.filesystem.read "stdio.fnl")
-        lua (if code
-                (love.filesystem.newFileData (fennel.compileString code) "io")
-                (love.filesystem.read "stdio.lua"))
-        thread (love.thread.newThread lua)
-        io-channel (love.thread.newChannel)]
-    ;; this thread will send "eval" events for us to consume:
-    (: thread :start "eval" io-channel)
-    (set love.handlers.eval
-         (fn [input]
-           (let [(ok val) (pcall fennel.eval input)]
-             (: io-channel :push (if ok (view val) val)))))))
-
 (fn love.load []
   (: canvas :setFilter "nearest" "nearest")
-  (start-repl)
-  (music.choose :temple))
+  (repl.start)
+  (sound.play :temple))
 
 (fn love.draw []
   (love.graphics.setCanvas canvas)
@@ -61,7 +47,7 @@
       ;; (= key "f5") (set-mode :win)
 
       (love.keyboard.isDown "m")
-      (music.toggle)
+      (sound.toggle)
 
       :else
       (mode.keypressed key set-mode)))

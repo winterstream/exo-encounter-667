@@ -3,6 +3,7 @@
 ;; a "door" property which corresponds to the name of a door object.
 
 (local lume (require "lib.lume"))
+(local sound (require "sound"))
 
 (fn finder [name] (fn [d] (= d.name name)))
 
@@ -26,23 +27,19 @@
       (each [_ item (ipairs items)]
         (when (= :rover item.type)
           (set item.immobilized? false)))))
-  (set door.properties.level 1)
-  (set door.properties.open true)
-  (set door.properties.opening nil)
-  (set door.properties.closing nil))
+  (lume.extend door.properties
+               {:level 1 :open true :closing false :opening false}))
 
 (fn close [_map door]
-  ;; TODO: closing door can push you all the way off the map!
-  (set door.properties.open false)
-  (set door.properties.level 0)
-  (set door.properties.opening nil)
-  (set door.properties.closing nil))
+  (lume.extend door.properties
+               {:level 0 :open false :closing false :opening false}))
 
 (fn on [map item]
   (set item.properties.on true)
   (when item.properties.door
     (let [door (lume.match map.layers.doors.objects
                            (finder item.properties.door))]
+      (sound.play :door)
       (set door.properties.opening true)
       (set door.properties.hit true))))
 
@@ -67,6 +64,8 @@
                            (finder sensor.properties.door))]
       (set door.properties.closing (not door.properties.hit))
       (when door.properties.closing
+        (when door.properties.open
+          (sound.play :door))
         (set door.properties.opening false))
       ;; set it to false at the end of the update call; the laser
       ;; check will happen later this tick, and then we'll check it
@@ -78,7 +77,12 @@
 {:is? (fn is [item] (and item.properties item.properties.sensor))
  :on on
  :update (fn update [_state map world dt]
+           (var in-motion? false)
            (each [_ door (ipairs map.layers.doors.objects)]
-             (update-door map world door dt))
+             (update-door map world door dt)
+             (when (or door.properties.opening door.properties.closing)
+               (set in-motion? true)))
+           (when (not in-motion?)
+             (sound.stop :door))
            (each [_ sensor (ipairs map.layers.sensors.objects)]
              (update-sensor map sensor)))}

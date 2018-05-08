@@ -6,6 +6,7 @@
 (local laser (require "laser"))
 (local sensor (require "sensor"))
 (local lint (require "lint"))
+(local sound (require "sound"))
 
 (local map (lint (tiled "map.lua" ["bump"])))
 (local world (bump.newWorld))
@@ -135,6 +136,9 @@
       (when (love.keyboard.isDown "." "v")
         (set state.probe.theta (+ state.probe.theta (* dt2 turn-speed))))))
   (sensor.update state map world dt)
+  (if (love.keyboard.isDown "space")
+      (sound.play :laser)
+      (sound.stop :laser))
   (set state.laser (and (love.keyboard.isDown "space")
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))
@@ -153,6 +157,7 @@
 (fn deploy [n]
   (tset (. state.rovers n) :docked? false)
   (set state.probe.mobile? (enough-docked?))
+  (sound.play :dock)
   (let [diameter 10
         [ox oy] (. offsets n)
         (px py) (: world :getRect state.probe)]
@@ -162,6 +167,7 @@
   (let [(x y w h) (: world :getRect state.probe)]
     (when (and (= state.selected.type :rover)
                (within? state.selected {:x x :y y :width w :height h} 12))
+      (sound.play :dock)
       (set state.selected.docked? true)
       (set state.probe.mobile? (enough-docked?))
       (: world :remove state.selected)

@@ -1,5 +1,5 @@
 (local lume (require "lib.lume"))
-(local music (require "music"))
+(local sound (require "sound"))
 
 (local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
 (local bg (love.graphics.newImage "assets/win.jpg"))
@@ -19,7 +19,8 @@
                                                   (* counter text-speed))))))
  :activate (fn activate []
              (love.graphics.setFont font)
-             (music.choose :pressure))
+             (sound.stop :temple)
+             (sound.play :pressure))
  :update (fn update [dt]
            (set counter (math.min (math.max 0 (+ counter dt)) 90)))
  :keypressed (fn keypressed [key]

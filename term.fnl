@@ -1,4 +1,5 @@
 (local lume (require "lib.lume"))
+(local sound (require "sound"))
 
 (local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
 (local bg (love.graphics.newImage "assets/term.bmp"))
@@ -16,6 +17,7 @@
  :update (fn [])
  :activate (fn activate [which]
              (love.graphics.setFont font)
+             (sound.play :chirp)
              (set offset 0)
              (set lines (lume.split (love.filesystem.read (.. "text/" which))
                                     "\n")))

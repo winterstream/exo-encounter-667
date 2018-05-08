@@ -7,17 +7,17 @@
 * [x] draw laser under "high" layer
 * [x] out-of-order tutorial items
 * [x] immobilize rovers that get stuck in doors
-* [ ] sound effects
- * [ ] laser hum
- * [ ] door opening
- * [ ] dock/undock
- * [ ] terminal activation bleep
+* [x] sound effects
+ * [x] laser hum (13599? 51265)
+ * [x] door opening (57560)
+ * [x] dock/undock (2110)
+ * [x] terminal activation bleep
 * [X] animate opening of doors
 * [ ] scroll bug/speed up
 * [X] number unselected deployed rovers
 * [ ] make the emitter actually look like a satellite dish
 * [ ] give HUD messages transparent bg
-
+* [ ] a few more screenshots
 * [X] build appimage files
 * [X] automate uploads to itch.io
 
