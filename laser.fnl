@@ -42,10 +42,8 @@
     (if x (values x y (normalize-angle inbound-theta mirror-theta)))))
 
 (fn split [fire x y hit theta state world map segments ignore limit]
-  (let [cx (/ (+ hit.x1 hit.x2) 2)
-        cy (/ (+ hit.y1 hit.y2) 2)
-        theta1 (+ theta (/ math.pi 4))
-        theta2 (- theta (/ math.pi 4))]
+  (let [cx (/ (+ hit.x1 hit.x2) 2) cy (/ (+ hit.y1 hit.y2) 2)
+        theta1 (+ theta (/ math.pi 4)) theta2 (- theta (/ math.pi 4))]
     (table.insert segments [x y cx cy])
     (fire cx cy theta1 state world map segments ignore limit)
     (fire cx cy theta2 state world map segments ignore limit)))

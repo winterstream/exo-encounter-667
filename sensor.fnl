@@ -69,8 +69,7 @@
       ;; begin to close, if not hit
       (set door.properties.closing (not door.properties.hit))
       (when door.properties.closing
-        (when door.properties.open
-          (sound.play :door))
+        (when door.properties.open (sound.play :door))
         (set door.properties.opening false))
       ;; set hit to false at the end of the update call; the laser
       ;; check will happen later this tick, and then we'll check it
@@ -87,7 +86,6 @@
              (update-door map world door dt)
              (when (or door.properties.opening door.properties.closing)
                (set in-motion? true)))
-           (when (not in-motion?)
-             (sound.stop :door))
+           (when (not in-motion?) (sound.stop :door))
            (each [_ sensor (ipairs map.layers.sensors.objects)]
              (update-sensor map sensor)))}

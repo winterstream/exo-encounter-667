@@ -8,9 +8,14 @@
 (local sounds
        {:temple (love.audio.newSource "assets/GalacticTemple.ogg" "stream")
         :pressure (love.audio.newSource "assets/Pressure.ogg" "stream")
-        :chirp (make 38577)
-        :laser (make 13599)
-        :door (make 57560)})
+        :chirp (make 38577) :door (make 57560)})
+
+(set sounds.laser (let [s (sfxr.newSound)]
+                    (: s :randomize 65505)
+                    (set s.envelope.decay 0.1)
+                    (set s.envelope.punch 0.1)
+                    (set s.volume.master 0.15)
+                    (love.audio.newSource (: s :generateSoundData))))
 
 (: sounds.laser :setLooping true)
 (: sounds.door :setLooping true)
