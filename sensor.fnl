@@ -12,7 +12,7 @@
   (let [(x y w h) (map.bump_wrap :getRect door)
         items (: world :queryRect x y w h)]
     (each [_ item (ipairs items)]
-      (when (= :rover item.type)
+      (when (or (= :rover item.type) (= :probe item.type))
         (set item.immobilized? true)))))
 
 (fn open [map world door]
@@ -25,7 +25,7 @@
           items (: world :queryRect x y w h)]
       (map.bump_wrap :remove door)
       (each [_ item (ipairs items)]
-        (when (= :rover item.type)
+        (when (or (= :rover item.type) (= :probe item.type))
           (set item.immobilized? false)))))
   (lume.extend door.properties
                {:level 1 :open true :closing false :opening false}))

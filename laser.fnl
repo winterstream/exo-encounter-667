@@ -8,10 +8,12 @@
 
 (fn splitter? [item] (and item.properties item.properties.splitter))
 
-(fn transparent? [item]
+(fn transparent? [state item]
   (let [layer-name (and item.layer item.layer.name)]
-    (or (= layer-name :obstacles)
-        (= layer-name :terms))))
+    (or (= layer-name :obstacles) (= layer-name :terms)
+        ;; if you've trapped the probe, allow laser to go thru the doors,
+        ;; otherwise you'll be trapped forever and that would be sad.
+        (and state.probe.immobilized? (= layer-name :doors)))))
 
 ;; a line segment for the mirror of a rover
 (fn mirror-segment [world rover mirror-theta]
@@ -39,16 +41,16 @@
     ;; just because the laser crossed the body doesn't mean it hit mirror
     (if x (values x y (normalize-angle inbound-theta mirror-theta)))))
 
-(fn split [fire x y hit theta world map segments ignore limit]
+(fn split [fire x y hit theta state world map segments ignore limit]
   (let [cx (/ (+ hit.x1 hit.x2) 2)
         cy (/ (+ hit.y1 hit.y2) 2)
         theta1 (+ theta (/ math.pi 4))
         theta2 (- theta (/ math.pi 4))]
     (table.insert segments [x y cx cy])
-    (fire cx cy theta1 world map segments ignore limit)
-    (fire cx cy theta2 world map segments ignore limit)))
+    (fire cx cy theta1 state world map segments ignore limit)
+    (fire cx cy theta2 state world map segments ignore limit)))
 
-{:fire (fn fire [x y theta world map segments ignore limit]
+{:fire (fn fire [x y theta state world map segments ignore limit]
          (let [far-x (+ x (* (math.cos theta) range))
                far-y (+ y (* (math.sin theta) range))
                filter (fn [item] (not (lume.find ignore item)))
@@ -59,12 +61,13 @@
                                                        theta hit.item)]
                      (if theta2
                          (do (table.insert segments [x y new-x new-y])
-                             (fire new-x new-y theta2 world map segments
+                             (fire new-x new-y theta2 state world map segments
                                    [hit.item] (- limit 1)))
                          (do (table.insert ignore hit.item)
-                             (fire x y theta world map segments ignore limit))))
+                             (fire x y theta state world map segments
+                                   ignore limit))))
                    (splitter? hit.item)
-                   (split fire x y hit theta world map segments
+                   (split fire x y hit theta state world map segments
                           [hit.item] (- limit 2))
 
                    (and hit.item hit.item.properties hit.item.properties.emitter)
@@ -75,9 +78,9 @@
                        (table.insert segments [x y hit.x1 hit.y1])
                        segments)
 
-                   (transparent? hit.item)
+                   (transparent? state hit.item)
                    (do (table.insert ignore hit.item)
-                       (fire x y theta world map segments ignore limit))
+                       (fire x y theta state world map segments ignore limit))
 
                    (do (table.insert segments [x y hit.x1 hit.y1])
                        segments))

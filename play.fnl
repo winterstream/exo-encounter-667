@@ -11,7 +11,7 @@
 (local map (lint (tiled "map.lua" ["bump"])))
 (local world (bump.newWorld))
 
-(local state {:tx 200 :ty (if (os.getenv "QUICK") 1024 500)
+(local state {:tx 200 :ty 500
               :rovers [{:theta 0 :docked? true :type :rover}
                        {:theta 3 :docked? false :type :rover}
                        {:theta 2 :docked? false :type :rover}
@@ -19,7 +19,9 @@
               :probe {:theta math.pi :type :probe :rovers []}
               :flags {}
               :messages []
-              :echo (fn [s msg] (table.insert s.messages 1 msg))})
+              :echo (fn [s msg] (table.insert s.messages 1 msg))
+              ;; for repl debugging
+              :map map :world world})
 
 (: map :bump_init world)
 (: world :add state.probe 105 1205 30 24)
@@ -44,8 +46,6 @@
 
 ;; so we can access these thru the repl
 (global s state)
-(global m map)
-(global w world)
 
 (fn calculate-new-rover-position [rover dt]
   (let [(x y) (: world :getRect state.selected)
@@ -143,7 +143,7 @@
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))
                                       (+ y (/ h 2) -6)
-                                      state.probe.theta world map
+                                      state.probe.theta state world map
                                       [] [state.probe] 64))))
   (when (= :win state.laser)
     (set-mode :win))
