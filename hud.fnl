@@ -6,10 +6,11 @@
          (love.graphics.setColor 1 1 1)
          (when (not state.no-hud)
            (when state.probe.stuck?
-             (love.graphics.print "immobile; dock at least 3 rovers" 26 4))
+             (love.graphics.print "Immobile; dock at least 3 rovers" 26 4))
            (for [i 1 5] ; show the most recent 5 messages
              (love.graphics.print (or (. state.messages i) "")
                                   10 (- 213 (* 18 i))))
+           ;; rover deploy indicators
            (each [i rover (ipairs state.rovers)]
              (if (= state.selected rover)
                  (love.graphics.setColor 0.7 1 0.7)
@@ -20,6 +21,7 @@
                (love.graphics.rectangle "line" x (- y 2) w w)
                (love.graphics.print (tostring i) 6 y)))
            (love.graphics.rectangle "line" 4 105 18 18)
+           ;; laser aiming vector
            (love.graphics.setColor 1 0 0)
            (let [lx (+ 13 (* (math.cos state.probe.theta) 8))
                  ly (+ 114 (* (math.sin state.probe.theta) 8))]

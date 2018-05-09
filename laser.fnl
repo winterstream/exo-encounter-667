@@ -1,7 +1,7 @@
 (local lume (require "lib.lume"))
 (local intersect (require "lib.intersect"))
 (local sensor (require "sensor"))
-;; this is the max range only for each segment individually; no total limit
+;; this is the max range only for each segment individually; not a total limit
 (local range 512)
 
 (fn reflective? [item] (= item.type :rover))
@@ -50,39 +50,52 @@
     (fire cx cy theta1 state world map segments ignore limit)
     (fire cx cy theta2 state world map segments ignore limit)))
 
+;; yeouch; this function is out of control. sorry, I guess?
 {:fire (fn fire [x y theta state world map segments ignore limit]
          (let [far-x (+ x (* (math.cos theta) range))
                far-y (+ y (* (math.sin theta) range))
                filter (fn [item] (not (lume.find ignore item)))
                [hit] (: world :querySegmentWithCoords x y far-x far-y filter)]
-           (if (and hit (> limit 0))
-               (if (reflective? hit.item)
-                   (let [(new-x new-y theta2) (reflect world x y hit.x2 hit.y2
-                                                       theta hit.item)]
-                     (if theta2
-                         (do (table.insert segments [x y new-x new-y])
-                             (fire new-x new-y theta2 state world map segments
-                                   [hit.item] (- limit 1)))
-                         (do (table.insert ignore hit.item)
-                             (fire x y theta state world map segments
-                                   ignore limit))))
-                   (splitter? hit.item)
-                   (split fire x y hit theta state world map segments
-                          [hit.item] (- limit 2))
 
-                   (and hit.item hit.item.properties hit.item.properties.emitter)
-                   :win
-
-                   (sensor.is? hit.item)
-                   (do (sensor.on map hit.item)
-                       (table.insert segments [x y hit.x1 hit.y1])
-                       segments)
-
-                   (transparent? state hit.item)
-                   (do (table.insert ignore hit.item)
-                       (fire x y theta state world map segments ignore limit))
-
-                   (do (table.insert segments [x y hit.x1 hit.y1])
-                       segments))
+           (if (or (not hit) (<= limit 0))
+               ;; we have to put a limit on how many times we'll
+               ;; reflect to avoid infinite loops
                (do (table.insert segments [x y far-x far-y])
+                   segments)
+
+               ;; did we hit a mirror?
+               (reflective? hit.item)
+               (let [(new-x new-y theta2) (reflect world x y hit.x2 hit.y2
+                                                   theta hit.item)]
+                 (if theta2
+                     (do (table.insert segments [x y new-x new-y])
+                         (fire new-x new-y theta2 state world map segments
+                               [hit.item] (- limit 1)))
+                     (do (table.insert ignore hit.item)
+                         (fire x y theta state world map segments
+                               ignore limit))))
+
+               ;; did we hit a splitter?
+               (splitter? hit.item)
+               (split fire x y hit theta state world map segments
+                      [hit.item] (- limit 2))
+
+               ;; should we trigger a door opening?
+               (sensor.is? hit.item)
+               (do (sensor.on map hit.item)
+                   (table.insert segments [x y hit.x1 hit.y1])
+                   segments)
+
+               ;; ignore the hit if it's transparent; maybe this
+               ;; should be handled in the filter function instead?
+               (transparent? state hit.item)
+               (do (table.insert ignore hit.item)
+                   (fire x y theta state world map segments ignore limit))
+
+               ;; did we just win the whole game?
+               (and hit.item hit.item.properties hit.item.properties.emitter)
+               :win
+
+               ;; if we hit a normal object.
+               (do (table.insert segments [x y hit.x1 hit.y1])
                    segments))))}

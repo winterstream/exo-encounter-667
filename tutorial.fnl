@@ -8,15 +8,15 @@
   (tset state.flags flag true))
 
 (fn sensor? [map name]
-  (let [sensor (lume.match map.layers.sensors.objects
-                           (fn [s] (= s.name name)))]
+  (let [sensor (lume.match map.layers.sensors.objects (fn [s] (= s.name name)))]
     (and sensor sensor.properties.on)))
 
 (var counter 0)
 
 (fn echo [state ...]
   (let [msgs [...]]
-    (while (< (# msgs) 5) (table.insert msgs 1 ""))
+    (while (< (# msgs) 5)
+      (table.insert msgs 1 ""))
     (lume.map msgs (fn [m] (: state :echo m)))))
 
 (fn echo-intro [state _world _map dt]
@@ -29,7 +29,7 @@
 
 (fn tutorial [state world map dt]
   (echo-intro state world map dt)
-  (set state.intro-complete? true) ;; we can scroll quickly now
+  (set state.intro-complete? true) ; we can scroll quickly now
   (echo state "Press 2 to select rover 2; bring it near"
         "the main probe and press enter to dock.")
   (step state :first-dock (fn [] (. state.rovers 2 :docked?)))

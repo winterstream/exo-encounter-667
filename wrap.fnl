@@ -1,3 +1,4 @@
+;; This module contains non-game-specific bits and mode-changing logic.
 (local repl (require "lib.stdio"))
 (local (w h) (values (/ 1440 2) (/ 900 2)))
 (local canvas (love.graphics.newCanvas w h))

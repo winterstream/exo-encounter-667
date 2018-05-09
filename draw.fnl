@@ -17,8 +17,8 @@
         center-y (+ corner-y radius)
         x2 (+ center-x (* (math.cos theta) radius))
         y2 (+ center-y (* (math.sin theta) radius))]
-    (love.graphics.setColor 0 0 0)
     (when (not docked?)
+      (love.graphics.setColor 0 0 0)
       (love.graphics.circle "line" center-x center-y radius))
     (if selected?
       (love.graphics.setColor 0.5 0.5 0.5)
@@ -59,7 +59,7 @@
   (each [_ segment (ipairs laser)]
     (love.graphics.line (unpack segment))))
 
-{:draw (fn [map world state]
+{:draw (fn draw [map world state]
          (: map :draw (- state.tx) (- state.ty))
          (love.graphics.push)
          ;; drawing non-map stuff needs to apply our own translate
@@ -95,7 +95,7 @@
                                            sensor.properties.on
                                            sensor-on-img
                                            sensor-img)
-                                       ;; TODO: why is the y wrong?
+                                       ;;       HUH: why is the y wrong?
                                        sensor.x (- sensor.y sensor.height))))
  :draw-doors (fn doors [layer]
                (each [_ door (ipairs layer.objects)]

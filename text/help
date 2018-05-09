@@ -8,5 +8,5 @@ tab: toggle HUD
 
 M: toggle music
 f11: toggle fullscreen
-escape: toggle pause
-ctrl: scroll quickly
+escape: toggle pause/help
+

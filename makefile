@@ -14,6 +14,7 @@ run: $(OUT) ; love .
 count: ; cloc *.fnl --force-lang=clojure
 
 check: $(OUT)
+	grep '.\{81\}' *fnl || true
 	luacheck --std luajit+love+fennel $(OUT)
 
 clean: ; rm -rf releases/* $(OUT)

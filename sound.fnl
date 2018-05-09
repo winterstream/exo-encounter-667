@@ -8,19 +8,21 @@
 (local sounds
        {:temple (love.audio.newSource "assets/GalacticTemple.ogg" "stream")
         :pressure (love.audio.newSource "assets/Pressure.ogg" "stream")
-        :chirp (make 38577) :laser (make 13599)
-        :dock (make 2110) :door (make 57560)})
+        :chirp (make 38577)
+        :laser (make 13599)
+        :door (make 57560)})
 
 (: sounds.laser :setLooping true)
 (: sounds.door :setLooping true)
 (: sounds.temple :setLooping true)
 
-(fn toggle []
+(fn toggle [name]
   (if (love.filesystem.getInfo "mute")
       (do (love.filesystem.remove "mute")
-          (: sounds.temple :play))
+          (: (. sounds (or name :temple)) :play))
       (do (love.filesystem.write "mute" "true")
-          (: sounds.temple :stop))))
+          (each [_ sound (pairs sounds)]
+            (: sound :pause)))))
 
 {:toggle toggle
  :play (fn play [name]

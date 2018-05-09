@@ -17,8 +17,8 @@
                        {:theta 2 :docked? false :type :rover}
                        {:theta 0 :docked? true :type :rover}]
               :probe {:theta math.pi :type :probe :rovers []}
-              :flags {}
-              :messages []
+              :flags {} ; for tutorial progression
+              :messages [] ; for hud
               :echo (fn [s msg] (table.insert s.messages 1 msg))
               ;; for repl debugging
               :map map :world world})
@@ -34,6 +34,7 @@
 
 (set state.selected state.probe)
 
+;; set up custom layers which aren't preloaded in the map
 (let [layer (: map :addCustomLayer "player" 8)]
   (set layer.sprites [(unpack state.rovers)])
   (tset layer.sprites 0 state.probe)
@@ -44,7 +45,7 @@
 (set map.layers.sensors.draw draw.draw-sensors)
 (set map.layers.doors.draw draw.draw-doors)
 
-;; so we can access these thru the repl
+;; so we can access state thru the repl
 (global s state)
 
 (fn calculate-new-rover-position [rover dt]
@@ -100,12 +101,14 @@
             new-y (+ y
                      (- (* up? speed dt))
                      (* down? speed dt))
-            (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
+            (_ _ cols) (: world :move state.selected new-x new-y
+                          collide-filter)]
         (terminal-check cols state.selected set-mode)))))
 
 ;; there is surely a smarter way to write this but I'm tired and it's late
 (fn scroll [state dt x y]
   (let [dist (lume.distance x y (+ state.tx 180) (+ state.ty 112))
+        ;; scroll faster when the selected unit is offscreen, unless intro
         delta (if (and (> dist 200) state.intro-complete?)
                   (* dt probe-move-speed (* (math.sqrt (* dist 100)) 0.02))
                   (* dt probe-move-speed))]
@@ -136,10 +139,11 @@
       (when (love.keyboard.isDown "." "v")
         (set state.probe.theta (+ state.probe.theta (* dt2 turn-speed))))))
   (sensor.update state map world dt)
-  (if (love.keyboard.isDown "space")
+  (if (love.keyboard.isDown "space" "lctrl" "rctrl" "capslock")
       (sound.play :laser)
       (sound.stop :laser))
-  (set state.laser (and (love.keyboard.isDown "space")
+  (set state.laser (and (love.keyboard.isDown "space" "lctrl"
+                                              "rctrl" "capslock")
                         (let [(x y w h) (: world :getRect state.probe)]
                           (laser.fire (+ x (/ w 2))
                                       (+ y (/ h 2) -6)
@@ -152,12 +156,12 @@
 ;; can't move unless 3 or 4 rovers are docked
 (fn enough-docked? [] (< 2 (# (lume.filter state.rovers :docked?))))
 
+;; TODO: these are bad
 (local offsets [[-10 -10] [20 -10] [20 20] [-10 20]])
 
 (fn deploy [n]
   (tset (. state.rovers n) :docked? false)
   (set state.probe.mobile? (enough-docked?))
-  (sound.play :dock)
   (let [diameter 10
         [ox oy] (. offsets n)
         (px py) (: world :getRect state.probe)]
@@ -167,7 +171,6 @@
   (let [(x y w h) (: world :getRect state.probe)]
     (when (and (= state.selected.type :rover)
                (within? state.selected {:x x :y y :width w :height h} 12))
-      (sound.play :dock)
       (set state.selected.docked? true)
       (set state.probe.mobile? (enough-docked?))
       (: world :remove state.selected)

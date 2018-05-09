@@ -17,9 +17,9 @@
 * [X] number unselected deployed rovers
 * [ ] make the emitter actually look like a satellite dish
 * [ ] give HUD messages transparent bg
-* [ ] a few more screenshots
 * [X] build appimage files
 * [X] automate uploads to itch.io
+* [ ] a few more screenshots
 
 # during jam
 

@@ -19,6 +19,7 @@
                                                   (* counter text-speed))))))
  :activate (fn activate []
              (love.graphics.setFont font)
+             (sound.stop :laser)
              (sound.stop :temple)
              (sound.play :pressure))
  :update (fn update [dt]
@@ -31,4 +32,6 @@
                    (= key "pageup")
                    (set counter (- counter 20))
                    (= key "pagedown")
-                   (set counter (+ counter 20))))}
+                   (set counter (+ counter 20))
+                   (= key "m")
+                   (sound.toggle :pressure)))}
