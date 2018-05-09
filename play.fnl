@@ -105,16 +105,16 @@
 
 ;; there is surely a smarter way to write this but I'm tired and it's late
 (fn scroll [state dt x y]
-  ;; TODO: scroll faster when your selected unit is offscreen
-  (let [delta (if (love.keyboard.isDown "lctrl" "rctrl" "capslock")
-                  (* dt 256)
-                  (* dt 64))]
-    (when (< (+ state.tx 260) x 1860)
-      (set state.tx (+ state.tx delta)))
+  (let [dist (lume.distance x y (+ state.tx 180) (+ state.ty 112))
+        delta (if (and (> dist 200) state.intro-complete?)
+                  (* dt probe-move-speed (* (math.sqrt (* dist 100)) 0.02))
+                  (* dt probe-move-speed))]
+    (when (< (+ state.tx 260) x)
+      (set state.tx (math.min (+ state.tx delta) 1559)))
     (when (< x (+ state.tx 80))
       (set state.tx (math.max (- state.tx delta) 0)))
-    (when (< (+ state.ty 165) y 1220)
-      (set state.ty (math.min (+ state.ty delta) 1215)))
+    (when (< (+ state.ty 165) y)
+      (set state.ty (math.min (+ state.ty delta) 1054)))
     (when (< y (+ state.ty 100))
       (set state.ty (math.max (- state.ty delta) 0)))))
 

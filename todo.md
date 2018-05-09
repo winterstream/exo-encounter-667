@@ -13,7 +13,7 @@
  * [x] dock/undock (2110)
  * [x] terminal activation bleep
 * [X] animate opening of doors
-* [ ] scroll bug/speed up
+* [X] scroll bug/speed up
 * [X] number unselected deployed rovers
 * [ ] make the emitter actually look like a satellite dish
 * [ ] give HUD messages transparent bg

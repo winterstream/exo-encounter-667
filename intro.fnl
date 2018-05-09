@@ -2,12 +2,9 @@
 (local intro-font (love.graphics.newFont "assets/FSEX300.ttf" 32))
 (local small-font (love.graphics.newFont "assets/FSEX300.ttf" 12))
 (local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
+(local lume (require "lib.lume"))
 
-(local messages
-       [["MISSION: initial unmanned expedition to Gliese 667"]
-        ["WARNING: extreme radiation storm approaching"]
-        ["CRITICAL: detected failure in lander engines"]
-        ["STATUS: lander crash; 352 meters southwest of target site"]])
+(local messages (lume.split (love.filesystem.read "text/splash") "\n"))
 
 (: intro-img :setFilter "nearest")
 

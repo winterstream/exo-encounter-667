@@ -29,8 +29,9 @@
 
 (fn tutorial [state world map dt]
   (echo-intro state world map dt)
-  (echo state "Press 2 to select rover 2; bring it near the"
-        "main probe and press enter to dock.")
+  (set state.intro-complete? true) ;; we can scroll quickly now
+  (echo state "Press 2 to select rover 2; bring it near"
+        "the main probe and press enter to dock.")
   (step state :first-dock (fn [] (. state.rovers 2 :docked?)))
   (echo state "With at least 3 rovers docked, the main" "probe has mobility."
         "" "Now do the same with rover 3.")
@@ -44,7 +45,8 @@
                            (sensor? map "second")
                            (sensor? map "third"))))
   (echo state "SENSORS: detected nearby structure to"
-        "the north which may react to the laser.")
+        "the north of the crash site which may"
+        "react to the laser.")
   (step state :first-sensor (fn [] (or (sensor? map "first")
                                        (sensor? map "second")
                                        (sensor? map "third"))))
