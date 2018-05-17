@@ -1,4 +1,3 @@
-(local lume (require "lib.lume"))
 (local intersect (require "lib.intersect"))
 (local sensor (require "sensor"))
 ;; this is the max range only for each segment individually; not a total limit

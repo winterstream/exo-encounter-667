@@ -3,7 +3,6 @@
 ;; a "door" property which corresponds to the name of a door object.
 ;; momentary doors close in any tick that their sensor isn't active.
 
-(local lume (require "lib.lume"))
 (local sound (require "sound"))
 
 (fn finder [name] (fn [d] (= d.name name)))

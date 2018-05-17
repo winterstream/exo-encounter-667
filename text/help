@@ -3,8 +3,9 @@ arrows: navigate
 space: laser
 period, comma: aim
 enter: dock rover
+
 shift: move/turn slowly
-tab: toggle HUD
+backspace: recall rovers
 
 M: toggle music
 f11: toggle fullscreen

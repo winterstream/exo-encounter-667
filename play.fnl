@@ -1,12 +1,12 @@
 (local tiled (require "lib.tiled"))
 (local bump (require "lib.bump"))
-(local lume (require "lib.lume"))
 (local draw (require "draw"))
 (local hud (require "hud"))
 (local laser (require "laser"))
 (local sensor (require "sensor"))
 (local lint (require "lint"))
 (local sound (require "sound"))
+(local autopilot (require "autopilot"))
 
 (local map (lint (tiled "map.lua" ["bump"])))
 (local world (bump.newWorld))
@@ -49,7 +49,7 @@
 (global s state)
 
 (fn calculate-new-rover-position [rover dt]
-  (let [(x y) (: world :getRect state.selected)
+  (let [(x y) (: world :getRect rover)
         new-x (+ x (* (math.cos rover.theta) rover-move-speed dt))
         new-y (+ y (* (math.sin rover.theta) rover-move-speed dt))]
     (values new-x new-y)))
@@ -74,16 +74,19 @@
       :cross
       :slide))
 
+(fn rover-forward [set-mode r delta]
+  (let [(new-x new-y) (calculate-new-rover-position r delta)
+        (_ _ cols) (: world :move r new-x new-y collide-filter)]
+    (terminal-check cols r set-mode)))
+
 (fn move-rover [dt set-mode]
   (when (love.keyboard.isDown "left")
     (set state.selected.theta (- state.selected.theta (* 2 dt turn-speed))))
   (when (love.keyboard.isDown "right")
     (set state.selected.theta (+ state.selected.theta (* 2 dt turn-speed))))
   (when (or (love.keyboard.isDown "up") (love.keyboard.isDown "down"))
-    (let [delta (if (love.keyboard.isDown "up") dt (- dt))
-          (new-x new-y) (calculate-new-rover-position state.selected delta)
-          (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
-      (terminal-check cols state.selected set-mode))))
+    (rover-forward set-mode state.selected
+                   (if (love.keyboard.isDown "up") dt (- dt)))))
 
 (fn move-probe [dt set-mode]
   (let [left? (if (love.keyboard.isDown "left") 1 0)
@@ -139,6 +142,7 @@
       (when (love.keyboard.isDown "." "v")
         (set state.probe.theta (+ state.probe.theta (* dt2 turn-speed))))))
   (sensor.update state map world dt)
+  (autopilot.update state world dt (partial rover-forward set-mode))
   (if (love.keyboard.isDown "space" "lctrl" "rctrl" "capslock")
       (sound.play :laser)
       (sound.stop :laser))
@@ -162,10 +166,9 @@
 (fn deploy [n]
   (tset (. state.rovers n) :docked? false)
   (set state.probe.mobile? (enough-docked?))
-  (let [diameter 10
-        [ox oy] (. offsets n)
+  (let [[ox oy] (. offsets n)
         (px py) (: world :getRect state.probe)]
-    (: world :add (. state.rovers n) (+ px ox) (+ py oy) diameter diameter)))
+    (: world :add (. state.rovers n) (+ px ox) (+ py oy) 10 10)))
 
 (fn dock []
   (let [(x y w h) (: world :getRect state.probe)]
@@ -177,6 +180,7 @@
       (set state.selected state.probe))))
 
 (fn select [n]
+  (when n (autopilot.disable))
   (set state.selected (if n
                           (. state.rovers n)
                           state.probe))
@@ -191,7 +195,7 @@
                :5 select
                "`" select
                :return dock
-               :tab (fn [] (set state.no-hud (not state.no-hud)))})
+               :backspace (fn [] (autopilot.enable) (select))})
 
 (fn keypressed [key set-mode]
   (let [f (. keymap key)]

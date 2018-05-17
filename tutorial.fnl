@@ -1,4 +1,3 @@
-(local lume (require "lib.lume"))
 (local intro-msgs (lume.split (love.filesystem.read "text/intro") "\n"))
 
 (fn step [state flag check]

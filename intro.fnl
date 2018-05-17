@@ -1,11 +1,8 @@
 (local intro-img (love.graphics.newImage "assets/intro-225.jpg"))
 (local intro-font (love.graphics.newFont "assets/FSEX300.ttf" 32))
 (local small-font (love.graphics.newFont "assets/FSEX300.ttf" 12))
-(local lume (require "lib.lume"))
 
 (local messages (lume.split (love.filesystem.read "text/splash") "\n"))
-
-(: intro-img :setFilter "nearest")
 
 (var counter 0)
 

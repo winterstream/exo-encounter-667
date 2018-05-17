@@ -1,4 +1,3 @@
-(local lume (require "lib.lume"))
 (local sound (require "sound"))
 
 (local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
