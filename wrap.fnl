@@ -1,7 +1,6 @@
 ;; This module contains non-game-specific bits and mode-changing logic.
 (local repl (require "lib.stdio"))
-(local (w h) (values (/ 1440 2) (/ 900 2)))
-(local canvas (love.graphics.newCanvas w h))
+(local canvas (love.graphics.newCanvas 720 450))
 
 (local sound (require "sound"))
 
@@ -33,16 +32,13 @@
 (fn love.keypressed [key]
   (if (and (= key "f11") (= scale 2))
       (let [(dw dh) (love.window.getDesktopDimensions)]
-        (love.window.setMode dw dh {:fullscreen true
-                                    :fullscreentype :desktop})
+        (love.window.setMode dw dh {:fullscreen true :fullscreentype :desktop})
         (set scale (/ dh 225)))
 
       (= key "f11")
-      (do (set scale 2)
-          (love.window.setMode (* w scale) (* h scale)))
+      (do (set scale 2) (love.window.setMode (* 720 scale) (* 450 scale)))
 
-      (and (love.keyboard.isDown "lctrl" "rctrl" "capslock")
-           (or (= key "q") (= key "x")))
+      (and (love.keyboard.isDown "lctrl" "rctrl" "capslock") (= key "q"))
       (love.event.quit)
 
       ;; (= key "f5") (set-mode :win)

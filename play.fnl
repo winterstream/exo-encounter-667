@@ -19,9 +19,9 @@
               :probe {:theta math.pi :type :probe :rovers []}
               :flags {} ; for tutorial progression
               :messages [] ; for hud
-              :echo (fn [s msg] (table.insert s.messages 1 msg))
               ;; for repl debugging
-              :map map :world world})
+              ;; :map map :world world
+              :echo (fn [s msg] (table.insert s.messages 1 msg))})
 
 (: map :bump_init world)
 (: world :add state.probe 105 1205 30 24)
@@ -187,13 +187,9 @@
   (when (and n (not (: world :hasItem (. state.rovers n))))
     (deploy n)))
 
-(local keymap {:1 (partial select 1)
-               :2 (partial select 2)
-               :3 (partial select 3)
-               :4 (partial select 4)
-               :0 select
-               :5 select
-               "`" select
+(local keymap {:1 (partial select 1) :2 (partial select 2)
+               :3 (partial select 3) :4 (partial select 4)
+               :0 select :5 select "`" select
                :return dock
                :backspace (fn [] (autopilot.enable) (select))})
 
