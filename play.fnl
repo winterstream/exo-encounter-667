@@ -20,7 +20,7 @@
               :flags {} ; for tutorial progression
               :messages [] ; for hud
               ;; for repl debugging
-              ;; :map map :world world
+              :map map :world world
               :echo (fn [s msg] (table.insert s.messages 1 msg))})
 
 (: map :bump_init world)
@@ -126,8 +126,7 @@
 
 (fn update [dt set-mode]
   (set state.probe.stuck? false)
-  (let [(ok err) (pcall (fn [] (hud.update state world map dt)))]
-    (when (not ok) (print err)))
+  (pcall (fn [] (hud.update state world map dt)))
   (: map :update dt)
   (scroll state dt (: world :getRect state.selected))
   ;; controls
