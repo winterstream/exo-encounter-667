@@ -12,10 +12,23 @@ During the game you can press **escape** to view the help screen which lists con
 
 ## Install
 
-From source: install [LÖVE](https://love2d.org) version 11.1 and run `love .` in
+From source: install [LÖVE](https://love2d.org) version 11.1 and run `make` in
 this directory.
 
 Downloads for Windows, Macs and GNU/Linux are [available on itch.io](https://technomancy.itch.io/exo-encounter-667).
+
+## Development
+
+I wrote up a series of blog posts about the development process:
+
+* [in which a game jam is recounted](https://technomancy.us/187)
+* [in which a game jam is recounted further](https://technomancy.us/188)
+* [in which interactive development saves the day](https://technomancy.us/189)
+
+This
+[post by Charl Botha](https://vxlabs.com/2018/05/18/interactive-programming-with-fennel-lua-lisp-emacs-and-lisp-game-jam-winner-exo_encounter-667/)
+describes how to get things installed in a way that allows you to hack
+on the game source live with interactive reloading.
 
 ## Licenses
 

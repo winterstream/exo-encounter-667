@@ -1,7 +1,6 @@
 # Credits
 
-* [Intro image](https://commons.wikimedia.org/wiki/File:Gliese_667.jpg)
-  [European Southern Observatory](https://en.wikipedia.org/wiki/European_Southern_Observatory) CC4 International Attribution
+* [Intro image](https://commons.wikimedia.org/wiki/File:Gliese_667.jpg) [European Southern Observatory](https://en.wikipedia.org/wiki/European_Southern_Observatory) CC4 International Attribution
 * [Endgame image](https://commons.wikimedia.org/wiki/File:Sky_around_Gliese_667C.jpg) [European Southern Observatory](https://en.wikipedia.org/wiki/European_Southern_Observatory) CC4 International Attribution
 * [Galactic Temple music](https://opengameart.org/content/galactic-temple) Copyright © 2013 [YD](http://ydstuff.wordpress.com/) (CC0)
 * [Pressure endgame music](https://opengameart.org/content/pressure) Copyright © 2012 [YD](http://ydstuff.wordpress.com/) (CC0)
