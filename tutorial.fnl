@@ -1,10 +1,8 @@
 (local intro-msgs (lume.split (love.filesystem.read "text/intro") "\n"))
 
 (fn step [state flag check]
-  (while (not (or (check state) (. state.flags flag)))
-    (coroutine.yield))
-  ;; save our progress so we can restart or reload this module
-  (tset state.flags flag true))
+  (while (not (check state))
+    (coroutine.yield)))
 
 (fn sensor? [map name]
   (let [sensor (lume.match map.layers.sensors.objects (fn [s] (= s.name name)))]
@@ -65,8 +63,8 @@
         "target the obscured sensor.")
   (step state :second-sensor (fn [] (or (> (: world :getRect state.selected)
                                            1230) (sensor? map "second"))))
-
-  (echo state "Continue exploration and collect clues.")
+  (echo state "Pressing backspace will recall rovers."
+        "Continue exploration and collect clues.")
   (step state :third-sensor (fn [] (sensor? map "third")))
   (echo state)
   (while (coroutine.yield) (coroutine.yield)))
