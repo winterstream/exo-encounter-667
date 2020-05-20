@@ -2,8 +2,7 @@
 
 (let [intro (require :intro)]
   {:draw (partial intro.draw help)
-   :update (fn [])
-   :keypressed (fn [key set-mode]
+   :keypressed (fn keypressed [key set-mode]
                  (if (= key "q")
                      (love.event.quit)
                      (set-mode :play)))})

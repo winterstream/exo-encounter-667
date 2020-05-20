@@ -5,7 +5,7 @@
 
 (local sound (require "sound"))
 
-(fn finder [name] (fn [d] (= d.name name)))
+(fn finder [name] (fn f [d] (= d.name name)))
 
 ;; immobilize units when the door closes on them
 (fn immobilize [map world door]
@@ -76,7 +76,7 @@
       (set door.properties.hit false)
       (set sensor.properties.on false))))
 
-{:is? (fn [item]
+{:is? (fn is [item]
         (and item.properties item.properties.sensor))
  :on on
  :update (fn update [_state map world dt]

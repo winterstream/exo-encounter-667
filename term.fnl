@@ -13,7 +13,6 @@
          (for [i 1 11]
            (love.graphics.print (or (. lines (+ offset i)) "")
                                 16 (- (* i 18) 6))))
- :update (fn [])
  :activate (fn activate [which]
              (love.graphics.setFont font)
              (sound.play :chirp)

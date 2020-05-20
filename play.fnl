@@ -21,7 +21,7 @@
               :messages [] ; for hud
               ;; for repl debugging
               :map map :world world
-              :echo (fn [s msg] (table.insert s.messages 1 msg))})
+              :echo (fn echo [s msg] (table.insert s.messages 1 msg))})
 
 (: map :bump_init world)
 (: world :add state.probe 105 1205 30 24)
@@ -38,12 +38,12 @@
 (let [layer (: map :addCustomLayer "player" 8)]
   (set layer.sprites [(unpack state.rovers)])
   (tset layer.sprites 0 state.probe)
-  (set layer.draw (partial draw.draw-player world state)))
+  (set layer.draw (partial draw.player world state)))
 
 ;; layers where we change the drawing of the sprites based on gameplay can't
 ;; be drawn by tiled; we have to write our own draw.
-(set map.layers.sensors.draw draw.draw-sensors)
-(set map.layers.doors.draw draw.draw-doors)
+(set map.layers.sensors.draw draw.sensors)
+(set map.layers.doors.draw draw.doors)
 
 ;; so we can access state thru the repl
 (global s state)
@@ -126,7 +126,7 @@
 
 (fn update [dt set-mode]
   (set state.probe.stuck? false)
-  (pcall (fn [] (hud.update state world map dt)))
+  (pcall (fn updater [] (hud.update state world map dt)))
   (: map :update dt)
   (scroll state dt (: world :getRect state.selected))
   ;; controls
@@ -190,7 +190,7 @@
                :3 (partial select 3) :4 (partial select 4)
                :0 select :5 select "`" select
                :return dock
-               :backspace (fn [] (autopilot.enable) (select))})
+               :backspace (fn back [] (autopilot.enable) (select))})
 
 (fn keypressed [key set-mode]
   (let [f (. keymap key)]

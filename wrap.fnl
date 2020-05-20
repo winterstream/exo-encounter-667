@@ -27,7 +27,8 @@
   (love.graphics.draw canvas 0 0 0 scale scale))
 
 (fn love.update [dt]
-  (mode.update dt set-mode))
+  (when mode.update
+    (mode.update dt set-mode)))
 
 (fn love.keypressed [key]
   (if (and (= key "f11") (= scale 2))

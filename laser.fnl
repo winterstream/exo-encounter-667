@@ -51,8 +51,8 @@
 {:fire (fn fire [x y theta state world map segments ignore limit]
          (let [far-x (+ x (* (math.cos theta) range))
                far-y (+ y (* (math.sin theta) range))
-               filter (fn [item] (not (lume.find ignore item)))
-               [hit] (: world :querySegmentWithCoords x y far-x far-y filter)]
+               [hit] (: world :querySegmentWithCoords x y far-x far-y
+                        (fn filter [item] (not (lume.find ignore item))))]
 
            (if (or (not hit) (<= limit 0))
                ;; we have to put a limit on how many times we'll

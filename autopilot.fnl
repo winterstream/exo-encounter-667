@@ -12,5 +12,5 @@
               (rover-forward r dt))))))))
 
 {:update update
- :enable (fn [] (set on? true))
- :disable (fn [] (set on? false))}
+ :enable (fn enable [] (set on? true))
+ :disable (fn disable [] (set on? false))}
