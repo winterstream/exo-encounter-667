@@ -2,7 +2,7 @@
 
 [Intro text as we pan over an image of a planet]
 
-MISSION:  initial unmanned expedition to Gliese 667, 6.8 parsecs from Sol
+MISSION:  initial uncrewed expedition to Gliese 667, 6.8 parsecs from Sol
 
 WARNING:  radiation storm approaching; extreme magnitude
 
@@ -30,7 +30,7 @@ Objective: investigate signs of intelligence.
 
 ## Gameplay
 
-You play as an unmanned probe exploring the ruins of an unknown
+You play as an uncrewed probe exploring the ruins of an unknown
 civilization on an exoplanet. The ruined outpost was created as part
 of an expedition to contact humanity, but it had to be abandoned when
 budget cuts necessitated their withdrawal from that system.

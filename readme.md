@@ -1,6 +1,6 @@
 # EXO_encounter 667
 
-EXO_encounter 667 is a game of exploration. You play as an unmanned
+EXO_encounter 667 is a game of exploration. You play as an uncrewed
 expedition to the remote exoplanet
 [Gliese 667 Cc](https://en.wikipedia.org/wiki/Gliese_667_Cc) which
 crashes near ruins of unknown origin. What mysteries will you find?
