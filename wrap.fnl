@@ -2,6 +2,8 @@
 (local repl (require :lib.stdio))
 (local canvas (love.graphics.newCanvas 720 450))
 
+(local try-call (require :src.dev.try-call))
+
 (local sound (require :sound))
 
 (var scale 2)
@@ -21,14 +23,14 @@
   (love.graphics.setCanvas canvas)
   (love.graphics.clear)
   (love.graphics.setColor 1 1 1)
-  (mode.draw nil)
+  (try-call.try-call #(mode.draw nil))
   (love.graphics.setCanvas nil)
   (love.graphics.setColor 1 1 1)
   (love.graphics.draw canvas 0 0 0 scale scale))
 
 (fn love.update [dt]
   (when mode.update
-    (mode.update dt set-mode)))
+    (try-call.try-call #(mode.update dt set-mode))))
 
 (fn love.keypressed [key]
   (if (and (= key :f11) (= scale 2))
