@@ -1,5 +1,4 @@
 (local font (love.graphics.newFont :assets/FSEX300.ttf 16))
-(local tutorial (require :tutorial))
 
 {:draw (fn draw [state]
          (love.graphics.setFont font)
@@ -26,5 +25,4 @@
          (love.graphics.setColor 1 0 0)
          (let [lx (+ 13 (* (math.cos state.probe.theta) 8))
                ly (+ 114 (* (math.sin state.probe.theta) 8))]
-           (love.graphics.line 13 114 lx ly)))
- :update tutorial.update}
+           (love.graphics.line 13 114 lx ly)))}
