@@ -1,43 +1,19 @@
-(local tiled (require :lib.tiled))
-(local bump (require :lib.bump))
 (local lume (require :lib.lume))
 (local draw (require :draw))
 (local hud (require :hud))
 (local laser (require :laser))
 (local sensor (require :sensor))
-(local lint (require :lint))
 (local sound (require :sound))
 (local autopilot (require :autopilot))
 
-(local map (lint (tiled :map.lua [:bump])))
-(local world (bump.newWorld))
-
-(local state {:tx 200
-              :ty 500
-              :rovers [{:theta 0 :docked? true :type :rover}
-                       {:theta 3 :docked? false :type :rover}
-                       {:theta 2 :docked? false :type :rover}
-                       {:theta 0 :docked? true :type :rover}]
-              :probe {:theta math.pi :type :probe :rovers []}
-              :flags {}
-              ; for tutorial progression
-              :messages []
-              ; for hud
-              ;; for repl debugging
-              : map
-              : world
-              :echo (fn [s msg] (table.insert s.messages 1 msg))})
-
-(map:bump_init world)
-(world:add state.probe 105 1205 30 24)
-(world:add (. state.rovers 2) 165 1200 10 10)
-
-; start undocked
-(world:add (. state.rovers 3) 145 1212 10 10)
+(local state (require :state))
 
 (local turn-speed 1)
 (local rover-move-speed 82)
 (local probe-move-speed 64)
+
+(local map state.map)
+(local world state.world)
 
 (set state.selected state.probe)
 
@@ -51,9 +27,6 @@
 ;; be drawn by tiled; we have to write our own draw.
 (set map.layers.sensors.draw draw.sensors)
 (set map.layers.doors.draw draw.doors)
-
-;; so we can access state thru the repl
-(global s state)
 
 (fn calculate-new-rover-position [rover dt]
   (let [(x y) (world:getRect rover)
