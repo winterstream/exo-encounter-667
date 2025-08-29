@@ -6,11 +6,12 @@
 (local sound (require :sound))
 (local autopilot (require :autopilot))
 
+(local const (require :const))
 (local state (require :state))
 
-(local turn-speed 1)
-(local rover-move-speed 82)
-(local probe-move-speed 64)
+(local turn-speed const.turn-speed)
+(local rover-move-speed const.rover-move-speed)
+(local probe-move-speed const.probe-move-speed)
 
 (local map state.map)
 (local world state.world)
@@ -83,27 +84,10 @@
             (_ _ cols) (world:move state.selected new-x new-y collide-filter)]
         (terminal-check cols state.selected set-mode)))))
 
-;; there is surely a smarter way to write this but I'm tired and it's late
-(fn scroll [state dt x y]
-  (let [dist (lume.distance x y (+ state.tx 180) (+ state.ty 112))
-        ;; scroll faster when the selected unit is offscreen, unless intro
-        delta (if (and (> dist 200) state.intro-complete?)
-                  (* dt probe-move-speed (* (math.sqrt (* dist 100)) 0.02))
-                  (* dt probe-move-speed))]
-    (when (< (+ state.tx 260) x)
-      (set state.tx (math.min (+ state.tx delta) 1559)))
-    (when (< x (+ state.tx 80))
-      (set state.tx (math.max (- state.tx delta) 0)))
-    (when (< (+ state.ty 165) y)
-      (set state.ty (math.min (+ state.ty delta) 1054)))
-    (when (< y (+ state.ty 100))
-      (set state.ty (math.max (- state.ty delta) 0)))))
-
 (fn update [dt set-mode]
   (set state.probe.stuck? false)
   (pcall (fn [] (hud.update state world map dt)))
   (map:update dt)
-  (scroll state dt (world:getRect state.selected))
   ;; controls
   (when (not state.selected.immobilized?)
     (let [dt2 (if (love.keyboard.isDown :lshift :rshift) (* dt 0.2) dt)]
