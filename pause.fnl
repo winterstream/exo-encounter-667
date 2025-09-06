@@ -1,8 +1,8 @@
-(local help (love.filesystem.read "text/help"))
+(local help (love.filesystem.read :text/help))
 
 (let [intro (require :intro)]
   {:draw (partial intro.draw help)
    :keypressed (fn keypressed [key set-mode]
-                 (if (= key "q")
+                 (if (= key :q)
                      (love.event.quit)
                      (set-mode :play)))})

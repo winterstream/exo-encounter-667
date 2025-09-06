@@ -15,5 +15,5 @@
   (each [_ term (ipairs map.layers.terms.objects)]
     (assert term.properties.collidable "Missing term collidable!")
     (assert term.properties.terminal "Missing term text!")
-    (assert (love.filesystem.getInfo (.. "text/" term.properties.terminal))))
+    (assert (love.filesystem.getInfo (.. :text/ term.properties.terminal))))
   map)

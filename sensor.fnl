@@ -3,7 +3,7 @@
 ;; a "door" property which corresponds to the name of a door object.
 ;; momentary doors close in any tick that their sensor isn't active.
 
-(local sound (require "sound"))
+(local sound (require :sound))
 
 (fn finder [name] (fn f [d] (= d.name name)))
 
@@ -31,12 +31,16 @@
       (each [_ item (ipairs items)]
         (when (or (= :rover item.type) (= :probe item.type))
           (set item.immobilized? false)))))
-  (lume.extend door.properties
-               {:level 1 :open true :closing false :opening false}))
+  (lume.extend door.properties {:level 1
+                                :open true
+                                :closing false
+                                :opening false}))
 
 (fn close [_map door]
-  (lume.extend door.properties
-               {:level 0 :open false :closing false :opening false}))
+  (lume.extend door.properties {:level 0
+                                :open false
+                                :closing false
+                                :opening false}))
 
 (fn on [map item]
   (set item.properties.on true)
@@ -78,7 +82,7 @@
 
 {:is? (fn is [item]
         (and item.properties item.properties.sensor))
- :on on
+ : on
  :update (fn update [_state map world dt]
            (var in-motion? false)
            (each [_ door (ipairs map.layers.doors.objects)]

@@ -11,6 +11,6 @@
               (set r.theta (math.atan2 (- py y) (- px x)))
               (rover-forward r dt))))))))
 
-{:update update
+{: update
  :enable (fn enable [] (set on? true))
  :disable (fn disable [] (set on? false))}

@@ -1,14 +1,14 @@
-(local hud (require "hud"))
+(local hud (require :hud))
 
-(local small-font (love.graphics.newFont "assets/FSEX300.ttf" 12))
+(local small-font (love.graphics.newFont :assets/FSEX300.ttf 12))
 
-(local probe-img (love.graphics.newImage "assets/probe.png"))
-(local sensor-img (love.graphics.newImage "assets/sensor.png"))
-(local sensor-on-img (love.graphics.newImage "assets/sensor-on.png"))
-(local sensor-m-on-img (love.graphics.newImage "assets/sensor-m-on.png"))
-(local sensor-m-img (love.graphics.newImage "assets/sensor-m.png"))
-(local door-below-img (love.graphics.newImage "assets/door-below.png"))
-(local door-img (love.graphics.newImage "assets/door-open.png"))
+(local probe-img (love.graphics.newImage :assets/probe.png))
+(local sensor-img (love.graphics.newImage :assets/sensor.png))
+(local sensor-on-img (love.graphics.newImage :assets/sensor-on.png))
+(local sensor-m-on-img (love.graphics.newImage :assets/sensor-m-on.png))
+(local sensor-m-img (love.graphics.newImage :assets/sensor-m.png))
+(local door-below-img (love.graphics.newImage :assets/door-below.png))
+(local door-img (love.graphics.newImage :assets/door-open.png))
 
 (fn draw-rover [rect theta selected? docked?]
   (let [[corner-x corner-y w] rect
@@ -19,11 +19,11 @@
         y2 (+ center-y (* (math.sin theta) radius))]
     (when (not docked?)
       (love.graphics.setColor 0 0 0)
-      (love.graphics.circle "line" center-x center-y radius))
+      (love.graphics.circle :line center-x center-y radius))
     (if selected?
         (love.graphics.setColor 0.5 0.5 0.5)
         (love.graphics.setColor 0.2 0.2 0.2))
-    (love.graphics.circle "fill" center-x center-y radius)
+    (love.graphics.circle :fill center-x center-y radius)
     ;; forward indicator
     (love.graphics.setColor 0.1 0.1 0.1)
     (love.graphics.line center-x center-y x2 y2)
@@ -65,8 +65,7 @@
       (let [rect (if rover.docked?
                      (docked-rect prect i)
                      [(: world :getRect rover)])]
-        (draw-rover rect rover.theta
-                    (= state.selected rover) rover.docked?)))
+        (draw-rover rect rover.theta (= state.selected rover) rover.docked?)))
     (draw-probe prect (= state.probe state.selected)))
   (when state.laser
     (laser state.laser)))
@@ -75,8 +74,7 @@
 ;; no way to change an object's sprite at runtime?
 (fn sensors [layer]
   (each [_ sensor (ipairs layer.objects)]
-    (let [img (if (and sensor.properties.momentary
-                       sensor.properties.on)
+    (let [img (if (and sensor.properties.momentary sensor.properties.on)
                   sensor-m-on-img
                   sensor.properties.momentary
                   sensor-m-img
@@ -89,8 +87,7 @@
   (each [_ door (ipairs layer.objects)]
     (love.graphics.draw door-below-img door.x (- door.y 21))
     (let [y (- 21 (* (or door.properties.level 0) 21))]
-      (love.graphics.draw door-img
-                          door.x (- door.y door.height y)))))
+      (love.graphics.draw door-img door.x (- door.y door.height y)))))
 
 (fn draw [map world state]
   (: map :draw (- state.tx) (- state.ty))

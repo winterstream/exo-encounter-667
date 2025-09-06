@@ -1,5 +1,5 @@
-(local intersect (require "lib.intersect"))
-(local sensor (require "sensor"))
+(local intersect (require :lib.intersect))
+(local sensor (require :sensor))
 ;; this is the max range only for each segment individually; not a total limit
 (local range 512)
 
@@ -41,8 +41,10 @@
     (if x (values x y (normalize-angle inbound-theta mirror-theta)))))
 
 (fn split [fire x y hit theta state world map segments ignore limit]
-  (let [cx (/ (+ hit.x1 hit.x2) 2) cy (/ (+ hit.y1 hit.y2) 2)
-        theta1 (+ theta (/ math.pi 4)) theta2 (- theta (/ math.pi 4))]
+  (let [cx (/ (+ hit.x1 hit.x2) 2)
+        cy (/ (+ hit.y1 hit.y2) 2)
+        theta1 (+ theta (/ math.pi 4))
+        theta2 (- theta (/ math.pi 4))]
     (table.insert segments [x y cx cy])
     (fire cx cy theta1 state world map segments ignore limit)
     (fire cx cy theta2 state world map segments ignore limit)))
@@ -53,46 +55,44 @@
                far-y (+ y (* (math.sin theta) range))
                [hit] (: world :querySegmentWithCoords x y far-x far-y
                         (fn filter [item] (not (lume.find ignore item))))]
-
            (if (or (not hit) (<= limit 0))
                ;; we have to put a limit on how many times we'll
                ;; reflect to avoid infinite loops
-               (do (table.insert segments [x y far-x far-y])
-                   segments)
-
+               (do
+                 (table.insert segments [x y far-x far-y])
+                 segments)
                ;; did we hit a mirror?
                (reflective? hit.item)
                (let [(new-x new-y theta2) (reflect world x y hit.x2 hit.y2
                                                    theta hit.item)]
                  (if theta2
-                     (do (table.insert segments [x y new-x new-y])
-                         (fire new-x new-y theta2 state world map segments
-                               [hit.item] (- limit 1)))
-                     (do (table.insert ignore hit.item)
-                         (fire x y theta state world map segments
-                               ignore limit))))
-
+                     (do
+                       (table.insert segments [x y new-x new-y])
+                       (fire new-x new-y theta2 state world map segments
+                             [hit.item] (- limit 1)))
+                     (do
+                       (table.insert ignore hit.item)
+                       (fire x y theta state world map segments ignore limit))))
                ;; did we hit a splitter?
                (splitter? hit.item)
-               (split fire x y hit theta state world map segments
-                      [hit.item] (- limit 2))
-
+               (split fire x y hit theta state world map segments [hit.item]
+                      (- limit 2))
                ;; should we trigger a door opening?
                (sensor.is? hit.item)
-               (do (sensor.on map hit.item)
-                   (table.insert segments [x y hit.x1 hit.y1])
-                   segments)
-
+               (do
+                 (sensor.on map hit.item)
+                 (table.insert segments [x y hit.x1 hit.y1])
+                 segments)
                ;; ignore the hit if it's transparent; maybe this
                ;; should be handled in the filter function instead?
                (transparent? state hit.item)
-               (do (table.insert ignore hit.item)
-                   (fire x y theta state world map segments ignore limit))
-
+               (do
+                 (table.insert ignore hit.item)
+                 (fire x y theta state world map segments ignore limit))
                ;; did we just win the whole game?
                (and hit.item hit.item.properties hit.item.properties.emitter)
                :win
-
                ;; if we hit a normal object.
-               (do (table.insert segments [x y hit.x1 hit.y1])
-                   segments))))}
+               (do
+                 (table.insert segments [x y hit.x1 hit.y1])
+                 segments))))}

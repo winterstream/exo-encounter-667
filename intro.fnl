@@ -1,8 +1,8 @@
-(local intro-img (love.graphics.newImage "assets/intro-225.jpg"))
-(local intro-font (love.graphics.newFont "assets/FSEX300.ttf" 32))
-(local small-font (love.graphics.newFont "assets/FSEX300.ttf" 12))
+(local intro-img (love.graphics.newImage :assets/intro-225.jpg))
+(local intro-font (love.graphics.newFont :assets/FSEX300.ttf 32))
+(local small-font (love.graphics.newFont :assets/FSEX300.ttf 12))
 
-(local messages (lume.split (love.filesystem.read "text/splash") "\n"))
+(local messages (lume.split (love.filesystem.read :text/splash) "\n"))
 
 (var counter 0)
 
@@ -14,7 +14,7 @@
          (if message
              ;; let this code be re-used by pause/help mode
              (love.graphics.print message 16 62)
-             (for [i 1 (# messages)]
+             (for [i 1 (length messages)]
                (when (> counter (* i 2))
                  (love.graphics.print (. messages i) 8 (+ (* 18 i) 110))))))
  :update (fn update [dt set-mode]
@@ -22,8 +22,9 @@
            (when (> counter 16)
              (set-mode :play)))
  :keypressed (fn keypressed [key set-mode]
-               (if (= key "space")
-                   (set counter (if (> counter 8)
-                                    (set-mode :play)
-                                    (* 2 (math.ceil (/ counter 2)))))
+               (if (= key :space)
+                   (set counter
+                        (if (> counter 8)
+                            (set-mode :play)
+                            (* 2 (math.ceil (/ counter 2)))))
                    (set-mode :play)))}

@@ -1,18 +1,19 @@
-(local intro-msgs (lume.split (love.filesystem.read "text/intro") "\n"))
+(local intro-msgs (lume.split (love.filesystem.read :text/intro) "\n"))
 
 (fn step [state _ check]
   (while (not (check state))
     (coroutine.yield)))
 
 (fn sensor? [map name]
-  (let [sensor (lume.match map.layers.sensors.objects (fn eq [s] (= s.name name)))]
+  (let [sensor (lume.match map.layers.sensors.objects
+                           (fn eq [s] (= s.name name)))]
     (and sensor sensor.properties.on)))
 
 (var counter 0)
 
 (fn echo [state ...]
   (let [msgs [...]]
-    (while (< (# msgs) 5)
+    (while (< (length msgs) 5)
       (table.insert msgs 1 ""))
     (lume.map msgs (fn mapper [m] (: state :echo m)))))
 
@@ -37,35 +38,34 @@
         "activated by holding space. Comma and"
         "period change the aim of the laser.")
   (step state :laser (fn laser? []
-                       (or (and state.laser (~= state.selected.theta math.pi))
-                           (sensor? map "first")
-                           (sensor? map "second")
-                           (sensor? map "third"))))
+                       (or (and state.laser (not= state.selected.theta math.pi))
+                           (sensor? map :first) (sensor? map :second)
+                           (sensor? map :third))))
   (echo state "SENSORS: detected nearby structure to"
-        "the north of the crash site which may"
-        "react to the laser.")
-  (step state :first-sensor (fn s1 [] (or (sensor? map "first")
-                                       (sensor? map "second")
-                                       (sensor? map "third"))))
+        "the north of the crash site which may" "react to the laser.")
+  (step state :first-sensor
+        (fn s1 []
+          (or (sensor? map :first) (sensor? map :second) (sensor? map :third))))
   (echo state "MISSION: proceed thru the door and"
         "investigate signs of civilization.")
-  (step state :gap (fn gapper [] (or (> (: world :getRect state.selected) 730)
-                              (sensor? map "second")
-                              (sensor? map "third"))))
+  (step state :gap
+        (fn gapper []
+          (or (> (: world :getRect state.selected) 730) (sensor? map :second)
+              (sensor? map :third))))
   (echo state "DEPLOY: press 2 to deploy a rover to"
         "investigate the gap in the north wall.")
   (step state :gap2 (fn gapper2 []
                       (let [(x y) (: world :getRect state.selected)]
-                        (or (and (> x 720) (< y 1050))
-                            (sensor? map "second")
-                            (sensor? map "third")))))
+                        (or (and (> x 720) (< y 1050)) (sensor? map :second)
+                            (sensor? map :third)))))
   (echo state "REFLECT: aim the laser at the rover to"
         "target the obscured sensor.")
-  (step state :second-sensor (fn s2 [] (or (> (: world :getRect state.selected)
-                                           1230) (sensor? map "second"))))
+  (step state :second-sensor
+        (fn s2 []
+          (or (> (: world :getRect state.selected) 1230) (sensor? map :second))))
   (echo state "Pressing backspace will recall rovers."
         "Continue exploration and collect clues.")
-  (step state :third-sensor (fn s3 [] (sensor? map "third")))
+  (step state :third-sensor (fn s3 [] (sensor? map :third)))
   (echo state)
   (while (coroutine.yield) (coroutine.yield)))
 

@@ -1,7 +1,7 @@
-(local sound (require "sound"))
+(local sound (require :sound))
 
-(local font (love.graphics.newFont "assets/FSEX300.ttf" 16))
-(local bg (love.graphics.newImage "assets/term.bmp"))
+(local font (love.graphics.newFont :assets/FSEX300.ttf 16))
+(local bg (love.graphics.newImage :assets/term.bmp))
 
 (var lines [])
 (var offset 0)
@@ -11,19 +11,19 @@
          (love.graphics.draw bg 0 0)
          (love.graphics.setColor 0 0.7 0)
          (for [i 1 11]
-           (love.graphics.print (or (. lines (+ offset i)) "")
-                                16 (- (* i 18) 6))))
+           (love.graphics.print (or (. lines (+ offset i)) "") 16
+                                (- (* i 18) 6))))
  :activate (fn activate [which]
              (love.graphics.setFont font)
              (sound.play :chirp)
              (set offset 0)
-             (set lines (lume.split (love.filesystem.read (.. "text/" which))
+             (set lines (lume.split (love.filesystem.read (.. :text/ which))
                                     "\n")))
  :keypressed (fn keypressed [key set-mode]
-               (if (= key "up")
+               (if (= key :up)
                    (set offset (math.max 0 (- offset 1)))
-                   (= key "down")
-                   (when (< offset (- (# lines) 12))
+                   (= key :down)
+                   (when (< offset (- (length lines) 12))
                      (set offset (+ offset 1)))
-                   (or (= key "return") (= key "escape"))
+                   (or (= key :return) (= key :escape))
                    (set-mode :play)))}
