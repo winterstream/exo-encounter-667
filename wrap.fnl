@@ -7,10 +7,10 @@
 (local sound (require :sound))
 
 (var scale 2)
-(var mode (require :intro))
+(var mode (require :src.states.intro))
 
 (fn set-mode [mode-name ...]
-  (set mode (require mode-name))
+  (set mode (require (.. :src.states. mode-name)))
   (when mode.activate
     (mode.activate ...)))
 

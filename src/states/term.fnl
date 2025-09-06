@@ -28,4 +28,4 @@
                    (when (< offset (- (length lines) 12))
                      (set offset (+ offset 1)))
                    (or (= key :return) (= key :escape))
-                   (set-mode :play)))}
+                   (set-mode :main)))}
