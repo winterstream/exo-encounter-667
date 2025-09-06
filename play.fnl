@@ -1,17 +1,15 @@
+(local beholder (require :lib.beholder))
 (local lume (require :lib.lume))
 (local draw (require :draw))
 (local hud (require :hud))
 (local laser (require :laser))
 (local sensor (require :sensor))
 (local sound (require :sound))
-(local autopilot (require :autopilot))
 
 (local const (require :const))
 (local state (require :state))
 
 (local turn-speed const.turn-speed)
-(local rover-move-speed const.rover-move-speed)
-(local probe-move-speed const.probe-move-speed)
 
 (local map state.map)
 (local world state.world)
@@ -29,78 +27,22 @@
 (set map.layers.sensors.draw draw.sensors)
 (set map.layers.doors.draw draw.doors)
 
-(fn calculate-new-rover-position [rover dt]
-  (let [(x y) (world:getRect rover)
-        new-x (+ x (* (math.cos rover.theta) rover-move-speed dt))
-        new-y (+ y (* (math.sin rover.theta) rover-move-speed dt))]
-    (values new-x new-y)))
-
 (fn within? [item box margin]
   (let [(x y width height) (world:getRect item)]
     (and (< (- box.x margin) x (+ x width) (+ box.x box.width margin))
          (< (- box.y margin) y (+ y height) (+ box.y box.height margin)))))
 
-(fn terminal-check [cols unit set-mode]
-  (set state.selected.in-term? false)
-  (each [_ col (ipairs cols)]
-    (when (and col.other.properties col.other.properties.terminal
-               (within? col.item col.other 0))
-      (set unit.in-term? true)
-      (when (not unit.in-term-last-tick?)
-        (set-mode :term col.other.properties.terminal)))))
-
-(fn collide-filter [_item other]
-  (if (or (love.keyboard.isDown :backspace) ; noclip
-          (and other.properties other.properties.terminal))
-      :cross
-      :slide))
-
-(fn rover-forward [set-mode r delta]
-  (let [(new-x new-y) (calculate-new-rover-position r delta)
-        (_ _ cols) (world:move r new-x new-y collide-filter)]
-    (terminal-check cols r set-mode)))
-
-(fn move-rover [dt set-mode]
-  (when (love.keyboard.isDown :left)
-    (set state.selected.theta (- state.selected.theta (* 2 dt turn-speed))))
-  (when (love.keyboard.isDown :right)
-    (set state.selected.theta (+ state.selected.theta (* 2 dt turn-speed))))
-  (when (or (love.keyboard.isDown :up) (love.keyboard.isDown :down))
-    (rover-forward set-mode state.selected
-                   (if (love.keyboard.isDown :up) dt (- dt)))))
-
-(fn move-probe [dt set-mode]
-  (let [left? (if (love.keyboard.isDown :left) 1 0)
-        right? (if (love.keyboard.isDown :right) 1 0)
-        up? (if (love.keyboard.isDown :up) 1 0)
-        down? (if (love.keyboard.isDown :down) 1 0)]
-    (set state.probe.stuck?
-         (and (> (+ left? right? up? down?) 0) (not state.probe.mobile?)))
-    (when (and (> (+ left? right? up? down?) 0) state.probe.mobile?)
-      (let [speed (if (love.keyboard.isDown "=") 164 probe-move-speed)
-            (x y) (world:getRect state.selected)
-            new-x (+ x (- (* left? speed dt)) (* right? speed dt))
-            new-y (+ y (- (* up? speed dt)) (* down? speed dt))
-            (_ _ cols) (world:move state.selected new-x new-y collide-filter)]
-        (terminal-check cols state.selected set-mode)))))
-
 (fn update [dt set-mode]
-  (set state.probe.stuck? false)
   (pcall (fn [] (hud.update state world map dt)))
   (map:update dt)
   ;; controls
   (when (not state.selected.immobilized?)
     (let [dt2 (if (love.keyboard.isDown :lshift :rshift) (* dt 0.2) dt)]
-      (when (= :rover state.selected.type)
-        (move-rover dt2 set-mode))
-      (when (= :probe state.selected.type)
-        (move-probe dt2 set-mode))
       (when (love.keyboard.isDown "," :w)
         (set state.probe.theta (- state.probe.theta (* dt2 turn-speed))))
       (when (love.keyboard.isDown "." :v)
         (set state.probe.theta (+ state.probe.theta (* dt2 turn-speed))))))
   (sensor.update state map world dt)
-  (autopilot.update state world dt (partial rover-forward set-mode))
   (if (love.keyboard.isDown :space :lctrl :rctrl :capslock)
       (sound.play :laser)
       (sound.stop :laser))
@@ -137,23 +79,21 @@
       (set state.selected state.probe))))
 
 (fn select [n]
-  (when n (autopilot.disable))
+  (when n (beholder.trigger :enable-autopilot false))
   (set state.selected (if n
                           (. state.rovers n)
                           state.probe))
   (when (and n (not (world:hasItem (. state.rovers n))))
     (deploy n)))
 
-(local keymap
-       {:1 (partial select 1)
-        :2 (partial select 2)
-        :3 (partial select 3)
-        :4 (partial select 4)
-        :0 select
-        :5 select
-        "`" select
-        :return dock
-        :backspace (fn [] (autopilot.enable) (select nil))})
+(local keymap {:1 (partial select 1)
+               :2 (partial select 2)
+               :3 (partial select 3)
+               :4 (partial select 4)
+               :0 select
+               :5 select
+               "`" select
+               :return dock})
 
 (fn keypressed [key set-mode]
   (let [f (. keymap key)]

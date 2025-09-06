@@ -5,12 +5,12 @@
 (local map (lint (tiled :map.lua [:bump])))
 (local world (bump.newWorld))
 
-(local rovers [{:theta 0 :docked? true :type :rover}
-               {:theta 3 :docked? false :type :rover}
-               {:theta 2 :docked? false :type :rover}
-               {:theta 0 :docked? true :type :rover}])
+(local rovers [{:theta 0 :docked? true :type :rover :vx 0 :vy 0}
+               {:theta 3 :docked? false :type :rover :vx 0 :vy 0}
+               {:theta 2 :docked? false :type :rover :vx 0 :vy 0}
+               {:theta 0 :docked? true :type :rover :vx 0 :vy 0}])
 
-(local probe {:theta math.pi :type :probe :rovers []})
+(local probe {:theta math.pi :type :probe :rovers [] :vx 0 :vy 0})
 
 (map:bump_init world)
 (world:add probe 105 1205 30 24)

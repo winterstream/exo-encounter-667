@@ -1,5 +1,6 @@
 ;; This module contains non-game-specific bits and mode-changing logic.
 (local repl (require :lib.stdio))
+(local beholder (require :lib.beholder))
 (local canvas (love.graphics.newCanvas 720 450))
 
 (local try-call (require :src.dev.try-call))
@@ -33,6 +34,7 @@
     (try-call.try-call #(mode.update dt set-mode))))
 
 (fn love.keypressed [key]
+  (beholder.trigger :keypressed key)
   (if (and (= key :f11) (= scale 2))
       (let [(dw dh) (love.window.getDesktopDimensions)]
         (love.window.setMode dw dh {:fullscreen true :fullscreentype :desktop})
