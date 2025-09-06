@@ -1,3 +1,5 @@
+(local lume (require :lib.lume))
+
 (local intro-img (love.graphics.newImage :assets/intro-225.jpg))
 (local intro-font (love.graphics.newFont :assets/FSEX300.ttf 32))
 (local small-font (love.graphics.newFont :assets/FSEX300.ttf 12))
@@ -6,7 +8,7 @@
 
 (var counter 0)
 
-{:draw (fn draw [message]
+{:draw (fn [message]
          (love.graphics.setFont intro-font)
          (love.graphics.draw intro-img)
          (love.graphics.print "EXO_encounter 667" 32 16)
@@ -17,11 +19,11 @@
              (for [i 1 (length messages)]
                (when (> counter (* i 2))
                  (love.graphics.print (. messages i) 8 (+ (* 18 i) 110))))))
- :update (fn update [dt set-mode]
+ :update (fn [dt set-mode]
            (set counter (+ counter dt))
            (when (> counter 16)
              (set-mode :play)))
- :keypressed (fn keypressed [key set-mode]
+ :keypressed (fn [key set-mode]
                (if (= key :space)
                    (set counter
                         (if (> counter 8)

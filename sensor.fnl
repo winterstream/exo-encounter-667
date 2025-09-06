@@ -3,14 +3,16 @@
 ;; a "door" property which corresponds to the name of a door object.
 ;; momentary doors close in any tick that their sensor isn't active.
 
+(local lume (require :lib.lume))
+
 (local sound (require :sound))
 
-(fn finder [name] (fn f [d] (= d.name name)))
+(fn finder [name] (fn [d] (= d.name name)))
 
 ;; immobilize units when the door closes on them
 (fn immobilize [map world door]
   (let [(x y w h) (map.bump_wrap :getRect door)
-        items (: world :queryRect x y w h)]
+        items (world:queryRect x y w h)]
     (each [_ item (ipairs items)]
       (when (or (= :rover item.type) (= :probe item.type))
         (set item.immobilized? true)))))
@@ -26,7 +28,7 @@
   ;; see https://github.com/karai17/Simple-Tiled-Implementation/issues/180
   (when (map.bump_wrap :hasItem door)
     (let [(x y w h) (map.bump_wrap :getRect door)
-          items (: world :queryRect x y w h)]
+          items (world:queryRect x y w h)]
       (map.bump_wrap :remove door)
       (each [_ item (ipairs items)]
         (when (or (= :rover item.type) (= :probe item.type))
@@ -80,10 +82,10 @@
       (set door.properties.hit false)
       (set sensor.properties.on false))))
 
-{:is? (fn is [item]
+{:is? (fn [item]
         (and item.properties item.properties.sensor))
  : on
- :update (fn update [_state map world dt]
+ :update (fn [_state map world dt]
            (var in-motion? false)
            (each [_ door (ipairs map.layers.doors.objects)]
              (update-door map world door dt)

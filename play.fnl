@@ -1,5 +1,6 @@
 (local tiled (require :lib.tiled))
 (local bump (require :lib.bump))
+(local lume (require :lib.lume))
 (local draw (require :draw))
 (local hud (require :hud))
 (local laser (require :laser))
@@ -11,29 +12,28 @@
 (local map (lint (tiled :map.lua [:bump])))
 (local world (bump.newWorld))
 
-(local state
-       {:tx 200
-        :ty 500
-        :rovers [{:theta 0 :docked? true :type :rover}
-                 {:theta 3 :docked? false :type :rover}
-                 {:theta 2 :docked? false :type :rover}
-                 {:theta 0 :docked? true :type :rover}]
-        :probe {:theta math.pi :type :probe :rovers []}
-        :flags {}
-        ; for tutorial progression
-        :messages []
-        ; for hud
-        ;; for repl debugging
-        : map
-        : world
-        :echo (fn echo [s msg] (table.insert s.messages 1 msg))})
+(local state {:tx 200
+              :ty 500
+              :rovers [{:theta 0 :docked? true :type :rover}
+                       {:theta 3 :docked? false :type :rover}
+                       {:theta 2 :docked? false :type :rover}
+                       {:theta 0 :docked? true :type :rover}]
+              :probe {:theta math.pi :type :probe :rovers []}
+              :flags {}
+              ; for tutorial progression
+              :messages []
+              ; for hud
+              ;; for repl debugging
+              : map
+              : world
+              :echo (fn [s msg] (table.insert s.messages 1 msg))})
 
-(: map :bump_init world)
-(: world :add state.probe 105 1205 30 24)
-(: world :add (. state.rovers 2) 165 1200 10 10)
+(map:bump_init world)
+(world:add state.probe 105 1205 30 24)
+(world:add (. state.rovers 2) 165 1200 10 10)
 
 ; start undocked
-(: world :add (. state.rovers 3) 145 1212 10 10)
+(world:add (. state.rovers 3) 145 1212 10 10)
 
 (local turn-speed 1)
 (local rover-move-speed 82)
@@ -42,7 +42,7 @@
 (set state.selected state.probe)
 
 ;; set up custom layers which aren't preloaded in the map
-(let [layer (: map :addCustomLayer :player 8)]
+(let [layer (map:addCustomLayer :player 8)]
   (set layer.sprites [(unpack state.rovers)])
   (tset layer.sprites 0 state.probe)
   (set layer.draw (partial draw.player world state)))
@@ -56,15 +56,15 @@
 (global s state)
 
 (fn calculate-new-rover-position [rover dt]
-  (let [(x y) (: world :getRect rover)
+  (let [(x y) (world:getRect rover)
         new-x (+ x (* (math.cos rover.theta) rover-move-speed dt))
         new-y (+ y (* (math.sin rover.theta) rover-move-speed dt))]
     (values new-x new-y)))
 
 (fn within? [item box margin]
-  (let [(x y width height) (: world :getRect item)]
-    (and (< (- box.x margin) x (+ x width) (+ (+ box.x box.width) margin))
-         (< (- box.y margin) y (+ y height) (+ (+ box.y box.height) margin)))))
+  (let [(x y width height) (world:getRect item)]
+    (and (< (- box.x margin) x (+ x width) (+ box.x box.width margin))
+         (< (- box.y margin) y (+ y height) (+ box.y box.height margin)))))
 
 (fn terminal-check [cols unit set-mode]
   (set state.selected.in-term? false)
@@ -83,7 +83,7 @@
 
 (fn rover-forward [set-mode r delta]
   (let [(new-x new-y) (calculate-new-rover-position r delta)
-        (_ _ cols) (: world :move r new-x new-y collide-filter)]
+        (_ _ cols) (world:move r new-x new-y collide-filter)]
     (terminal-check cols r set-mode)))
 
 (fn move-rover [dt set-mode]
@@ -104,10 +104,10 @@
          (and (> (+ left? right? up? down?) 0) (not state.probe.mobile?)))
     (when (and (> (+ left? right? up? down?) 0) state.probe.mobile?)
       (let [speed (if (love.keyboard.isDown "=") 164 probe-move-speed)
-            (x y) (: world :getRect state.selected)
+            (x y) (world:getRect state.selected)
             new-x (+ x (- (* left? speed dt)) (* right? speed dt))
             new-y (+ y (- (* up? speed dt)) (* down? speed dt))
-            (_ _ cols) (: world :move state.selected new-x new-y collide-filter)]
+            (_ _ cols) (world:move state.selected new-x new-y collide-filter)]
         (terminal-check cols state.selected set-mode)))))
 
 ;; there is surely a smarter way to write this but I'm tired and it's late
@@ -128,9 +128,9 @@
 
 (fn update [dt set-mode]
   (set state.probe.stuck? false)
-  (pcall (fn updater [] (hud.update state world map dt)))
-  (: map :update dt)
-  (scroll state dt (: world :getRect state.selected))
+  (pcall (fn [] (hud.update state world map dt)))
+  (map:update dt)
+  (scroll state dt (world:getRect state.selected))
   ;; controls
   (when (not state.selected.immobilized?)
     (let [dt2 (if (love.keyboard.isDown :lshift :rshift) (* dt 0.2) dt)]
@@ -148,7 +148,7 @@
       (sound.play :laser)
       (sound.stop :laser))
   (set state.laser (and (love.keyboard.isDown :space :lctrl :rctrl :capslock)
-                        (let [(x y w h) (: world :getRect state.probe)]
+                        (let [(x y w h) (world:getRect state.probe)]
                           (laser.fire (+ x (/ w 2)) (+ y (/ h 2) -6)
                                       state.probe.theta state world map []
                                       [state.probe] 64))))
@@ -167,16 +167,16 @@
   (tset (. state.rovers n) :docked? false)
   (set state.probe.mobile? (enough-docked?))
   (let [[ox oy] (. offsets n)
-        (px py) (: world :getRect state.probe)]
-    (: world :add (. state.rovers n) (+ px ox) (+ py oy) 10 10)))
+        (px py) (world:getRect state.probe)]
+    (world:add (. state.rovers n) (+ px ox) (+ py oy) 10 10)))
 
 (fn dock []
-  (let [(x y w h) (: world :getRect state.probe)]
+  (let [(x y w h) (world:getRect state.probe)]
     (when (and (= state.selected.type :rover)
                (within? state.selected {: x : y :width w :height h} 12))
       (set state.selected.docked? true)
       (set state.probe.mobile? (enough-docked?))
-      (: world :remove state.selected)
+      (world:remove state.selected)
       (set state.selected state.probe))))
 
 (fn select [n]
@@ -184,7 +184,7 @@
   (set state.selected (if n
                           (. state.rovers n)
                           state.probe))
-  (when (and n (not (: world :hasItem (. state.rovers n))))
+  (when (and n (not (world:hasItem (. state.rovers n))))
     (deploy n)))
 
 (local keymap
@@ -196,7 +196,7 @@
         :5 select
         "`" select
         :return dock
-        :backspace (fn back [] (autopilot.enable) (select))})
+        :backspace (fn [] (autopilot.enable) (select nil))})
 
 (fn keypressed [key set-mode]
   (let [f (. keymap key)]

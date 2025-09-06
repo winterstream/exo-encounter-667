@@ -1,3 +1,5 @@
+(local lume (require :lib.lume))
+
 (local sound (require :sound))
 
 (local font (love.graphics.newFont :assets/FSEX300.ttf 16))
@@ -6,20 +8,20 @@
 (var lines [])
 (var offset 0)
 
-{:draw (fn draw []
+{:draw (fn []
          (love.graphics.setColor 0.8 0.8 0.8)
          (love.graphics.draw bg 0 0)
          (love.graphics.setColor 0 0.7 0)
          (for [i 1 11]
            (love.graphics.print (or (. lines (+ offset i)) "") 16
                                 (- (* i 18) 6))))
- :activate (fn activate [which]
+ :activate (fn [which]
              (love.graphics.setFont font)
              (sound.play :chirp)
              (set offset 0)
              (set lines (lume.split (love.filesystem.read (.. :text/ which))
                                     "\n")))
- :keypressed (fn keypressed [key set-mode]
+ :keypressed (fn [key set-mode]
                (if (= key :up)
                    (set offset (math.max 0 (- offset 1)))
                    (= key :down)

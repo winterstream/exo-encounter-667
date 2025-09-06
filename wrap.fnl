@@ -13,7 +13,7 @@
     (mode.activate ...)))
 
 (fn love.load []
-  (: canvas :setFilter :nearest :nearest)
+  (canvas:setFilter :nearest :nearest)
   (repl.start)
   (sound.play :temple))
 
@@ -21,8 +21,8 @@
   (love.graphics.setCanvas canvas)
   (love.graphics.clear)
   (love.graphics.setColor 1 1 1)
-  (mode.draw)
-  (love.graphics.setCanvas)
+  (mode.draw nil)
+  (love.graphics.setCanvas nil)
   (love.graphics.setColor 1 1 1)
   (love.graphics.draw canvas 0 0 0 scale scale))
 
@@ -38,11 +38,11 @@
       (= key :f11)
       (do
         (set scale 2)
-        (love.window.setMode (* 720 scale) (* 450 scale)))
+        (love.window.setMode (* 720 scale) (* 450 scale) {}))
       (and (love.keyboard.isDown :lctrl :rctrl :capslock) (= key :q))
       (love.event.quit)
       ;; (= key "f5") (set-mode :win)
       (love.keyboard.isDown :m)
-      (sound.toggle)
+      (sound.toggle nil)
       :else
       (mode.keypressed key set-mode)))

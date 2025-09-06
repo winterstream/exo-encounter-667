@@ -37,7 +37,7 @@
 
 (fn label-rover [world rover number selected?]
   (when (and (not selected?) (not rover.docked?))
-    (let [(x y) (: world :getRect rover)]
+    (let [(x y) (world:getRect rover)]
       (love.graphics.print number (+ x 2) (- y 2)))))
 
 (local offsets [[-5 -5] [25 -5] [25 19] [-5 19]])
@@ -60,11 +60,11 @@
     (love.graphics.line (unpack segment))))
 
 (fn player [world state]
-  (let [prect [(: world :getRect state.probe)]]
+  (let [prect [(world:getRect state.probe)]]
     (each [i rover (ipairs state.rovers)]
       (let [rect (if rover.docked?
                      (docked-rect prect i)
-                     [(: world :getRect rover)])]
+                     [(world:getRect rover)])]
         (draw-rover rect rover.theta (= state.selected rover) rover.docked?)))
     (draw-probe prect (= state.probe state.selected)))
   (when state.laser
@@ -90,7 +90,7 @@
       (love.graphics.draw door-img door.x (- door.y door.height y)))))
 
 (fn draw [map world state]
-  (: map :draw (- state.tx) (- state.ty))
+  (map:draw (- state.tx) (- state.ty))
   (love.graphics.push)
   ;; drawing non-map stuff needs to apply our own translate
   (love.graphics.translate (- state.tx) (- state.ty))

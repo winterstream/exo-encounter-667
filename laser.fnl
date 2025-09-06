@@ -1,4 +1,5 @@
 (local intersect (require :lib.intersect))
+(local lume (require :lib.lume))
 (local sensor (require :sensor))
 ;; this is the max range only for each segment individually; not a total limit
 (local range 512)
@@ -16,7 +17,7 @@
 
 ;; a line segment for the mirror of a rover
 (fn mirror-segment [world rover mirror-theta]
-  (let [(x y w) (: world :getRect rover)
+  (let [(x y w) (world:getRect rover)
         radius (/ w 2)
         center-x (+ x radius)
         center-y (+ y radius)
@@ -53,8 +54,10 @@
 {:fire (fn fire [x y theta state world map segments ignore limit]
          (let [far-x (+ x (* (math.cos theta) range))
                far-y (+ y (* (math.sin theta) range))
-               [hit] (: world :querySegmentWithCoords x y far-x far-y
-                        (fn filter [item] (not (lume.find ignore item))))]
+               [hit] (world:querySegmentWithCoords x y far-x far-y
+                                                   (fn [item]
+                                                     (not (lume.find ignore
+                                                                     item))))]
            (if (or (not hit) (<= limit 0))
                ;; we have to put a limit on how many times we'll
                ;; reflect to avoid infinite loops
