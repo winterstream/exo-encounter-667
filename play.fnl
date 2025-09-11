@@ -1,7 +1,6 @@
 (local beholder (require :lib.beholder))
 (local lume (require :lib.lume))
 (local draw (require :draw))
-(local hud (require :hud))
 (local sensor (require :sensor))
 
 (local const (require :const))
@@ -31,7 +30,6 @@
          (< (- box.y margin) y (+ y height) (+ box.y box.height margin)))))
 
 (fn update [dt set-mode]
-  (pcall (fn [] (hud.update state world map dt)))
   (map:update dt)
   ;; controls
   (sensor.update state map world dt))

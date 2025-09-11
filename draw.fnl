@@ -1,5 +1,3 @@
-(local hud (require :hud))
-
 (local small-font (love.graphics.newFont :assets/FSEX300.ttf 12))
 
 (local probe-img (love.graphics.newImage :assets/probe.png))
@@ -98,7 +96,6 @@
   (love.graphics.setFont small-font)
   (each [i rover (ipairs state.rovers)]
     (label-rover world rover i (= rover state.selected)))
-  (love.graphics.pop)
-  (hud.draw state))
+  (love.graphics.pop))
 
 {: draw : player : sensors : doors}
