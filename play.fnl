@@ -2,9 +2,7 @@
 (local lume (require :lib.lume))
 (local draw (require :draw))
 (local hud (require :hud))
-(local laser (require :laser))
 (local sensor (require :sensor))
-(local sound (require :sound))
 
 (local const (require :const))
 (local state (require :state))
@@ -36,24 +34,7 @@
   (pcall (fn [] (hud.update state world map dt)))
   (map:update dt)
   ;; controls
-  (when (not state.selected.immobilized?)
-    (let [dt2 (if (love.keyboard.isDown :lshift :rshift) (* dt 0.2) dt)]
-      (when (love.keyboard.isDown "," :w)
-        (set state.probe.theta (- state.probe.theta (* dt2 turn-speed))))
-      (when (love.keyboard.isDown "." :v)
-        (set state.probe.theta (+ state.probe.theta (* dt2 turn-speed))))))
-  (sensor.update state map world dt)
-  (if (love.keyboard.isDown :space :lctrl :rctrl :capslock)
-      (sound.play :laser)
-      (sound.stop :laser))
-  (set state.laser (and (love.keyboard.isDown :space :lctrl :rctrl :capslock)
-                        (let [(x y w h) (world:getRect state.probe)]
-                          (laser.fire (+ x (/ w 2)) (+ y (/ h 2) -6)
-                                      state.probe.theta state world map []
-                                      [state.probe] 64))))
-  (when (= :win state.laser)
-    (set-mode :win))
-  (set state.selected.in-term-last-tick? state.selected.in-term?))
+  (sensor.update state map world dt))
 
 ;; can't move unless 3 or 4 rovers are docked
 (fn enough-docked? []
