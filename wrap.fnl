@@ -24,7 +24,7 @@
   (love.graphics.setCanvas canvas)
   (love.graphics.clear)
   (love.graphics.setColor 1 1 1)
-  (try-call.try-call #(mode.draw nil))
+  (try-call.try-call #(mode.draw (love.timer.getDelta)))
   (love.graphics.setCanvas nil)
   (love.graphics.setColor 1 1 1)
   (love.graphics.draw canvas 0 0 0 scale scale))

@@ -30,7 +30,6 @@
          (< (- box.y margin) y (+ y height) (+ box.y box.height margin)))))
 
 (fn update [dt set-mode]
-  (map:update dt)
   ;; controls
   (sensor.update state map world dt))
 

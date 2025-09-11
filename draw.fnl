@@ -88,7 +88,6 @@
       (love.graphics.draw door-img door.x (- door.y door.height y)))))
 
 (fn draw [map world state]
-  (map:draw (- state.tx) (- state.ty))
   (love.graphics.push)
   ;; drawing non-map stuff needs to apply our own translate
   (love.graphics.translate (- state.tx) (- state.ty))
