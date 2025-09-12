@@ -1,6 +1,7 @@
 (local autopilot-system (require :src.systems.autopilot-system))
 (local bump-physics-system (require :src.systems.bump-physics-system))
 (local camera-tracking-system (require :src.systems.camera-tracking-system))
+(local door-update-system (require :src.systems.door-update-system))
 (local docking-system (require :src.systems.docking-system))
 (local hud-system (require :src.systems.hud-system))
 (local laser-control-system (require :src.systems.laser-control-system))
@@ -15,6 +16,7 @@
 (local autopilot (autopilot-system state))
 (local bump-physics (bump-physics-system state))
 (local camera (camera-tracking-system state))
+(local door-updater (door-update-system state))
 (local docker (docking-system state))
 (local hud (hud-system state))
 (local laser (laser-control-system state))
@@ -33,6 +35,7 @@
            (bump-physics:update dt set-mode)
            (laser:update dt set-mode)
            (docker:update dt set-mode)
+           (door-updater:update dt set-mode)
            (play.update dt set-mode))
  :keypressed (fn [key set-mode]
                (if (or (= key :escape) (= key :f1)) (set-mode :pause)))}
