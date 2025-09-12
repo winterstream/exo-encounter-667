@@ -1,6 +1,6 @@
 (local intersect (require :lib.intersect))
 (local lume (require :lib.lume))
-(local sound (require :sound))
+(local sound (require :src.sound))
 ;; this is the max range only for each segment individually; not a total limit
 (local range 512)
 

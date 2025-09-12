@@ -2,7 +2,7 @@
 (local class (require :lib.30log))
 (local lume (require :lib.lume))
 
-(local const (require :const))
+(local const (require :src.const))
 
 (local autopilot-system (class :autopilot-system))
 

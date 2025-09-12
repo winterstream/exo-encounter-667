@@ -6,7 +6,7 @@
 (local class (require :lib.30log))
 (local lume (require :lib.lume))
 
-(local sound (require :sound))
+(local sound (require :src.sound))
 
 (local sensor-update-system (class :sensor-update-system))
 

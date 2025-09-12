@@ -1,4 +1,4 @@
-(local module (require (.. ... :module)))
+(local module (require :src.module))
 
 (fn reload []
   (each [_i m (ipairs [:state :intro :play :src.dev.reload])]

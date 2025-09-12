@@ -1,5 +1,5 @@
 (local class (require :lib.30log))
-(local assets (require :assets))
+(local assets (require :src.assets))
 (local splash-screen-system (class :splash-screen-system))
 
 (fn splash-screen-system.init [self text]

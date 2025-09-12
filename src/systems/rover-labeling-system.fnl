@@ -1,6 +1,6 @@
 (local class (require :lib.30log))
 
-(local assets (require :assets))
+(local assets (require :src.assets))
 
 (local rover-labeling-system (class :rover-labeling-system))
 

@@ -1,6 +1,6 @@
 (local lume (require :lib.lume))
 
-(local sound (require :sound))
+(local sound (require :src.sound))
 
 (local font (love.graphics.newFont :assets/FSEX300.ttf 16))
 (local bg (love.graphics.newImage :assets/term.bmp))

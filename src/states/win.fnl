@@ -1,4 +1,4 @@
-(local sound (require :sound))
+(local sound (require :src.sound))
 (local lume (require :lib.lume))
 
 (local font (love.graphics.newFont :assets/FSEX300.ttf 16))

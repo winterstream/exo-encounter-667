@@ -1,5 +1,5 @@
 (local class (require :lib.30log))
-(local tutorial (require :tutorial))
+(local tutorial (require :src.tutorial))
 
 (local tutorial-system (class :tutorial-system))
 

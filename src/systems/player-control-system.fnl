@@ -1,6 +1,6 @@
 (local class (require :lib.30log))
 
-(local const (require :const))
+(local const (require :src.const))
 
 (local player-control-system (class :player-control-system))
 

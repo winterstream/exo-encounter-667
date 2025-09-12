@@ -5,7 +5,7 @@
 
 (local try-call (require :src.dev.try-call))
 
-(local sound (require :sound))
+(local sound (require :src.sound))
 
 (var scale 2)
 (var mode (require :src.states.intro))

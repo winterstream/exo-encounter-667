@@ -1,8 +1,8 @@
 (local class (require :lib.30log))
 
-(local const (require :const))
-(local laser (require :laser))
-(local sound (require :sound))
+(local const (require :src.const))
+(local laser (require :src.laser))
+(local sound (require :src.sound))
 
 (local laser-control-system (class :laser-control-system))
 

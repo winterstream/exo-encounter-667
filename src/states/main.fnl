@@ -1,3 +1,6 @@
+(local bump (require :lib.bump))
+(local tiled (require :lib.tiled))
+
 (local autopilot-system (require :src.systems.autopilot-system))
 (local bump-physics-system (require :src.systems.bump-physics-system))
 (local camera-tracking-system (require :src.systems.camera-tracking-system))
@@ -10,10 +13,32 @@
 (local tile-map-render-system (require :src.systems.tile-map-render-system))
 (local tutorial-system (require :src.systems.tutorial-system))
 
-(local draw (require :draw))
-(local state (require :state))
+(local draw (require :src.draw))
+(local lint (require :src.lint))
+(local state (require :src.state))
 
-(set state.selected state.probe)
+(local rovers [{:theta 0 :docked? true :type :rover :vx 0 :vy 0}
+               {:theta 3 :docked? false :type :rover :vx 0 :vy 0}
+               {:theta 2 :docked? false :type :rover :vx 0 :vy 0}
+               {:theta 0 :docked? true :type :rover :vx 0 :vy 0}])
+
+(local probe {:theta math.pi :type :probe :rovers [] :vx 0 :vy 0})
+
+(local map (lint (tiled :map.lua [:bump])))
+(local world (bump.newWorld))
+
+(set state.rovers rovers)
+(set state.probe probe)
+(set state.map map)
+(set state.world world)
+(set state.selected probe)
+
+(map:bump_init world)
+(world:add probe 105 1205 30 24)
+(world:add (. rovers 2) 165 1200 10 10)
+
+; start undocked
+(world:add (. rovers 3) 145 1212 10 10)
 
 ;; set up custom layers which aren't preloaded in the map
 (let [layer (state.map:addCustomLayer :player 8)]

@@ -1,7 +1,7 @@
 (local class (require :lib.30log))
 (local lume (require :lib.lume))
 
-(local const (require :const))
+(local const (require :src.const))
 
 (local camera-tracking-system (class :camera-tracking-system))
 
