@@ -1,6 +1,6 @@
 (local intersect (require :lib.intersect))
 (local lume (require :lib.lume))
-(local sensor (require :sensor))
+(local sound (require :sound))
 ;; this is the max range only for each segment individually; not a total limit
 (local range 512)
 
@@ -50,6 +50,18 @@
     (fire cx cy theta1 state world map segments ignore limit)
     (fire cx cy theta2 state world map segments ignore limit)))
 
+(fn finder [name] (fn [d] (= d.name name)))
+
+(fn on-sensor [map item]
+  (set item.properties.on true)
+  (when item.properties.door
+    (let [door (lume.match map.layers.doors.objects
+                           (finder item.properties.door))]
+      ;; begin to open
+      (sound.play :door)
+      (set door.properties.opening true)
+      (set door.properties.hit true))))
+
 ;; yeouch; this function is out of control. sorry, I guess?
 {:fire (fn fire [x y theta state world map segments ignore limit]
          (let [far-x (+ x (* (math.cos theta) range))
@@ -81,9 +93,9 @@
                (split fire x y hit theta state world map segments [hit.item]
                       (- limit 2))
                ;; should we trigger a door opening?
-               (sensor.is? hit.item)
+               (?. hit.item :properties :sensor)
                (do
-                 (sensor.on map hit.item)
+                 (on-sensor map hit.item)
                  (table.insert segments [x y hit.x1 hit.y1])
                  segments)
                ;; ignore the hit if it's transparent; maybe this

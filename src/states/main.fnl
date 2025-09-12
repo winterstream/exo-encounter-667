@@ -10,32 +10,42 @@
 (local tile-map-render-system (require :src.systems.tile-map-render-system))
 (local tutorial-system (require :src.systems.tutorial-system))
 
+(local draw (require :draw))
 (local state (require :state))
-(local play (require :play))
 
-(local autopilot (autopilot-system state))
-(local bump-physics (bump-physics-system state))
-(local camera (camera-tracking-system state))
-(local door-updater (door-update-system state))
-(local docker (docking-system state))
-(local hud (hud-system state))
-(local laser (laser-control-system state))
-(local player-control (player-control-system state))
-(local rover-labeler (rover-labeling-system state))
-(local tile-map-renderer (tile-map-render-system state))
-(local tutorial (tutorial-system state))
+(set state.selected state.probe)
 
-{:draw (fn [dt] (tile-map-renderer:update dt) (rover-labeler:update dt)
-         (hud:update))
+;; set up custom layers which aren't preloaded in the map
+(let [layer (state.map:addCustomLayer :player 8)]
+  (set layer.sprites [(unpack state.rovers)])
+  (tset layer.sprites 0 state.probe)
+  (set layer.draw (partial draw.player state.world state)))
+
+;; layers where we change the drawing of the sprites based on gameplay can't
+;; be drawn by tiled; we have to write our own draw.
+(set state.map.layers.sensors.draw draw.sensors)
+(set state.map.layers.doors.draw draw.doors)
+
+(local draw-systems [(tile-map-render-system state)
+                     (rover-labeling-system state)
+                     (hud-system state)])
+
+(local update-systems [(autopilot-system state)
+                       (bump-physics-system state)
+                       (camera-tracking-system state)
+                       (door-update-system state)
+                       (docking-system state)
+                       (hud-system state)
+                       (laser-control-system state)
+                       (player-control-system state)
+                       (rover-labeling-system state)
+                       (tutorial-system state)])
+
+{:draw (fn [dt]
+         (each [_ system (ipairs draw-systems)]
+           (system:update dt)))
  :update (fn [dt set-mode]
-           (camera:update dt set-mode)
-           (tutorial:update dt set-mode)
-           (player-control:update dt set-mode)
-           (autopilot:update dt set-mode)
-           (bump-physics:update dt set-mode)
-           (laser:update dt set-mode)
-           (docker:update dt set-mode)
-           (door-updater:update dt set-mode)
-           (play.update dt set-mode))
+           (each [_ system (ipairs update-systems)]
+             (system:update dt set-mode)))
  :keypressed (fn [key set-mode]
                (if (or (= key :escape) (= key :f1)) (set-mode :pause)))}
