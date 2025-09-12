@@ -33,11 +33,6 @@
           py2 (- center-y (* (math.sin perpendicular) radius 0.8))]
       (love.graphics.line px1 py1 px2 py2))))
 
-(fn label-rover [world rover number selected?]
-  (when (and (not selected?) (not rover.docked?))
-    (let [(x y) (world:getRect rover)]
-      (love.graphics.print number (+ x 2) (- y 2)))))
-
 (local offsets [[-5 -5] [25 -5] [25 19] [-5 19]])
 
 (fn docked-rect [prect i]
@@ -87,14 +82,4 @@
     (let [y (- 21 (* (or door.properties.level 0) 21))]
       (love.graphics.draw door-img door.x (- door.y door.height y)))))
 
-(fn draw [map world state]
-  (love.graphics.push)
-  ;; drawing non-map stuff needs to apply our own translate
-  (love.graphics.translate (- state.tx) (- state.ty))
-  (love.graphics.setColor 1 1 1)
-  (love.graphics.setFont small-font)
-  (each [i rover (ipairs state.rovers)]
-    (label-rover world rover i (= rover state.selected)))
-  (love.graphics.pop))
-
-{: draw : player : sensors : doors}
+{: player : sensors : doors}

@@ -78,4 +78,4 @@
     (if (or (= :escape key) (= :f1 key)) (set-mode :pause)
         (= (type f) :function) (f))))
 
-{:draw (partial draw.draw map world state) : update : keypressed}
+{:draw (fn []) : update : keypressed}
