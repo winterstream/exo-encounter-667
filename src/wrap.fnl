@@ -1,6 +1,8 @@
 ;; This module contains non-game-specific bits and mode-changing logic.
 (local repl (require :lib.stdio))
 (local beholder (require :lib.beholder))
+(local fennel (require :lib.fennel))
+
 (local canvas (love.graphics.newCanvas 720 450))
 
 (local try-call (require :src.dev.try-call))
@@ -50,3 +52,24 @@
       (sound.toggle nil)
       :else
       (mode.keypressed key set-mode)))
+
+; Replace print by a version that uses fennel.view on its args
+
+(local _rawprint _G.print)
+
+(fn print-rest [...]
+  (let [fst ...
+        s (fennel.view fst)]
+    (io.stdout:write "\t" s)
+    (if (> (select "#" ...) 1) (print-rest (select 2 ...)))))
+
+(fn _G.print [...]
+  (let [nargs (select "#" ...)]
+    (if (= nargs 1)
+        (_rawprint (fennel.view (select 1 ...)))
+        (> nargs 1)
+        (let [fst ...] (io.stdout:write (fennel.view fst))
+          (print-rest (select 2 ...))
+          (io.stdout:write "\n")
+          (values))
+        (_rawprint))))
